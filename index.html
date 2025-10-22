@@ -1,158 +1,88 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>e-Rapor Quantum — Dashboard</title>
-
-  <!-- Fonts & icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/lucide@0.258.0/dist/lucide.min.js"></script>
-
-  <!-- Chart.js (for Part 2 rendering) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-  <!-- Core CSS -->
-  <link rel="stylesheet" href="assets/css/style.css">
-
+  <meta charset="UTF-8">
+  <title>e-Rapor Quantum - Login</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1d4ed8, #2563eb);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #1e293b;
+    }
+    .card {
+      background: white;
+      width: 420px;
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+      text-align: center;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d1d5db;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      font-weight: 600;
+      border-radius: 8px;
+      color: white;
+      transition: all 0.3s ease;
+    }
+    .btn-blue { background: #1d4ed8; }
+    .btn-blue:hover { background: #1e40af; }
+    .btn-green { background: #16a34a; }
+    .btn-green:hover { background: #15803d; }
+    footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #64748b;
+    }
+  </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo-wrap">
-          <img src="assets/img/logo-erapor-quantum.png" alt="e-Rapor Quantum" class="logo-img"/>
-        </div>
-        <div class="app-title">e-Rapor</div>
-        <div class="app-sub">Quantum</div>
-        <div class="school-name" id="ui-school-name">— Memuat sekolah —</div>
-      </div>
+  <div class="card animate-fade-in">
+    <img src="assets/logo-erapor.png" alt="Logo e-Rapor Quantum" class="w-24 mx-auto mb-4">
+    <h2 id="title" class="text-2xl font-bold text-blue-700 mb-6">Masuk ke e-Rapor Quantum</h2>
 
-      <nav class="nav" aria-label="main-navigation">
-        <a href="#" class="active" data-route="home"><span class="nav-ic">🏠</span><span>Home</span></a>
-        <a href="#" data-route="siswa"><span class="nav-ic">👨‍🎓</span><span>Data Siswa</span></a>
-        <a href="#" data-route="nilai"><span class="nav-ic">✍️</span><span>Input Nilai</span></a>
-        <a href="#" data-route="rapor"><span class="nav-ic">📄</span><span>Rapor</span></a>
-        <a href="#" data-route="backup"><span class="nav-ic">💾</span><span>Backup</span></a>
-        <a href="#" data-route="settings"><span class="nav-ic">⚙️</span><span>Pengaturan</span></a>
-      </nav>
+    <!-- Step 1: Token -->
+    <div id="tokenSection">
+      <input id="token" placeholder="Masukkan Token Sekolah">
+      <button onclick="validateToken()" class="btn-blue">Lanjut</button>
+    </div>
 
-      <div class="sidebar-footer">
-        Dibuat oleh: <strong>Tim e-Rapor Quantum</strong><br/>
-        v1.0 · © <span id="ui-year"></span>
-      </div>
-    </aside>
+    <!-- Step 2: Registrasi -->
+    <div id="registerSection" class="hidden">
+      <input id="nama" placeholder="Nama Lengkap">
+      <input id="usernameReg" placeholder="Username">
+      <input id="passwordReg" type="password" placeholder="Password">
+      <button onclick="registerUser()" class="btn-green">Daftar & Masuk</button>
+      <p class="mt-3 text-sm text-blue-700 cursor-pointer" onclick="showLogin()">Sudah punya akun?</p>
+    </div>
 
-    <main class="main">
-      <header class="topbar">
-        <div class="welcome" id="ui-welcome">Selamat datang, <span id="ui-username">User</span> 👋</div>
-        <div class="top-actions">
-          <button class="btn" id="btn-refresh">Refresh</button>
-          <button class="btn gold" id="btn-logout">Logout</button>
-        </div>
-      </header>
+    <!-- Step 3: Login -->
+    <div id="loginSection" class="hidden">
+      <input id="usernameLogin" placeholder="Username">
+      <input id="passwordLogin" type="password" placeholder="Password">
+      <button onclick="loginUser()" class="btn-blue">Masuk</button>
+      <p class="mt-3 text-sm text-blue-700 cursor-pointer" onclick="showRegister()">Belum punya akun?</p>
+    </div>
 
-      <section class="content">
-        <div class="cards">
-          <div class="card">
-            <div class="ic">🎓</div>
-            <div>
-              <div class="meta" id="cnt-siswa">--</div>
-              <div class="label">Jumlah Siswa</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="ic">🧑‍🏫</div>
-            <div>
-              <div class="meta" id="cnt-guru">--</div>
-              <div class="label">Jumlah Guru</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="ic">🏫</div>
-            <div>
-              <div class="meta" id="cnt-kelas">--</div>
-              <div class="label">Kelas Aktif</div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="ic">📈</div>
-            <div>
-              <div class="meta" id="cnt-progress">--%</div>
-              <div class="label">Progress Input Nilai</div>
-            </div>
-          </div>
-        </div>
-
-        <div class="layout">
-          <div class="panel left-panel">
-            <div class="section-title">
-              <div>Progress Nilai per Mata Pelajaran</div>
-              <div class="muted">Total mapel: <span id="ui-mapel-count">0</span></div>
-            </div>
-
-            <div class="progress-list" id="progress-list"></div>
-
-            <div class="chart-wrap">
-              <div class="section-title">
-                <div>Analitik Siswa — Nilai Terendah</div>
-                <div class="muted">Onyx • Gold</div>
-              </div>
-              <div style="display:flex;gap:12px;align-items:stretch">
-                <canvas id="chart-lowest" style="flex:1;min-height:260px;background:transparent;"></canvas>
-                <canvas id="chart-bimbingan" style="width:260px;height:260px;background:transparent;"></canvas>
-              </div>
-            </div>
-          </div>
-
-          <aside class="panel right-panel">
-            <div class="muted">Ringkasan</div>
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
-              <div>
-                <div class="stat-big" id="ui-class-count">--</div>
-                <div class="muted">Total siswa</div>
-              </div>
-              <div style="text-align:right">
-                <div class="muted">Semester</div>
-                <div id="ui-semester">--</div>
-              </div>
-            </div>
-
-            <div style="height:14px"></div>
-
-            <div class="muted">Quick Actions</div>
-            <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
-              <button class="btn" id="btn-generate-rapor">Generate Rapor</button>
-              <button class="btn" id="btn-generate-leger">Generate Leger</button>
-              <button class="btn" id="btn-backup">Backup Sekarang</button>
-            </div>
-
-            <div style="height:14px"></div>
-            <div class="muted">Notifikasi</div>
-            <div id="ui-notifs" class="notifs"></div>
-          </aside>
-        </div>
-
-      </section>
-
-      <footer class="app-footer">© <span id="ui-year-2"></span> e-Rapor Quantum — Semua hak dilindungi</footer>
-    </main>
+    <footer>
+      © 2025 e-Rapor Quantum — Dikembangkan oleh : <b>Dedi Agus Mustofa, S.Pd.SD</b>
+    </footer>
   </div>
 
-  <!-- Toast -->
-  <div id="toast" class="toast"></div>
-
-  <!-- Core JS -->
-  <script src="assets/js/core.js"></script>
-  <!-- Dashboard logic (Part 2 will provide full dashboard.js) -->
-  <script src="assets/js/dashboard.js"></script>
-  <script>
-    document.getElementById('ui-year').textContent = new Date().getFullYear();
-    document.getElementById('ui-year-2').textContent = new Date().getFullYear();
-  </script>
-  <script> if(window.lucide) lucide.replace(); </script>
+  <script src="auth.js"></script>
 </body>
 </html>
