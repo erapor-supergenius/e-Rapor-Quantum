@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Input Nilai Siswa</title>
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Input Nilai Siswa</h1>
+    <form id="formNilai">
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Nama Siswa</th>
+                    <th>Nilai H1</th>
+                    <th>Nilai H2</th>
+                    <th>Nilai H3</th>
+                    <th>Nilai H4</th>
+                </tr>
+            </thead>
+            <tbody id="tbodySiswa">
+                <!-- Data siswa akan di-fetch dari backend -->
+            </tbody>
+        </table>
+        <button type="submit">Simpan Nilai</button>
+    </form>
+    <div id="status"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="assets/js/input_nilai.js"></script>
+</body>
+</html>
