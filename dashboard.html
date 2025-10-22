@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard e-Rapor</title>
+<link rel="stylesheet" href="assets/css/style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="container">
+    <h1>Dashboard e-Rapor</h1>
+
+    <!-- Total Siswa -->
+    <div class="card">
+        <h2>Total Siswa</h2>
+        <p id="totalSiswa">0</p>
+    </div>
+
+    <!-- Progress Bars -->
+    <div class="card">
+        <h2>Progress Nilai</h2>
+        <div class="progress-container">
+            <div class="progress-label">H1 Tuntas</div>
+            <div class="progress">
+                <div class="progress-bar" data-key="nilaiH1"></div>
+            </div>
+            <div class="progress-label">H2 Tuntas</div>
+            <div class="progress">
+                <div class="progress-bar" data-key="nilaiH2"></div>
+            </div>
+            <div class="progress-label">H3 Tuntas</div>
+            <div class="progress">
+                <div class="progress-bar" data-key="nilaiH3"></div>
+            </div>
+            <div class="progress-label">H4 Tuntas</div>
+            <div class="progress">
+                <div class="progress-bar" data-key="nilaiH4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="card">
+        <h2>Rata-rata Nilai Siswa</h2>
+        <canvas id="chart" height="100"></canvas>
+    </div>
+
+    <!-- Link ke Input Nilai -->
+    <div class="card">
+        <a href="input_nilai.html" class="btn">Input Nilai Siswa</a>
+    </div>
+</div>
+
+<script src="assets/js/dashboard.js"></script>
+</body>
+</html>
