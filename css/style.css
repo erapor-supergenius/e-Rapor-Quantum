@@ -1,0 +1,162 @@
+:root{
+  --bg:#0e0e10;
+  --panel: rgba(255,255,255,0.03);
+  --muted: #bfb8a3;
+  --gold: #d4af37;
+  --accent: rgba(212,175,55,0.12);
+  --glass: rgba(255,255,255,0.04);
+  --card-shadow: 0 6px 20px rgba(0,0,0,0.6);
+  --radius: 12px;
+}
+
+/* basic */
+* { box-sizing: border-box; }
+html,body { margin:0; height:100%; font-family:"Poppins",sans-serif; background: linear-gradient(180deg,#0b0b0c 0%, #0f1113 100%); color:#f5f5f5; -webkit-font-smoothing:antialiased; }
+a { color:inherit; text-decoration:none; }
+
+/* layout */
+.app { display:flex; min-height:100vh; }
+.sidebar {
+  width:300px; background:var(--bg); border-right:1px solid rgba(255,255,255,0.03); padding:28px 20px; display:flex; flex-direction:column; gap:18px;
+}
+.logo-wrap { width:120px; height:120px; border-radius:20px; background:linear-gradient(135deg, rgba(212,175,55,0.12), rgba(255,255,255,0.02)); display:flex; align-items:center; justify-content:center; border:1px solid var(--glass); box-shadow: 0 8px 30px rgba(0,0,0,0.6); margin:0 auto; }
+.logo-img { max-width:86px; max-height:86px; }
+.app-title { font-size:20px; font-weight:700; letter-spacing:0.6px; color:#fff; text-align:center; }
+.app-sub { font-size:13px; color:var(--muted); text-align:center; }
+.school-name { font-size:13px; color:var(--muted); opacity:0.95; text-align:center; margin-top:6px; }
+
+.nav { margin-top:8px; display:flex; flex-direction:column; gap:6px; }
+.nav a { display:flex; gap:12px; align-items:center; padding:12px 14px; color:#eaeaea; border-radius:10px; transition: all .16s ease; font-weight:600; }
+.nav a:hover { background: rgba(212,175,55,0.06); transform: translateX(6px); color:var(--gold); }
+.nav .active { background: linear-gradient(90deg, rgba(212,175,55,0.06), rgba(212,175,55,0.02)); color:var(--gold); box-shadow: var(--card-shadow); }
+
+.sidebar-footer { margin-top:auto; font-size:12px; color:var(--muted); text-align:center; padding-top:10px; border-top:1px solid rgba(255,255,255,0.02); }
+
+/* main */
+.main { flex:1; padding:28px; display:flex; flex-direction:column; gap:18px; }
+.topbar { display:flex; justify-content:space-between; align-items:center; }
+.welcome { font-size:20px; font-weight:600; color:#fff; }
+.top-actions { display:flex; gap:12px; align-items:center; }
+.btn { background:transparent; border:1px solid rgba(255,255,255,0.04); color:#fff; padding:8px 12px; border-radius:10px; cursor:pointer; font-weight:600; }
+.btn.gold { background:linear-gradient(180deg, rgba(212,175,55,0.16), rgba(212,175,55,0.06)); color:var(--gold); border-color: rgba(212,175,55,0.12); }
+
+/* content */
+.content { display:flex; flex-direction:column; gap:18px; }
+.cards { display:flex; gap:12px; margin-bottom:6px; }
+.card { flex:1; padding:16px; border-radius:12px; background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01)); display:flex; gap:12px; align-items:center; box-shadow: var(--card-shadow); border:1px solid var(--glass); }
+.card .ic { width:44px; height:44px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; color:var(--gold); background: rgba(212,175,55,0.06); }
+.meta { font-weight:700; font-size:18px; }
+.label { font-size:12px; color:var(--muted); margin-top:6px; }
+
+.layout { display:grid; grid-template-columns: 1fr 420px; gap:18px; align-items:start; }
+.panel { background:var(--panel); border-radius:var(--radius); padding:18px; box-shadow: var(--card-shadow); border:1px solid var(--glass); }
+.left-panel { min-height:480px; }
+.right-panel { position:sticky; top:28px; }
+
+/* progress list */
+.section-title { font-size:14px; font-weight:700; color:#fff; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+.progress-list { display:flex; flex-direction:column; gap:8px; max-height:260px; overflow:auto; padding-right:6px; }
+.progress-item { display:flex; gap:12px; align-items:center; }
+.p-left { width:36px; text-align:center; color:var(--muted); font-weight:700; }
+.p-mid { flex:1; }
+.p-title { font-weight:600; font-size:13px; }
+.progress-bar { height:10px; background:rgba(255,255,255,0.03); border-radius:8px; overflow:hidden; margin-top:6px; }
+.progress-fill { height:10px; border-radius:8px; transition: width 900ms cubic-bezier(.2,.9,.3,1); background: linear-gradient(90deg, rgba(212,175,55,0.9), rgba(212,175,55,0.5)); }
+
+/* charts */
+.chart-wrap { margin-top:12px; display:flex; gap:12px; flex-direction:column; }
+
+/* right panel */
+.stat-big { font-size:36px; font-weight:700; color:var(--gold); }
+.muted { color:var(--muted); font-size:13px; }
+
+/* footer */
+.app-footer { margin-top:18px; text-align:center; color:var(--muted); font-size:12px; }
+
+/* toast */
+.toast { position:fixed; right:24px; bottom:24px; background: #111; color:#fff; padding:12px 16px; border-radius:10px; box-shadow:0 6px 20px rgba(0,0,0,0.6); display:flex; gap:10px; align-items:center; opacity:0; transform: translateY(12px); transition: all .28s ease; z-index:9999; }
+.toast.show { opacity:1; transform: translateY(0); }
+
+/* responsive */
+@media (max-width: 980px) {
+  .sidebar { display:none; }
+  .layout { grid-template-columns: 1fr; }
+}
+
+/* ===== Dashboard & Progress Bar ===== */
+.card {
+    background: #fff;
+    padding: 16px;
+    margin-bottom: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.progress-container {
+    margin-top: 10px;
+}
+
+.progress-label {
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.progress {
+    background: #e0e0e0;
+    border-radius: 20px;
+    overflow: hidden;
+    height: 20px;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 0;
+    background: #4e73df;
+    text-align: center;
+    color: #fff;
+    line-height: 20px;
+    transition: width 0.5s ease-in-out;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #4e73df;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.header-center {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.header-center .logo {
+    height: 80px; /* ukuran logo */
+    width: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.header-center .title {
+    font-size: 28px;
+    margin: 8px 0 4px 0;
+    color: #4e73df;
+}
+
+.header-center .school-name {
+    font-size: 18px;
+    margin: 0;
+    color: #555;
+}
+
+.footer {
+    text-align: center;
+    padding: 12px;
+    background-color: #f5f5f5;
+    color: #555;
+    font-size: 14px;
+    margin-top: 20px;
+    border-top: 1px solid #ddd;
+}
