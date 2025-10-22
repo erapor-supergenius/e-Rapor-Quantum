@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>e-Rapor Quantum — Dashboard</title>
+
+  <!-- Fonts & icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.258.0/dist/lucide.min.js"></script>
+
+  <!-- Chart.js (for Part 2 rendering) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="assets/css/style.css">
+
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo-wrap">
+          <img src="assets/img/logo-erapor-quantum.png" alt="e-Rapor Quantum" class="logo-img"/>
+        </div>
+        <div class="app-title">e-Rapor</div>
+        <div class="app-sub">Quantum</div>
+        <div class="school-name" id="ui-school-name">— Memuat sekolah —</div>
+      </div>
+
+      <nav class="nav" aria-label="main-navigation">
+        <a href="#" class="active" data-route="home"><span class="nav-ic">🏠</span><span>Home</span></a>
+        <a href="#" data-route="siswa"><span class="nav-ic">👨‍🎓</span><span>Data Siswa</span></a>
+        <a href="#" data-route="nilai"><span class="nav-ic">✍️</span><span>Input Nilai</span></a>
+        <a href="#" data-route="rapor"><span class="nav-ic">📄</span><span>Rapor</span></a>
+        <a href="#" data-route="backup"><span class="nav-ic">💾</span><span>Backup</span></a>
+        <a href="#" data-route="settings"><span class="nav-ic">⚙️</span><span>Pengaturan</span></a>
+      </nav>
+
+      <div class="sidebar-footer">
+        Dibuat oleh: <strong>Tim e-Rapor Quantum</strong><br/>
+        v1.0 · © <span id="ui-year"></span>
+      </div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="welcome" id="ui-welcome">Selamat datang, <span id="ui-username">User</span> 👋</div>
+        <div class="top-actions">
+          <button class="btn" id="btn-refresh">Refresh</button>
+          <button class="btn gold" id="btn-logout">Logout</button>
+        </div>
+      </header>
+
+      <section class="content">
+        <div class="cards">
+          <div class="card">
+            <div class="ic">🎓</div>
+            <div>
+              <div class="meta" id="cnt-siswa">--</div>
+              <div class="label">Jumlah Siswa</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ic">🧑‍🏫</div>
+            <div>
+              <div class="meta" id="cnt-guru">--</div>
+              <div class="label">Jumlah Guru</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ic">🏫</div>
+            <div>
+              <div class="meta" id="cnt-kelas">--</div>
+              <div class="label">Kelas Aktif</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="ic">📈</div>
+            <div>
+              <div class="meta" id="cnt-progress">--%</div>
+              <div class="label">Progress Input Nilai</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="layout">
+          <div class="panel left-panel">
+            <div class="section-title">
+              <div>Progress Nilai per Mata Pelajaran</div>
+              <div class="muted">Total mapel: <span id="ui-mapel-count">0</span></div>
+            </div>
+
+            <div class="progress-list" id="progress-list"></div>
+
+            <div class="chart-wrap">
+              <div class="section-title">
+                <div>Analitik Siswa — Nilai Terendah</div>
+                <div class="muted">Onyx • Gold</div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:stretch">
+                <canvas id="chart-lowest" style="flex:1;min-height:260px;background:transparent;"></canvas>
+                <canvas id="chart-bimbingan" style="width:260px;height:260px;background:transparent;"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <aside class="panel right-panel">
+            <div class="muted">Ringkasan</div>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px">
+              <div>
+                <div class="stat-big" id="ui-class-count">--</div>
+                <div class="muted">Total siswa</div>
+              </div>
+              <div style="text-align:right">
+                <div class="muted">Semester</div>
+                <div id="ui-semester">--</div>
+              </div>
+            </div>
+
+            <div style="height:14px"></div>
+
+            <div class="muted">Quick Actions</div>
+            <div style="display:flex;flex-direction:column;gap:8px;margin-top:12px;">
+              <button class="btn" id="btn-generate-rapor">Generate Rapor</button>
+              <button class="btn" id="btn-generate-leger">Generate Leger</button>
+              <button class="btn" id="btn-backup">Backup Sekarang</button>
+            </div>
+
+            <div style="height:14px"></div>
+            <div class="muted">Notifikasi</div>
+            <div id="ui-notifs" class="notifs"></div>
+          </aside>
+        </div>
+
+      </section>
+
+      <footer class="app-footer">© <span id="ui-year-2"></span> e-Rapor Quantum — Semua hak dilindungi</footer>
+    </main>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="toast"></div>
+
+  <!-- Core JS -->
+  <script src="assets/js/core.js"></script>
+  <!-- Dashboard logic (Part 2 will provide full dashboard.js) -->
+  <script src="assets/js/dashboard.js"></script>
+  <script>
+    document.getElementById('ui-year').textContent = new Date().getFullYear();
+    document.getElementById('ui-year-2').textContent = new Date().getFullYear();
+  </script>
+  <script> if(window.lucide) lucide.replace(); </script>
+</body>
+</html>
