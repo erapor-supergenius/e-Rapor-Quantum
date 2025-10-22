@@ -1,23 +1,102 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <title>Dashboard e-Rapor Quantum</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>e-Rapor Quantum — Dashboard</title>
+
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
-    body { font-family: 'Poppins', sans-serif; background: #f8fafc; min-height: 100vh; }
-    .container { max-width: 700px; margin: 80px auto; background: white; padding: 40px; border-radius: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
-    .btn-danger { background: #dc2626; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 600; }
-    .btn-danger:hover { background: #b91c1c; }
+    :root{--blue:#1d4ed8;--blue-dark:#1e40af}
+    body{ margin:0; font-family:Inter,system-ui; background:#f3f6fb; color:#0f172a; min-height:100vh; }
+    /* sidebar */
+    .sidebar{ width:260px; background:linear-gradient(180deg,#0f172a,#1d4ed8); color:white; min-height:100vh; position:fixed; left:0; top:0; padding:22px; box-shadow: 6px 0 30px rgba(2,6,23,0.12); transition: transform .28s ease; }
+    .sidebar.collapsed{ transform: translateX(-110%); }
+    .brand{ text-align:center; margin-bottom:12px; }
+    .brand img{ width:88px; border-radius:10px; margin:0 auto; display:block; }
+    .school-name{ color:#bfdbfe; font-size:14px; margin-top:6px; }
+    nav .nav-btn{ display:block; width:100%; text-align:left; padding:10px 12px; border-radius:10px; color:#e6f0ff; margin-bottom:6px; background:transparent; border:0; cursor:pointer; }
+    nav .nav-btn:hover{ background: rgba(255,255,255,0.06); }
+
+    /* main */
+    .main-wrap{ margin-left:260px; padding:28px; transition: margin-left .28s ease; }
+    .main-wrap.full{ margin-left:20px; } /* when sidebar collapsed on mobile */
+
+    .card{ background:white; border-radius:12px; padding:20px; box-shadow: 0 8px 20px rgba(2,6,23,0.06); }
+
+    /* topbar */
+    .topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+    .menu-btn{ display:none; background:var(--blue); color:white; padding:8px 12px; border-radius:8px; border:0; cursor:pointer; }
+    .logout-btn{ background:#ef4444; color:white; padding:8px 12px; border-radius:8px; border:0; cursor:pointer; }
+
+    /* responsive */
+    @media (max-width: 900px){
+      .sidebar{ position:fixed; z-index:40; transform: translateX(-110%); }
+      .sidebar.show{ transform: translateX(0); }
+      .main-wrap{ margin-left:0; }
+      .menu-btn{ display:inline-block; }
+    }
+
+    footer{ color:#94a3b8; font-size:13px; margin-top:18px; text-align:center; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="assets/logo-erapor.png" class="w-24 mx-auto mb-4">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">Selamat Datang, <span id="namaUser" class="text-blue-700"></span></h2>
-    <p class="text-gray-600 mb-8">Anda berhasil masuk ke sistem e-Rapor Quantum.</p>
-    <button onclick="logout()" class="btn-danger">Logout</button>
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img id="logoSekolah" src="assets/logo-sekolah.png" alt="Logo Sekolah">
+      <h2 style="margin:10px 0 0 0; font-weight:700; font-size:18px;">e-Rapor Quantum</h2>
+      <div class="school-name" id="schoolName">Nama Sekolah</div>
+    </div>
+
+    <nav>
+      <button class="nav-btn">🏠 Dashboard</button>
+      <button class="nav-btn">📘 Data Siswa</button>
+      <button class="nav-btn">👨‍🏫 Data Guru</button>
+      <button class="nav-btn">📊 Nilai</button>
+    </nav>
+
+    <div style="margin-top:20px; font-size:13px; color:#cfe2ff;">&nbsp;</div>
+
+    <footer style="margin-top:auto; font-size:13px; color:#dbeafe;">© 2025 Quantum EduTech</footer>
+  </aside>
+
+  <!-- Main content -->
+  <div class="main-wrap" id="mainWrap">
+    <div class="topbar">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <button class="menu-btn" id="menuBtn" aria-label="Tampilkan menu">☰</button>
+        <h1 style="margin:0; font-size:20px;">Dashboard</h1>
+      </div>
+
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="text-align:right;">
+          <div style="font-weight:700;" id="namaUser">User</div>
+          <div style="font-size:13px; color:#64748b;" id="usernameUser">username</div>
+        </div>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+      </div>
+    </div>
+
+    <!-- Grid -->
+    <div class="grid" style="display:grid; grid-template-columns:1fr 360px; gap:18px;">
+      <div class="card">
+        <h3 style="margin:0 0 10px 0; font-size:18px; color:var(--blue); font-weight:700;">Selamat Datang</h3>
+        <p style="color:#475569;">Anda berhasil masuk ke sistem e-Rapor Quantum. Gunakan menu di kiri untuk mengelola data.</p>
+        <div style="margin-top:18px;">
+          <button class="btn" style="background:var(--blue); color:white; padding:10px 14px; border-radius:10px;" onclick="goto('siswa')">Kelola Data Siswa</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4 style="margin:0 0 10px 0; font-weight:700;">Informasi Sekolah</h4>
+        <div id="infoSchool" style="color:#475569;">Memuat data sekolah...</div>
+      </div>
+    </div>
+
+    <footer>© 2025 e-Rapor Quantum — Dikembangkan oleh: <strong>Dedi Agus Mustofa, S.Pd.SD</strong></footer>
   </div>
 
   <script src="dashboard.js"></script>
