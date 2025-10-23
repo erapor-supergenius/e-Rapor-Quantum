@@ -1,102 +1,282 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>e-Rapor Quantum — Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>eRapor Quantum Super Genius — Dashboard</title>
 
-  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
-    :root{--blue:#1d4ed8;--blue-dark:#1e40af}
-    body{ margin:0; font-family:Inter,system-ui; background:#f3f6fb; color:#0f172a; min-height:100vh; }
-    /* sidebar */
-    .sidebar{ width:260px; background:linear-gradient(180deg,#0f172a,#1d4ed8); color:white; min-height:100vh; position:fixed; left:0; top:0; padding:22px; box-shadow: 6px 0 30px rgba(2,6,23,0.12); transition: transform .28s ease; }
-    .sidebar.collapsed{ transform: translateX(-110%); }
-    .brand{ text-align:center; margin-bottom:12px; }
-    .brand img{ width:88px; border-radius:10px; margin:0 auto; display:block; }
-    .school-name{ color:#bfdbfe; font-size:14px; margin-top:6px; }
-    nav .nav-btn{ display:block; width:100%; text-align:left; padding:10px 12px; border-radius:10px; color:#e6f0ff; margin-bottom:6px; background:transparent; border:0; cursor:pointer; }
-    nav .nav-btn:hover{ background: rgba(255,255,255,0.06); }
+    /* =============== BASE STYLE =============== */
+    * { box-sizing: border-box; }
+    body {
+      font-family: "Poppins", sans-serif;
+      margin: 0;
+      background: #f6f8fa;
+      color: #333;
+    }
+    a { text-decoration: none; color: inherit; }
 
-    /* main */
-    .main-wrap{ margin-left:260px; padding:28px; transition: margin-left .28s ease; }
-    .main-wrap.full{ margin-left:20px; } /* when sidebar collapsed on mobile */
-
-    .card{ background:white; border-radius:12px; padding:20px; box-shadow: 0 8px 20px rgba(2,6,23,0.06); }
-
-    /* topbar */
-    .topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
-    .menu-btn{ display:none; background:var(--blue); color:white; padding:8px 12px; border-radius:8px; border:0; cursor:pointer; }
-    .logout-btn{ background:#ef4444; color:white; padding:8px 12px; border-radius:8px; border:0; cursor:pointer; }
-
-    /* responsive */
-    @media (max-width: 900px){
-      .sidebar{ position:fixed; z-index:40; transform: translateX(-110%); }
-      .sidebar.show{ transform: translateX(0); }
-      .main-wrap{ margin-left:0; }
-      .menu-btn{ display:inline-block; }
+    /* =============== NAVBAR =============== */
+    .navbar {
+      background: linear-gradient(135deg, #0c4b78, #0078d7);
+      color: #fff;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .navbar h1 {
+      font-size: 1.2rem;
+      margin: 0;
+    }
+    .navbar button {
+      background: #fff;
+      color: #0078d7;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+      font-weight: 600;
+    }
+    .navbar button:hover {
+      background: #e1ecff;
     }
 
-    footer{ color:#94a3b8; font-size:13px; margin-top:18px; text-align:center; }
+    /* =============== LAYOUT WRAP =============== */
+    .container {
+      display: flex;
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    /* =============== SIDEBAR =============== */
+    #sidebar {
+      width: 230px;
+      background: #1f2937;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: 0.3s;
+    }
+    #sidebar.show { transform: translateX(0); }
+    #sidebar .menu {
+      padding: 20px 0;
+    }
+    #sidebar .menu h2 {
+      text-align: center;
+      font-size: 1rem;
+      margin-bottom: 15px;
+    }
+    #sidebar .menu ul {
+      list-style: none;
+      padding: 0;
+    }
+    #sidebar .menu ul li {
+      padding: 10px 20px;
+      transition: 0.3s;
+      cursor: pointer;
+    }
+    #sidebar .menu ul li:hover {
+      background: #374151;
+    }
+    #sidebar footer {
+      padding: 15px;
+      font-size: 0.8rem;
+      text-align: center;
+      background: #111827;
+    }
+
+    /* =============== MAIN CONTENT =============== */
+    #mainWrap {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    /* Logo Header */
+    .header-logo {
+      text-align: center;
+      margin: 20px 0;
+    }
+    .header-logo img {
+      width: 120px;
+      border-radius: 50%;
+      border: 3px solid #0078d7;
+    }
+    .header-logo h2 {
+      margin-top: 10px;
+      color: #0078d7;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .header-logo p {
+      font-size: 1rem;
+      color: #444;
+      margin-top: 4px;
+    }
+
+    /* Cards */
+    .dashboard-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 30px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      text-align: center;
+      transition: 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card h3 {
+      font-size: 1rem;
+      color: #555;
+    }
+    .card span {
+      display: block;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0078d7;
+      margin-top: 10px;
+    }
+
+    /* Chart Section */
+    .chart-section {
+      background: #fff;
+      border-radius: 12px;
+      margin-top: 30px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .chart-section h3 {
+      margin-bottom: 15px;
+      color: #0078d7;
+    }
+
+    /* Progress */
+    .progress-container {
+      margin-top: 30px;
+      background: #fff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    }
+    .progress-item {
+      margin-bottom: 15px;
+    }
+    .progress-label {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+    .progress-bar {
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .progress-bar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #00b4d8, #0078d7);
+      transition: width 1.2s ease-in-out;
+    }
+
+    /* Responsive */
+    @media(max-width: 900px) {
+      #sidebar { position: fixed; height: 100%; left: -230px; z-index: 1000; }
+      #sidebar.show { left: 0; }
+      .navbar h1 { font-size: 1rem; }
+    }
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="brand">
-      <img id="logoSekolah" src="assets/logo-sekolah.png" alt="Logo Sekolah">
-      <h2 style="margin:10px 0 0 0; font-weight:700; font-size:18px;">e-Rapor Quantum</h2>
-      <div class="school-name" id="schoolName">Nama Sekolah</div>
-    </div>
+  <div class="navbar">
+    <button id="menuBtn">☰</button>
+    <h1>eRapor Quantum Super Genius</h1>
+    <button id="logoutBtn">Logout</button>
+  </div>
 
-    <nav>
-      <button class="nav-btn">🏠 Dashboard</button>
-      <button class="nav-btn">📘 Data Siswa</button>
-      <button class="nav-btn">👨‍🏫 Data Guru</button>
-      <button class="nav-btn">📊 Nilai</button>
-    </nav>
+  <div class="container">
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+      <div class="menu">
+        <h2>Menu</h2>
+        <ul>
+          <li onclick="goto('Home')">🏠 Home</li>
+          <li onclick="goto('Input Nilai')">📝 Input Nilai</li>
+          <li onclick="goto('Rekap Nilai')">📊 Rekap Nilai</li>
+          <li onclick="goto('Data Siswa')">👨‍🎓 Data Siswa</li>
+          <li onclick="goto('Data Guru')">👩‍🏫 Data Guru</li>
+          <li onclick="goto('Tentang Pengembang')">💡 Tentang</li>
+        </ul>
+      </div>
+      <footer>© 2025 e-Rapor Quantum | Developed by: Dedi Agus Mustofa, S.Pd.SD</footer>
+    </aside>
 
-    <div style="margin-top:20px; font-size:13px; color:#cfe2ff;">&nbsp;</div>
-
-    <footer style="margin-top:auto; font-size:13px; color:#dbeafe;">© 2025 Dedi Agus Mustofa, S.Pd.SD</footer>
-  </aside>
-
-  <!-- Main content -->
-  <div class="main-wrap" id="mainWrap">
-    <div class="topbar">
-      <div style="display:flex; align-items:center; gap:12px;">
-        <button class="menu-btn" id="menuBtn" aria-label="Tampilkan menu">☰</button>
-        <h1 style="margin:0; font-size:20px;">Dashboard</h1>
+    <!-- MAIN CONTENT -->
+    <main id="mainWrap">
+      <!-- Header -->
+      <div class="header-logo">
+        <img id="logoSekolah" src="assets/img/logo-erapor.png" alt="Logo eRapor">
+        <h2>e-Rapor Quantum</h2>
+        <p id="schoolName">Nama Sekolah</p>
       </div>
 
-      <div style="display:flex; align-items:center; gap:12px;">
-        <div style="text-align:right;">
-          <div style="font-weight:700;" id="namaUser">User</div>
-          <div style="font-size:13px; color:#64748b;" id="usernameUser">username</div>
+      <!-- Dashboard Cards -->
+      <section class="dashboard-cards">
+        <div class="card">
+          <h3>Jumlah Siswa</h3>
+          <span id="totalSiswa">0</span>
         </div>
-        <button class="logout-btn" id="logoutBtn">Logout</button>
-      </div>
-    </div>
-
-    <!-- Grid -->
-    <div class="grid" style="display:grid; grid-template-columns:1fr 360px; gap:18px;">
-      <div class="card">
-        <h3 style="margin:0 0 10px 0; font-size:18px; color:var(--blue); font-weight:700;">Selamat Datang</h3>
-        <p style="color:#475569;">Anda berhasil masuk ke sistem e-Rapor Quantum. Gunakan menu di kiri untuk mengelola data.</p>
-        <div style="margin-top:18px;">
-          <button class="btn" style="background:var(--blue); color:white; padding:10px 14px; border-radius:10px;" onclick="goto('siswa')">Kelola Data Siswa</button>
+        <div class="card">
+          <h3>Jumlah Guru</h3>
+          <span id="totalGuru">0</span>
         </div>
-      </div>
+        <div class="card">
+          <h3>Jumlah Mapel</h3>
+          <span id="totalMapel">0</span>
+        </div>
+        <div class="card">
+          <h3>Jumlah Kelas</h3>
+          <span id="totalKelas">0</span>
+        </div>
+      </section>
 
-      <div class="card">
-        <h4 style="margin:0 0 10px 0; font-weight:700;">Informasi Sekolah</h4>
-        <div id="infoSchool" style="color:#475569;">Memuat data sekolah...</div>
-      </div>
-    </div>
+      <!-- Chart -->
+      <section class="chart-section">
+        <h3>Statistik Nilai Rata-rata</h3>
+        <canvas id="chartOverview" height="150"></canvas>
+      </section>
 
-    <footer>© 2025 e-Rapor Quantum — Dikembangkan oleh: <strong>Dedi Agus Mustofa, S.Pd.SD</strong></footer>
+      <!-- Progress -->
+      <section class="progress-container">
+        <div class="progress-item">
+          <div class="progress-label">Kelengkapan Data Siswa</div>
+          <div class="progress-bar"><span id="progressSiswa"></span></div>
+        </div>
+        <div class="progress-item">
+          <div class="progress-label">Kelengkapan Data Guru</div>
+          <div class="progress-bar"><span id="progressGuru"></span></div>
+        </div>
+      </section>
+    </main>
   </div>
 
   <script src="dashboard.js"></script>
