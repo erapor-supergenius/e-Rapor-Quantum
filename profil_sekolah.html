@@ -1,11 +1,11 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>e-Rapor Quantum — Profil Sekolah</title>
 
-  <!-- Chart.js not needed here; SweetAlert2 used for notifications -->
+  <!-- SweetAlert2 (notifikasi elegan) -->
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
@@ -14,17 +14,21 @@
       --blue-dark:#0b4ea2;
       --bg:#f4f7fb;
       --card-shadow: 0 6px 20px rgba(2,6,23,0.06);
-      --sidebar-grad1:#071030;
-      --sidebar-grad2:#0d3a8a;
-      --accent:#3B82F6;
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#0f172a;min-height:100vh;display:flex;}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;
+      background:var(--bg);
+      color:#0f172a;
+      min-height:100vh;
+      display:flex;
+    }
 
     /* SIDEBAR */
     .sidebar{
       width:260px;
-      background:linear-gradient(180deg,var(--sidebar-grad1),var(--sidebar-grad2));
+      background:linear-gradient(180deg,#071030,#0d3a8a);
       color:#fff;
       padding:22px;
       display:flex;
@@ -35,25 +39,51 @@
       z-index:40;
     }
     .brand{ text-align:center; margin-bottom:16px; }
-    .brand .logo-box{ width:88px; height:88px; margin:0 auto 8px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--blue-dark)); font-weight:800; font-size:20px; box-shadow:0 8px 24px rgba(11,78,162,0.18); }
-    .brand h2{ margin:0; font-size:18px; font-weight:700; color:#eaf4ff; }
+    .brand img{
+      width:88px;
+      border-radius:12px;
+      display:block;
+      margin:0 auto 8px;
+      box-shadow:0 4px 16px rgba(255,255,255,0.15);
+      transition:transform 0.3s ease;
+    }
+    .brand img:hover{ transform:scale(1.05); }
+    .brand h2{ margin:0; font-size:18px; font-weight:700; }
     .brand .school-name{ font-size:13px; color:#cfe2ff; margin-top:6px; }
 
-    nav{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
-    .nav-item{
-      display:flex; align-items:center; gap:12px; width:100%; text-align:left; padding:10px 12px; border-radius:8px;
-      color:#e6f0ff; background:transparent; border:0; cursor:pointer; margin-bottom:0; font-size:15px; transition: all .18s ease;
+    nav{ margin-top:12px; }
+    .nav-btn{
+      display:block;
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border-radius:8px;
+      color:#e6f0ff;
+      background:transparent;
+      border:0;
+      cursor:pointer;
+      margin-bottom:6px;
+      font-size:15px;
+      transition:background 0.3s ease, color 0.3s ease;
     }
-    .nav-item svg { width:20px; height:20px; flex-shrink:0; }
-    .nav-item:hover{ background: rgba(255,255,255,0.03); transform: translateX(6px); color:#fff; }
-    .nav-item.active{ background: linear-gradient(90deg, rgba(59,130,246,0.12), rgba(11,78,162,0.06)); color:#fff; border-left:4px solid var(--accent); box-shadow:0 8px 20px rgba(11,78,162,0.06); padding-left:10px; }
+    .nav-btn:hover{ background:rgba(255,255,255,0.08); }
+    .nav-btn.active{
+      background:rgba(255,255,255,0.14);
+      color:#ffffff;
+      font-weight:700;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,0.2);
+    }
 
     .sidebar-footer{ margin-top:auto; font-size:13px; color:#dbeafe; text-align:center; }
 
     /* MAIN */
-    .main-wrap{ margin-left:260px; padding:20px; flex:1; transition:margin-left .28s ease; }
+    .main-wrap{
+      margin-left:260px;
+      padding:20px;
+      flex:1;
+      transition:margin-left .28s ease;
+    }
 
-    /* HEADER (top bar inside main) */
     .topbar{
       display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px;
     }
@@ -62,245 +92,137 @@
       background:#fff; padding:12px; border-radius:12px; box-shadow:var(--card-shadow);
     }
     .school-logo{ width:72px; height:72px; object-fit:cover; border-radius:10px; border:2px solid rgba(11,78,162,0.06); }
-    .welcome { line-height:1; }
     .welcome .title{ font-weight:700; font-size:16px; color:var(--blue-dark); }
     .welcome .subtitle{ font-size:13px; color:#64748b; }
 
-    .topbar .right { display:flex; align-items:center; gap:12px; }
-    .logout-btn { background:#ef4444; color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; }
+    .logout-btn {
+      background:#ef4444;
+      color:#fff;
+      border:0;
+      padding:8px 12px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:700;
+    }
 
-    /* card / form */
-    .card-grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:18px; }
-    .card{ background:#fff; border-radius:12px; padding:14px; box-shadow:var(--card-shadow); }
-    .grid { display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:start; }
+    /* CARD FORM PROFIL */
+    .card{
+      background:#fff;
+      border-radius:12px;
+      padding:20px;
+      box-shadow:var(--card-shadow);
+      margin-bottom:18px;
+    }
+    .card h3{ margin:0 0 16px 0; color:var(--blue-dark); font-weight:700; }
+    form{ display:grid; grid-template-columns:1fr 1fr; gap:12px 18px; }
+    label{ font-weight:600; font-size:13px; color:#334155; }
+    input{
+      width:100%;
+      padding:8px 10px;
+      border-radius:8px;
+      border:1px solid #cbd5e1;
+      font-size:14px;
+      outline:none;
+      transition:border .2s ease;
+    }
+    input:focus{ border-color:var(--blue); }
 
-    label{font-size:13px;color:#64748b;display:block;margin-bottom:6px}
-    input, textarea, select { width:100%; padding:10px 12px;border-radius:10px;border:1px solid rgba(15,23,42,0.06); background:#fbfdff; color:#0f172a; outline:none; }
-    input:focus, textarea:focus, select:focus { box-shadow: 0 6px 18px rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.4); }
+    .btn-primary{
+      grid-column:1 / span 2;
+      background:var(--blue);
+      color:#fff;
+      padding:10px;
+      border:0;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:700;
+      transition:background .3s;
+    }
+    .btn-primary:hover{ background:var(--blue-dark); }
 
-    .field-row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
-    .btn { display:inline-flex; gap:10px; align-items:center; padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700;
-           background: linear-gradient(90deg,var(--accent),var(--blue-dark)); color:#fff; box-shadow: 0 10px 30px rgba(11,78,190,0.12);}
-    .btn.ghost { background:transparent; border:1px solid rgba(15,23,42,0.04); color:#0f172a; box-shadow:none; }
+    /* FOOTER */
+    .main-footer{ text-align:center; color:#334155; margin-top:28px; font-size:13px; line-height:1.5; }
 
-    .logo-preview { height:140px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:1px dashed rgba(15,23,42,0.04); background:#fbfdff; }
-
-    .small { font-size:13px; color:#64748b; }
-
-    @media (max-width: 980px){
+    @media (max-width:900px){
       .sidebar{ transform:translateX(-100%); position:fixed; z-index:50; }
       .sidebar.show{ transform:translateX(0); }
       .main-wrap{ margin-left:0; padding:12px; }
-      .grid { grid-template-columns: 1fr; }
+      form{ grid-template-columns:1fr; }
     }
   </style>
 </head>
 <body>
-  <!-- SIDEBAR -->
+
+  <!-- Sidebar -->
   <aside class="sidebar" id="sidebar">
     <div class="brand">
-      <div class="logo-box">EQ</div>
+      <img src="assets/logo-erapor.png" alt="eRapor" />
       <h2>e-Rapor Quantum</h2>
       <div class="school-name" id="schoolNameTop">Nama Sekolah</div>
     </div>
 
-    <nav aria-label="Main navigation">
-      <button class="nav-item" data-link="dashboard.html" onclick="navigateTo('dashboard.html')">
-        <!-- SVG: chart / dashboard -->
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M3 13h4V3H3v10zM10 21h4V3h-4v18zM17 21h4V11h-4v10z" fill="currentColor"/></svg>
-        <span>Dashboard</span>
-      </button>
-
-      <button class="nav-item active" data-link="profil_sekolah.html" onclick="navigateTo('profil_sekolah.html')">
-        <!-- SVG: building / school -->
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M12 2L2 7v2h20V7L12 2zM6 12v8h4v-6h4v6h4v-8H6z" fill="currentColor"/></svg>
-        <span>Profil Sekolah</span>
-      </button>
-
-      <button class="nav-item" data-link="data_siswa.html" onclick="navigateTo('data_siswa.html')">
-        <!-- SVG: graduation cap (elegant) -->
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2zM11 12.2L3.1 8 11 4.8 18.9 9 11 12.2z" fill="currentColor"/></svg>
-        <span>Data Siswa</span>
-      </button>
-
-      <button class="nav-item" data-link="input_nilai_cp.html" onclick="navigateTo('input_nilai_cp.html')">
-        <!-- SVG: document-edit -->
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16l4-2h8a2 2 0 0 0 2-2V6l-4-4zM7 7h6v2H7V7z" fill="currentColor"/></svg>
-        <span>Input Nilai CP</span>
-      </button>
-
-      <button class="nav-item" data-link="cetak.html" onclick="navigateTo('cetak.html')">
-        <!-- SVG: printer -->
-        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M19 8H5V3h14v5zM7 21h10v-6H7v6zM17 12v3H7v-3h10z" fill="currentColor"/></svg>
-        <span>Cetak Rapor</span>
-      </button>
+    <nav>
+      <button class="nav-btn" onclick="navigateTo('dashboard.html')">🏠 Dashboard</button>
+      <button class="nav-btn active" onclick="navigateTo('profil_sekolah.html')">🏫 Profil Sekolah</button>
+      <button class="nav-btn" onclick="navigateTo('data_siswa.html')">👨‍🎓 Data Siswa</button>
+      <button class="nav-btn" onclick="navigateTo('input_nilai_cp.html')">🧾 Input Nilai CP</button>
+      <button class="nav-btn" onclick="navigateTo('cetak.html')">🖨️ Cetak Rapor</button>
     </nav>
 
     <footer class="sidebar-footer">
       © 2025 e-Rapor Quantum<br>
-      <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+      Developed by:<br><strong>Dedi Agus Mustofa, S.Pd.SD</strong>
     </footer>
   </aside>
 
-  <!-- MAIN -->
+  <!-- Main -->
   <main class="main-wrap">
     <div class="topbar">
       <div class="left">
-        <img id="logoSekolah" class="school-logo" src="assets/logo_erapor.png" alt="Logo Sekolah">
+        <img id="logoSekolah" class="school-logo" src="assets/logo-erapor.png" alt="Logo Sekolah">
         <div class="welcome">
-          <div class="title">Selamat Datang, <span id="namaUser">Admin</span></div>
-          <div class="subtitle" id="usernameUser">username</div>
+          <div class="title">Profil Sekolah</div>
+          <div class="subtitle">Data Instansi Pendidikan</div>
         </div>
       </div>
 
       <div class="right">
-        <div id="navCenterText" style="color:#0f172a;font-weight:700;">Profil Sekolah</div>
-        <button class="logout-btn" id="logoutBtn">Logout</button>
+        <button class="logout-btn" onclick="logout()">Logout</button>
       </div>
     </div>
 
+    <!-- FORM PROFIL -->
     <section class="card">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <h3 style="margin:0">Data Profil Sekolah</h3>
-          <div class="small">Kelola data profil sekolah — akan tampil pada header rapor.</div>
-        </div>
-        <div style="display:flex;gap:8px">
-          <button id="btn-refresh" class="btn ghost">Muat Ulang</button>
-          <button id="btn-save" class="btn">Simpan Profil</button>
-        </div>
-      </div>
+      <h3>Data Profil Sekolah</h3>
+      <form id="formProfil">
+        <div><label>Nama Sekolah</label><input id="nama_sekolah" /></div>
+        <div><label>NSS</label><input id="nss" /></div>
+        <div><label>NPSN</label><input id="npsn" /></div>
+        <div><label>Status Sekolah</label><input id="status_sekolah" /></div>
+        <div><label>Alamat</label><input id="alamat_sekolah" /></div>
+        <div><label>Kelurahan / Desa</label><input id="kelurahan_desa" /></div>
+        <div><label>Kecamatan</label><input id="kecamatan" /></div>
+        <div><label>Kabupaten / Kota</label><input id="kabupaten_kota" /></div>
+        <div><label>Provinsi</label><input id="provinsi" /></div>
+        <div><label>Website</label><input id="website" /></div>
+        <div><label>Email</label><input id="email" /></div>
+        <div><label>Telepon</label><input id="telepon" /></div>
+        <div><label>Kepala Sekolah</label><input id="kepala_sekolah" /></div>
+        <div><label>NIP Kepala Sekolah</label><input id="nip_kepsek" /></div>
+        <div><label>URL Logo Sekolah</label><input id="url_logo" /></div>
+        <div><label>Kabupaten (untuk Rapor)</label><input id="kabupaten_kota_rapor" /></div>
+        <div><label>Tanggal Rapor</label><input id="tanggal_rapor" type="date" /></div>
+
+        <button type="button" class="btn-primary" onclick="simpanProfil()">💾 Simpan Perubahan</button>
+      </form>
     </section>
 
-    <div class="grid">
-      <!-- FORM -->
-      <section class="card">
-        <form id="formProfil" onsubmit="return false;">
-          <div class="field-row">
-            <div>
-              <label for="nama_sekolah">Nama Sekolah</label>
-              <input id="nama_sekolah" name="nama_sekolah" type="text" placeholder="Nama sekolah">
-            </div>
-            <div>
-              <label for="nss">NSS</label>
-              <input id="nss" name="nss" type="text">
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div>
-              <label for="npsn">NPSN</label>
-              <input id="npsn" name="npsn" type="text">
-            </div>
-            <div>
-              <label for="status_sekolah">Status Sekolah</label>
-              <select id="status_sekolah" name="status_sekolah">
-                <option value="">Pilih</option><option value="Negeri">Negeri</option><option value="Swasta">Swasta</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label for="alamat_sekolah">Alamat Sekolah</label>
-            <input id="alamat_sekolah" name="alamat_sekolah" type="text">
-          </div>
-
-          <div class="field-row">
-            <div>
-              <label for="kelurahan_desa">Kelurahan / Desa</label>
-              <input id="kelurahan_desa" name="kelurahan_desa" type="text">
-            </div>
-            <div>
-              <label for="kecamatan">Kecamatan</label>
-              <input id="kecamatan" name="kecamatan" type="text">
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div>
-              <label for="kabupaten_kota">Kabupaten / Kota</label>
-              <input id="kabupaten_kota" name="kabupaten_kota" type="text">
-            </div>
-            <div>
-              <label for="provinsi">Provinsi</label>
-              <input id="provinsi" name="provinsi" type="text">
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div>
-              <label for="website">Website</label>
-              <input id="website" name="website" type="url" placeholder="https://">
-            </div>
-            <div>
-              <label for="email">Email</label>
-              <input id="email" name="email" type="email">
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div>
-              <label for="telepon">Telepon</label>
-              <input id="telepon" name="telepon" type="tel">
-            </div>
-            <div>
-              <label for="kepala_sekolah">Kepala Sekolah</label>
-              <input id="kepala_sekolah" name="kepala_sekolah" type="text">
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div>
-              <label for="nip_kepsek">NIP Kepala Sekolah</label>
-              <input id="nip_kepsek" name="nip_kepsek" type="text">
-            </div>
-            <div>
-              <label for="url_logo">URL Logo</label>
-              <input id="url_logo" name="url_logo" type="url" placeholder="https://.../logo.png">
-            </div>
-          </div>
-
-          <div class="field-row">
-            <div>
-              <label for="kabupaten_kota_rapor">Kab/Kota Rapor</label>
-              <input id="kabupaten_kota_rapor" name="kabupaten_kota_rapor" type="text">
-            </div>
-            <div>
-              <label for="tanggal_rapor">Tanggal Rapor (YYYY-MM-DD)</label>
-              <input id="tanggal_rapor" name="tanggal_rapor" type="text" placeholder="2025-10-23">
-            </div>
-          </div>
-
-          <div style="display:flex;gap:10px;margin-top:12px">
-            <button id="btn-save-2" class="btn" type="button">Simpan Profil</button>
-            <button id="btn-init-ensure" class="btn ghost" type="button">Init Headers</button>
-          </div>
-        </form>
-      </section>
-
-      <!-- PREVIEW -->
-      <aside class="card">
-        <div style="display:flex;gap:12px;align-items:center">
-          <div class="logo-preview" id="logoPreview">
-            <div style="text-align:center;color:#64748b"><div style="font-weight:700;font-size:20px">EQ</div><div style="font-size:13px">Logo Sekolah</div></div>
-          </div>
-          <div>
-            <div id="previewNama" style="font-weight:700">Nama Sekolah</div>
-            <div id="previewAlamat" style="color:#64748b;font-size:13px">Alamat singkat</div>
-            <div id="previewKontak" style="color:#64748b;font-size:13px;margin-top:8px">Email • Telp</div>
-          </div>
-        </div>
-
-        <hr style="margin:12px 0;border:none;border-top:1px solid rgba(15,23,42,0.04)" />
-        <div class="small">Sistem menyimpan profil pada baris ke-2 sheet <code>profil_sekolah</code>. Pastikan token/unik identifier benar saat load/save.</div>
-      </aside>
-    </div>
-
-    <footer style="text-align:center;margin-top:20px;color:#94a3b8">© 2025 e-Rapor Quantum — Developed by Dedi Agus Mustofa</footer>
+    <footer class="main-footer">
+      © 2025 e-Rapor Quantum — <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+    </footer>
   </main>
 
-  <!-- external script (letakkan di root: profil_sekolah.js) -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- Core Script -->
   <script src="core.js"></script>
   <script src="profil_sekolah.js"></script>
 </body>
