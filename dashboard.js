@@ -247,3 +247,21 @@ function showDeveloperInfo() {
     confirmButtonText: "Tutup"
   });
 }
+
+/* =========================================================
+   🔹 Fungsi Navigasi Antar Halaman
+========================================================= */
+function navigateTo(page) {
+  // Pastikan sesi masih aktif
+  const username = localStorage.getItem("username");
+  const token = localStorage.getItem("token_sesi");
+  if (!username || !token) {
+    Swal.fire("Sesi Habis", "Silakan login kembali.", "info");
+    localStorage.clear();
+    setTimeout(() => (location.href = "index.html"), 1200);
+    return;
+  }
+
+  // Arahkan ke halaman yang diminta
+  window.location.href = page;
+}
