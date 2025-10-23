@@ -1,185 +1,585 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Profil Sekolah — e-Rapor Quantum</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Profil Sekolah — eRapor Quantum</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- GANTI dengan GAS URL projectmu jika belum ada -->
+  <script>
+    // Jika kamu sudah punya GAS_URL di global project, abaikan atau hapus ini baris:
+    const GAS_URL = "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec"; // <-- GANTI
+  </script>
 
   <style>
+    /* ===== Reset & dasar ===== */
     :root{
-      --blue:#1d4ed8;
-      --blue-dark:#0b4ea2;
-      --bg:#f4f7fb;
-      --card-shadow:0 6px 20px rgba(2,6,23,0.06);
+      --bg:#0f1724;
+      --card:#0b1220;
+      --muted:#9aa6b2;
+      --accent:#0d6efd; /* biru elegan (active) */
+      --accent-2:#0b5ed7;
+      --glass: rgba(255,255,255,0.03);
+      --radius:12px;
+      --soft: 12px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color-scheme: dark;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto;
-      background:var(--bg);
-      color:#0f172a;
-      display:flex;
-      min-height:100vh;
-    }
-
-    /* Sidebar kiri */
-    .sidebar{
-      width:260px;
-      background:linear-gradient(180deg,#071030,#0d3a8a);
-      color:#fff;
-      padding:22px;
-      display:flex;
-      flex-direction:column;
-      position:fixed;
-      left:0;top:0;bottom:0;
-      box-shadow:4px 0 30px rgba(2,6,23,0.14);
-    }
-    .brand{text-align:center;margin-bottom:16px;}
-    .brand img{width:88px;border-radius:12px;display:block;margin:0 auto 8px;}
-    .brand h2{margin:0;font-size:18px;font-weight:700;}
-    .brand .school-name{font-size:13px;color:#cfe2ff;margin-top:6px;}
-    nav{margin-top:12px;}
-    .nav-btn{
-      display:block;width:100%;text-align:left;padding:10px 12px;border-radius:8px;
-      color:#e6f0ff;background:transparent;border:0;cursor:pointer;margin-bottom:6px;font-size:15px;
-    }
-    .nav-btn:hover{background:rgba(255,255,255,0.04);}
-    .sidebar-footer{margin-top:auto;font-size:13px;color:#dbeafe;text-align:center;}
-
-    /* Main content */
-    .main-wrap{
-      margin-left:260px;
-      padding:24px;
-      flex:1;
-    }
-
-    /* Card container */
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071029 0%, #071a2b 100%); color:#e6eef6}
+    a{color:var(--accent); text-decoration:none}
+    .container{max-width:1100px;margin:28px auto;padding:20px;}
     .card{
-      background:#fff;
-      border-radius:12px;
-      padding:22px 28px;
-      box-shadow:var(--card-shadow);
-      max-width:1000px;
-      margin:auto;
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: var(--radius);
+      padding:18px;
+      box-shadow: 0 6px 20px rgba(6,11,25,0.6);
     }
 
-    h1{margin-top:0;color:var(--blue-dark);font-weight:800;}
+    /* ===== Navbar sederhana premium ===== */
+    .navbar {
+      display:flex;
+      align-items:center;
+      gap:16px;
+      padding:12px 16px;
+      border-radius:14px;
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      margin-bottom:18px;
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,0.02);
+    }
+    .brand {
+      display:flex; gap:12px; align-items:center;
+    }
+    .brand .logo {
+      width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px;
+      box-shadow:0 4px 18px rgba(13,110,253,0.18);
+    }
+    .brand .title { font-size:16px; font-weight:600; color:#eaf4ff; }
 
-    form{
+    .nav {
+      display:flex; gap:8px; margin-left:24px;
+    }
+    .nav button {
+      background:transparent;border:0;padding:8px 14px;border-radius:10px;color:var(--muted);font-weight:600;cursor:pointer;
+      transition: all 180ms ease;
+      box-shadow: none;
+    }
+    .nav button:hover { transform: translateY(-2px); color:#fff; background: rgba(255,255,255,0.02); }
+    .nav button.active {
+      background: linear-gradient(180deg, rgba(13,110,253,0.12), rgba(13,110,253,0.08));
+      color: white;
+      border: 1px solid rgba(13,110,253,0.28);
+      box-shadow: 0 6px 18px rgba(13,110,253,0.14);
+      position:relative;
+    }
+    .nav button.active::after{
+      content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:-10px;
+      height:4px; width:36px; border-radius:4px; background:linear-gradient(90deg,var(--accent),var(--accent-2));
+      box-shadow:0 6px 16px rgba(13,110,253,0.12);
+    }
+
+    /* ===== grid form ===== */
+    .grid {
       display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:16px 24px;
-      margin-top:18px;
+      grid-template-columns: 1fr 360px;
+      gap:18px;
     }
-
-    label{
-      display:block;
-      font-weight:600;
-      font-size:14px;
-      color:#0f172a;
-      margin-bottom:6px;
+    .form {
+      display:grid;
+      gap:12px;
     }
-    input,textarea{
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
+    input[type="text"], input[type="url"], input[type="tel"], input[type="email"], textarea, select {
       width:100%;
       padding:10px 12px;
-      border:1px solid #cbd5e1;
-      border-radius:8px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.02);
+      color: #eaf4ff;
+      outline:none;
+      transition: box-shadow 160ms ease, border-color 160ms ease;
       font-size:14px;
     }
-    textarea{resize:vertical;min-height:80px;}
-    .btn{
-      grid-column:span 2;
-      justify-self:center;
-      margin-top:18px;
-      background:var(--blue);
-      color:#fff;
-      border:0;
-      padding:10px 28px;
-      border-radius:8px;
-      font-weight:700;
-      cursor:pointer;
+    input:focus, textarea:focus, select:focus {
+      box-shadow: 0 6px 18px rgba(13,110,253,0.08);
+      border-color: rgba(13,110,253,0.6);
     }
-    .btn:hover{background:var(--blue-dark);}
+    textarea{min-height:100px;resize:vertical}
+    .field-row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    .btn {
+      display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600;
+      background: linear-gradient(90deg,var(--accent),var(--accent-2));
+      color:#fff; box-shadow: 0 10px 30px rgba(11,78,190,0.18);
+    }
+    .btn.ghost { background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted); box-shadow:none; }
 
-    footer{text-align:center;color:#64748b;margin-top:28px;font-size:13px;}
+    /* ===== panel kanan (preview/logo/info) ===== */
+    .side {
+      display:flex;flex-direction:column;gap:12px;
+      align-items:stretch;
+    }
+    .logo-preview {
+      height:140px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+      border:1px dashed rgba(255,255,255,0.03); background:var(--glass);
+    }
+    .meta { font-size:13px; color:var(--muted); }
 
-    @media(max-width:900px){
-      .sidebar{transform:translateX(-100%);}
-      .main-wrap{margin-left:0;padding:16px;}
-      form{grid-template-columns:1fr;}
+    /* ===== toast notifications ===== */
+    #toast-container {
+      position: fixed;
+      right: 20px;
+      bottom: 24px;
+      z-index: 9999;
+      display:flex; flex-direction: column; gap:10px;
+    }
+    .toast {
+      min-width: 260px;
+      max-width: 420px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+      border: 1px solid rgba(255,255,255,0.04);
+      box-shadow: 0 8px 28px rgba(2,6,23,0.6);
+      color: #eaf4ff;
+      font-weight:600;
+      display:flex; align-items:center; gap:12px;
+    }
+    .toast.success { border-left: 4px solid #2dd36f; }
+    .toast.error { border-left: 4px solid #ff6b6b; }
+    .small { font-size:13px; color:var(--muted); font-weight:500 }
+
+    /* responsive */
+    @media (max-width: 920px){
+      .grid{ grid-template-columns: 1fr; }
+      .nav { margin-left:12px; flex-wrap:wrap; }
     }
   </style>
 </head>
 <body>
-
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="brand">
-      <img src="assets/logo-erapor.png" alt="Logo eRapor">
-      <h2>e-Rapor Quantum</h2>
-      <div class="school-name" id="schoolNameTop">Nama Sekolah</div>
-    </div>
-
-    <nav>
-      <button class="nav-btn" onclick="navigateTo('dashboard.html')">🏠 Dashboard</button>
-      <button class="nav-btn" onclick="navigateTo('profil_sekolah.html')">🏫 Profil Sekolah</button>
-      <button class="nav-btn" onclick="navigateTo('data_siswa.html')">👨‍🎓 Data Siswa</button>
-      <button class="nav-btn" onclick="navigateTo('input_nilai_cp.html')">🧾 Input Nilai CP</button>
-      <button class="nav-btn" onclick="navigateTo('cetak.html')">🖨️ Cetak Rapor</button>
-    </nav>
-
-    <footer class="sidebar-footer">
-      © 2025 e-Rapor Quantum<br>Developed by<br><strong>Dedi Agus Mustofa, S.Pd.SD</strong>
-    </footer>
-  </aside>
-
-  <!-- Konten utama -->
-  <main class="main-wrap">
+  <div class="container">
     <div class="card">
-      <h1>Profil Sekolah</h1>
-
-      <form id="formProfilSekolah">
-        <div>
-          <label>Nama Sekolah</label>
-          <input type="text" id="nama_sekolah" required>
+      <div class="navbar">
+        <div class="brand">
+          <div class="logo">EQ</div>
+          <div>
+            <div class="title">e-Rapor Quantum</div>
+            <div class="small">Profil Sekolah</div>
+          </div>
         </div>
 
-        <div>
-          <label>NPSN</label>
-          <input type="text" id="npsn">
+        <div class="nav" role="navigation" aria-label="Main nav">
+          <button data-link="dashboard" id="nav-dashboard">Dashboard</button>
+          <button data-link="profil" id="nav-profil" class="active">Profil</button>
+          <button data-link="siswa" id="nav-siswa">Siswa</button>
+          <button data-link="nilai" id="nav-nilai">Nilai</button>
         </div>
 
+        <div style="margin-left:auto; display:flex; gap:8px; align-items:center">
+          <button class="btn ghost" id="btn-logout">Logout</button>
+          <button class="btn" id="btn-save">Simpan Profil</button>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:12px">
+        <!-- FORM UTAMA -->
         <div>
-          <label>Alamat Sekolah</label>
-          <textarea id="alamat_sekolah"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+            <h3 style="margin:0">Data Profil Sekolah</h3>
+            <div class="small meta">Semua field sesuai header sheet <strong>profil_sekolah</strong>.</div>
+          </div>
+
+          <form id="formProfil" class="form" autocomplete="off" onsubmit="return false;">
+            <!-- baris 1 -->
+            <div class="field-row">
+              <div>
+                <label for="token_sekolah">Token Sekolah</label>
+                <input id="token_sekolah" name="token_sekolah" type="text" placeholder="Token sekolah (digunakan utk identifikasi)">
+              </div>
+              <div>
+                <label for="nama_sekolah">Nama Sekolah</label>
+                <input id="nama_sekolah" name="nama_sekolah" type="text" placeholder="Nama sekolah">
+              </div>
+            </div>
+
+            <!-- baris 2 -->
+            <div class="field-row">
+              <div>
+                <label for="nss">NSS</label>
+                <input id="nss" name="nss" type="text" placeholder="NSS">
+              </div>
+              <div>
+                <label for="npsn">NPSN</label>
+                <input id="npsn" name="npsn" type="text" placeholder="NPSN">
+              </div>
+            </div>
+
+            <!-- alamat & status -->
+            <div class="field-row">
+              <div>
+                <label for="status_sekolah">Status Sekolah</label>
+                <select id="status_sekolah" name="status_sekolah">
+                  <option value="">Pilih status</option>
+                  <option value="Negeri">Negeri</option>
+                  <option value="Swasta">Swasta</option>
+                </select>
+              </div>
+              <div>
+                <label for="alamat_sekolah">Alamat Sekolah</label>
+                <input id="alamat_sekolah" name="alamat_sekolah" type="text" placeholder="Alamat lengkap">
+              </div>
+            </div>
+
+            <!-- locality -->
+            <div class="field-row">
+              <div>
+                <label for="kelurahan_desa">Kelurahan / Desa</label>
+                <input id="kelurahan_desa" name="kelurahan_desa" type="text">
+              </div>
+              <div>
+                <label for="kecamatan">Kecamatan</label>
+                <input id="kecamatan" name="kecamatan" type="text">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div>
+                <label for="kabupaten_kota">Kabupaten / Kota</label>
+                <input id="kabupaten_kota" name="kabupaten_kota" type="text">
+              </div>
+              <div>
+                <label for="provinsi">Provinsi</label>
+                <input id="provinsi" name="provinsi" type="text">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div>
+                <label for="website">Website</label>
+                <input id="website" name="website" type="url" placeholder="https://">
+              </div>
+              <div>
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email" placeholder="admin@sekolah.sch.id">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div>
+                <label for="telepon">Telepon</label>
+                <input id="telepon" name="telepon" type="tel" placeholder="(021) 123456">
+              </div>
+              <div>
+                <label for="kepala_sekolah">Kepala Sekolah</label>
+                <input id="kepala_sekolah" name="kepala_sekolah" type="text" placeholder="Nama kepala sekolah">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div>
+                <label for="nip_kepsek">NIP Kepala Sekolah</label>
+                <input id="nip_kepsek" name="nip_kepsek" type="text">
+              </div>
+              <div>
+                <label for="url_logo">URL Logo</label>
+                <input id="url_logo" name="url_logo" type="url" placeholder="https://.../logo.png">
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div>
+                <label for="kabupaten_kota_rapor">Kab/Kota Rapor</label>
+                <input id="kabupaten_kota_rapor" name="kabupaten_kota_rapor" type="text">
+              </div>
+              <div>
+                <label for="tanggal_rapor">Tanggal Rapor (YYYY-MM-DD)</label>
+                <input id="tanggal_rapor" name="tanggal_rapor" type="text" placeholder="2025-10-23">
+              </div>
+            </div>
+
+            <div>
+              <label for="alamat_lain">Catatan / Alamat tambahan</label>
+              <textarea id="alamat_lain" name="alamat_lain" placeholder="Optional..."></textarea>
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:6px;">
+              <button id="btn-save-2" class="btn" type="button">Simpan Profil</button>
+              <button id="btn-refresh" class="btn ghost" type="button">Muat Ulang</button>
+            </div>
+          </form>
         </div>
 
-        <div>
-          <label>Nama Kepala Sekolah</label>
-          <input type="text" id="kepala_sekolah">
-        </div>
+        <!-- PANEL KANAN -->
+        <div class="side">
+          <div class="card" style="padding:12px">
+            <div style="display:flex;gap:12px;align-items:center">
+              <div class="logo-preview" id="logoPreview">
+                <div style="text-align:center;color:var(--muted)">
+                  <div style="font-weight:700;font-size:20px">EQ</div>
+                  <div class="small">Logo Sekolah</div>
+                </div>
+              </div>
+              <div style="flex:1">
+                <div style="font-weight:700" id="previewNama">Nama Sekolah</div>
+                <div class="meta small" id="previewAlamat">Alamat singkat</div>
+                <div style="margin-top:10px" class="small meta" id="previewKontak">Email / Telepon</div>
+              </div>
+            </div>
+          </div>
 
-        <div>
-          <label>Email Sekolah</label>
-          <input type="email" id="email_sekolah">
-        </div>
+          <div class="card" style="padding:12px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div>
+                <div style="font-weight:700">Informasi</div>
+                <div class="small meta">Ringkasan profil yang tersimpan</div>
+              </div>
+              <div>
+                <button id="btn-init-ensure" class="btn ghost" title="Pastikan header sheet lengkap">Init Headers</button>
+              </div>
+            </div>
 
-        <div>
-          <label>Logo Sekolah (URL Gambar)</label>
-          <input type="text" id="logo_url" placeholder="https://...">
-        </div>
+            <div style="margin-top:12px" class="small meta">
+              - Sistem akan menyimpan profil pada baris ke-2 sheet <code>profil_sekolah</code> (sesuai konfigurasi Apps Script).<br>
+              - Field mengikuti header sheet yang didefinisikan di Apps Script. :contentReference[oaicite:1]{index=1}
+            </div>
+          </div>
 
-        <button type="submit" class="btn">💾 Simpan Perubahan</button>
-      </form>
+          <div style="height:1px"></div>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <footer>
-      © 2025 e-Rapor Quantum — Developed by: <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
-    </footer>
-  </main>
+  <!-- Toast container -->
+  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
 
-  <script src="profil_sekolah.js"></script>
+  <script>
+    /* =========================
+       Utility notif / toast
+       ========================= */
+    const toastContainer = document.getElementById('toast-container');
+    function showToast(message, type='success', ttl=3800){
+      const t = document.createElement('div');
+      t.className = 'toast ' + (type==='error' ? 'error' : 'success');
+      t.innerHTML = '<div style="flex:1">'+ message +'</div>';
+      toastContainer.appendChild(t);
+      setTimeout(()=> { t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; }, ttl - 450);
+      setTimeout(()=> t.remove(), ttl);
+    }
+
+    /* =========================
+       Navbar active handling
+       ========================= */
+    document.querySelectorAll('.nav button').forEach(btn=>{
+      btn.addEventListener('click', (e)=>{
+        document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active');
+        // jika kamu ingin redirect ke halaman lain: gunakan data-link
+        // contoh: location.href = btn.dataset.link + '.html';
+      });
+    });
+
+    /* =========================
+       Helper: form <-> object mapping
+       Fields sesuai header profil_sekolah pada kode GS yang dikirim. :contentReference[oaicite:2]{index=2}
+       Headers: token_sekolah, nama_sekolah, nss, npsn, status_sekolah,
+                alamat_sekolah, kelurahan_desa, kecamatan, kabupaten_kota,
+                provinsi, website, email, telepon, kepala_sekolah,
+                nip_kepsek, url_logo, kabupaten_kota_rapor, tanggal_rapor
+    ========================= */
+    const FIELDS = [
+      'token_sekolah','nama_sekolah','nss','npsn','status_sekolah','alamat_sekolah',
+      'kelurahan_desa','kecamatan','kabupaten_kota','provinsi','website','email',
+      'telepon','kepala_sekolah','nip_kepsek','url_logo','kabupaten_kota_rapor','tanggal_rapor'
+    ];
+
+    function getFormData(){
+      const o = {};
+      FIELDS.forEach(f => {
+        const el = document.getElementById(f);
+        if (el) o[f] = el.value.trim();
+      });
+      // include extra if any
+      const extra = document.getElementById('alamat_lain');
+      if(extra) o.alamat_lain = extra.value.trim();
+      return o;
+    }
+    function setFormData(obj){
+      FIELDS.forEach(f => {
+        const el = document.getElementById(f);
+        if (el) el.value = obj[f] || '';
+      });
+      const extra = document.getElementById('alamat_lain');
+      if(extra) extra.value = obj.alamat_lain || '';
+      refreshPreview();
+    }
+
+    /* =========================
+       Preview logo + info
+    ========================= */
+    const logoPreview = document.getElementById('logoPreview');
+    function refreshPreview(){
+      const nama = document.getElementById('nama_sekolah').value || 'Nama Sekolah';
+      const alamat = document.getElementById('alamat_sekolah').value || '';
+      const email = document.getElementById('email').value || '';
+      const telepon = document.getElementById('telepon').value || '';
+
+      document.getElementById('previewNama').textContent = nama;
+      document.getElementById('previewAlamat').textContent = alamat;
+      document.getElementById('previewKontak').textContent = [email, telepon].filter(Boolean).join(' • ');
+
+      const url = document.getElementById('url_logo').value || '';
+      if (url) {
+        logoPreview.innerHTML = '<img src="'+escapeHtml(url)+'" alt="Logo" style="max-height:120px; max-width:100%; object-fit:contain; border-radius:8px;">';
+      } else {
+        logoPreview.innerHTML = '<div style="text-align:center;color:var(--muted)"><div style="font-weight:700;font-size:20px">EQ</div><div class="small">Logo Sekolah</div></div>';
+      }
+    }
+    function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+    /* update preview on url/nama/.. change */
+    ['url_logo','nama_sekolah','alamat_sekolah','email','telepon'].forEach(id=>{
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('input', refreshPreview);
+    });
+
+    /* =========================
+       Fetch wrapper untuk doPost
+       expects { action: "...", ...payload }
+    ========================= */
+    async function gsPost(body){
+      if (!window.GAS_URL && !GAS_URL) {
+        console.error('GAS_URL tidak ditemukan. Set GAS_URL di file JS/HTML kamu.');
+        showToast('Gagal: GAS_URL belum diset. Periksa konfigurasi.', 'error', 4200);
+        throw new Error('GAS_URL not set');
+      }
+      const url = (typeof GAS_URL !== 'undefined') ? GAS_URL : window.GAS_URL;
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {'Content-Type':'application/json'},
+        body: JSON.stringify(body)
+      });
+      return res.json();
+    }
+
+    /* =========================
+       Load profil dari server (getProfilSekolah)
+       - body.action = "getProfilSekolah"
+       - expects token in payload (token_sekolah or token_sesi)
+    ========================= */
+    async function loadProfil(token){
+      try {
+        const payload = { action: 'getProfilSekolah', token_sekolah: token || document.getElementById('token_sekolah').value || '' };
+        const r = await gsPost(payload);
+        if (r && r.success && r.profil){
+          // r.profil may have keys normalized (see gs) - so use direct mapping by header names
+          setFormData(r.profil || {});
+          showToast('Profil berhasil dimuat.');
+        } else {
+          // Jika sheet kosong, kosongkan form
+          setFormData({});
+          if(r && r.message) showToast(r.message, 'error');
+          else showToast('Profil tidak ditemukan atau belum terisi.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Gagal memuat profil: ' + (err.message||err), 'error', 5200);
+      }
+    }
+
+    /* =========================
+       Simpan profil (saveProfilSekolah)
+    ========================= */
+    async function saveProfil(){
+      try {
+        const data = getFormData();
+        if (!data.token_sekolah || data.token_sekolah.length < 3){
+          showToast('Token sekolah wajib diisi agar data tersimpan.', 'error', 3800);
+          return;
+        }
+        const payload = { action: 'saveProfilSekolah', token_sekolah: data.token_sekolah, data: data };
+        const r = await gsPost(payload);
+        if (r && r.success){
+          showToast('Profil tersimpan ✔');
+        } else {
+          showToast('Gagal simpan: ' + (r.error || r.message || 'unknown'), 'error', 5200);
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Gagal simpan: ' + (err.message||err), 'error', 5200);
+      }
+    }
+
+    /* =========================
+       Event listeners untuk tombol
+    ========================= */
+    document.getElementById('btn-save').addEventListener('click', saveProfil);
+    document.getElementById('btn-save-2').addEventListener('click', saveProfil);
+    document.getElementById('btn-refresh').addEventListener('click', ()=> {
+      const tok = document.getElementById('token_sekolah').value || '';
+      if (!tok) return showToast('Masukkan token sekolah lalu klik Muat Ulang.', 'error');
+      loadProfil(tok);
+    });
+
+    document.getElementById('btn-init-ensure').addEventListener('click', async ()=>{
+      try {
+        const token = document.getElementById('token_sekolah').value || '';
+        if(!token) return showToast('Token sekolah diperlukan untuk inisialisasi headers.', 'error');
+        const r = await gsPost({ action: 'initEnsure', token_sekolah: token });
+        if (r && r.success) {
+          showToast('Headers berhasil dipastikan di spreadsheet.');
+        } else {
+          showToast('Gagal inisialisasi: ' + (r.error || r.message || 'unknown'), 'error');
+        }
+      } catch (e){
+        console.error(e); showToast('Gagal inisialisasi: ' + (e.message||e), 'error');
+      }
+    });
+
+    /* Logout placeholder (sesuaikan dengan mekanisme autentikasi di projectmu) */
+    document.getElementById('btn-logout').addEventListener('click', async ()=>{
+      try {
+        // Jika kamu menyimpan token_sesi di localStorage: kirim ke backend logout
+        const token_sesi = localStorage.getItem('token_sesi') || '';
+        if (!token_sesi) {
+          localStorage.removeItem('token_sesi');
+          showToast('Logout (lokal) berhasil.');
+          return;
+        }
+        const r = await gsPost({ action: 'logout', token_sesi: token_sesi });
+        if (r && r.success) {
+          localStorage.removeItem('token_sesi');
+          showToast('Logout berhasil.');
+        } else showToast('Logout gagal: ' + (r.error||r.message), 'error');
+      } catch (e){
+        console.error(e); showToast('Logout error: ' + (e.message||e), 'error');
+      }
+    });
+
+    /* =========================
+       Auto load if token_sesi or token_sekolah sudah ada
+    ========================= */
+    (function init(){
+      // try token_sekolah from localStorage or input
+      const token_sesi = localStorage.getItem('token_sesi') || '';
+      const token_sekolah = document.getElementById('token_sekolah').value || localStorage.getItem('token_sekolah') || '';
+      if (token_sekolah) {
+        document.getElementById('token_sekolah').value = token_sekolah;
+        loadProfil(token_sekolah);
+      } else if (token_sesi) {
+        // if only token_sesi, pass as payload
+        (async ()=> {
+          try {
+            const r = await gsPost({ action: 'getProfilSekolah', token_sesi: token_sesi });
+            if (r && r.success && r.profil) {
+              setFormData(r.profil);
+              showToast('Profil dimuat (token sesi).');
+            }
+          } catch(e){}
+        })();
+      }
+    })();
+
+  </script>
 </body>
 </html>
