@@ -233,7 +233,7 @@ function showDeveloperInfo() {
   Swal.fire({
     title: "Tentang eRapor Quantum",
     html: `
-      <p><strong>eRapor Quantum</strong> adalah e-Rapor modern berbasis cloud
+      <p><strong>e-Rapor Quantum</strong> adalah e-Rapor modern berbasis cloud
       yang dikembangkan oleh <strong>Dedi Agus Mustofa, S.Pd.SD</strong>.</p>
       <ul style="text-align:left;margin-top:10px;">
         <li>⚡ Terintegrasi penuh dengan Google Workspace</li>
