@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Profil Sekolah — e-Rapor Quantum</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    :root{
+      --blue:#1d4ed8;
+      --blue-dark:#0b4ea2;
+      --bg:#f4f7fb;
+      --card-shadow:0 6px 20px rgba(2,6,23,0.06);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto;
+      background:var(--bg);
+      color:#0f172a;
+      display:flex;
+      min-height:100vh;
+    }
+
+    /* Sidebar kiri */
+    .sidebar{
+      width:260px;
+      background:linear-gradient(180deg,#071030,#0d3a8a);
+      color:#fff;
+      padding:22px;
+      display:flex;
+      flex-direction:column;
+      position:fixed;
+      left:0;top:0;bottom:0;
+      box-shadow:4px 0 30px rgba(2,6,23,0.14);
+    }
+    .brand{text-align:center;margin-bottom:16px;}
+    .brand img{width:88px;border-radius:12px;display:block;margin:0 auto 8px;}
+    .brand h2{margin:0;font-size:18px;font-weight:700;}
+    .brand .school-name{font-size:13px;color:#cfe2ff;margin-top:6px;}
+    nav{margin-top:12px;}
+    .nav-btn{
+      display:block;width:100%;text-align:left;padding:10px 12px;border-radius:8px;
+      color:#e6f0ff;background:transparent;border:0;cursor:pointer;margin-bottom:6px;font-size:15px;
+    }
+    .nav-btn:hover{background:rgba(255,255,255,0.04);}
+    .sidebar-footer{margin-top:auto;font-size:13px;color:#dbeafe;text-align:center;}
+
+    /* Main content */
+    .main-wrap{
+      margin-left:260px;
+      padding:24px;
+      flex:1;
+    }
+
+    /* Card container */
+    .card{
+      background:#fff;
+      border-radius:12px;
+      padding:22px 28px;
+      box-shadow:var(--card-shadow);
+      max-width:1000px;
+      margin:auto;
+    }
+
+    h1{margin-top:0;color:var(--blue-dark);font-weight:800;}
+
+    form{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px 24px;
+      margin-top:18px;
+    }
+
+    label{
+      display:block;
+      font-weight:600;
+      font-size:14px;
+      color:#0f172a;
+      margin-bottom:6px;
+    }
+    input,textarea{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid #cbd5e1;
+      border-radius:8px;
+      font-size:14px;
+    }
+    textarea{resize:vertical;min-height:80px;}
+    .btn{
+      grid-column:span 2;
+      justify-self:center;
+      margin-top:18px;
+      background:var(--blue);
+      color:#fff;
+      border:0;
+      padding:10px 28px;
+      border-radius:8px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    .btn:hover{background:var(--blue-dark);}
+
+    footer{text-align:center;color:#64748b;margin-top:28px;font-size:13px;}
+
+    @media(max-width:900px){
+      .sidebar{transform:translateX(-100%);}
+      .main-wrap{margin-left:0;padding:16px;}
+      form{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="brand">
+      <img src="assets/logo-erapor.png" alt="Logo eRapor">
+      <h2>e-Rapor Quantum</h2>
+      <div class="school-name" id="schoolNameTop">Nama Sekolah</div>
+    </div>
+
+    <nav>
+      <button class="nav-btn" onclick="navigateTo('dashboard.html')">🏠 Dashboard</button>
+      <button class="nav-btn" onclick="navigateTo('profil_sekolah.html')">🏫 Profil Sekolah</button>
+      <button class="nav-btn" onclick="navigateTo('data_siswa.html')">👨‍🎓 Data Siswa</button>
+      <button class="nav-btn" onclick="navigateTo('input_nilai_cp.html')">🧾 Input Nilai CP</button>
+      <button class="nav-btn" onclick="navigateTo('cetak.html')">🖨️ Cetak Rapor</button>
+    </nav>
+
+    <footer class="sidebar-footer">
+      © 2025 e-Rapor Quantum<br>Developed by<br><strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+    </footer>
+  </aside>
+
+  <!-- Konten utama -->
+  <main class="main-wrap">
+    <div class="card">
+      <h1>Profil Sekolah</h1>
+
+      <form id="formProfilSekolah">
+        <div>
+          <label>Nama Sekolah</label>
+          <input type="text" id="nama_sekolah" required>
+        </div>
+
+        <div>
+          <label>NPSN</label>
+          <input type="text" id="npsn">
+        </div>
+
+        <div>
+          <label>Alamat Sekolah</label>
+          <textarea id="alamat_sekolah"></textarea>
+        </div>
+
+        <div>
+          <label>Nama Kepala Sekolah</label>
+          <input type="text" id="kepala_sekolah">
+        </div>
+
+        <div>
+          <label>Email Sekolah</label>
+          <input type="email" id="email_sekolah">
+        </div>
+
+        <div>
+          <label>Logo Sekolah (URL Gambar)</label>
+          <input type="text" id="logo_url" placeholder="https://...">
+        </div>
+
+        <button type="submit" class="btn">💾 Simpan Perubahan</button>
+      </form>
+    </div>
+
+    <footer>
+      © 2025 e-Rapor Quantum — Developed by: <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+    </footer>
+  </main>
+
+  <script src="profil_sekolah.js"></script>
+</body>
+</html>
