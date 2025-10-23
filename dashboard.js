@@ -1,257 +1,214 @@
-/****************************************************
- * dashboard.js — eRapor Quantum Super Genius
- * Versi Final Premium (Responsive + Dynamic Data)
- * Dikembangkan oleh: Dedi Agus Mustofa, S.Pd.SD (c) 2025
- ****************************************************/
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>e-Rapor Quantum — Dashboard</title>
 
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec";
+  <!-- CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-/* ========== Elemen utama ========== */
-const sidebar = document.getElementById("sidebar");
-const mainWrap = document.getElementById("mainWrap");
-const menuBtn = document.getElementById("menuBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-
-/* ========== Sidebar toggle ========== */
-menuBtn?.addEventListener("click", () => {
-  sidebar.classList.toggle("show");
-});
-
-/* ========== Logout ========== */
-logoutBtn?.addEventListener("click", async () => {
-  const token = localStorage.getItem("token_sesi");
-  try {
-    await fetch(WEBAPP_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "logout", token_sesi: token })
-    });
-  } catch (e) {
-    console.warn("Logout tanpa koneksi:", e);
-  }
-
-  Swal.fire({
-    icon: "success",
-    title: "Logout",
-    text: "Anda telah keluar dari sistem.",
-    timer: 1000,
-    showConfirmButton: false
-  });
-
-  localStorage.clear();
-  setTimeout(() => (location.href = "index.html"), 1000);
-});
-
-/* ========== Navigasi (sementara) ========== */
-function goto(page) {
-  Swal.fire("Fitur", "Menu " + page + " akan tersedia di modul berikutnya.", "info");
-}
-
-/* ======================================================
-   🔹 Saat halaman dimuat: validasi sesi & ambil data awal
-====================================================== */
-window.addEventListener("load", async () => {
-  await new Promise((r) => setTimeout(r, 300)); // tunggu data login
-
-  const username = localStorage.getItem("username");
-  const nama = localStorage.getItem("nama");
-  const tokenSesi = localStorage.getItem("token_sesi");
-  const tokenUnik = localStorage.getItem("token_unik");
-  const expire = Number(localStorage.getItem("login_expire") || 0);
-
-  // Validasi sesi login
-  if (!username || !tokenSesi) {
-    localStorage.clear();
-    return (location.href = "index.html");
-  }
-
-  if (expire && Date.now() > expire) {
-    Swal.fire("Sesi Habis", "Silakan login kembali.", "info");
-    localStorage.clear();
-    setTimeout(() => (location.href = "index.html"), 1300);
-    return;
-  }
-
-  // Tampilkan identitas user
-  document.getElementById("namaUser").innerText = nama || username;
-  document.getElementById("usernameUser").innerText = username;
-
-  // Ambil profil sekolah
-  await loadProfilSekolah(tokenUnik || tokenSesi);
-
-  // Ambil data dashboard
-  await loadDashboardData(tokenUnik || tokenSesi);
-
-  // Ambil progres tiap mapel
-  await loadProgressMapel(tokenUnik || tokenSesi);
-
-  // Responsif
-  if (window.innerWidth <= 900) {
-    sidebar.classList.remove("show");
-    mainWrap.classList.add("full");
-  }
-});
-
-/* ======================================================
-   🔹 Fungsi: Ambil Profil Sekolah
-====================================================== */
-async function loadProfilSekolah(token) {
-  try {
-    const res = await fetch(WEBAPP_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "getProfilSekolah", token_sekolah: token })
-    });
-    const data = await res.json();
-
-    if (data && data.success) {
-      const profil = data.profil || {};
-      document.getElementById("schoolNameTop").innerText = profil.nama_sekolah || "Sekolah Anda";
-      document.getElementById("schoolName").innerText = profil.nama_sekolah || "Sekolah Anda";
-
-      const img = document.getElementById("logoSekolah");
-      if (profil.logo_url) img.src = profil.logo_url;
-
-      const info = document.getElementById("infoSchool");
-      info.innerHTML = `
-        <strong>${profil.nama_sekolah || "Sekolah Anda"}</strong><br/>
-        NPSN: ${profil.npsn || "-"}<br/>
-        Alamat: ${profil.alamat_sekolah || "-"}
-      `;
-    } else {
-      document.getElementById("infoSchool").innerText = "Profil sekolah tidak tersedia.";
+  <style>
+    :root {
+      --blue:#1d4ed8;
+      --blue-dark:#1e3a8a;
+      --bg:#f8fafc;
     }
-  } catch (err) {
-    console.error("Gagal memuat profil sekolah:", err);
-    document.getElementById("infoSchool").innerText = "Terjadi kesalahan memuat profil sekolah.";
-  }
-}
+    body {
+      margin:0; font-family:"Inter",system-ui,sans-serif;
+      background:var(--bg); color:#0f172a;
+      display:flex; min-height:100vh; overflow-x:hidden;
+    }
+    /* Sidebar kiri */
+    .sidebar {
+      width:260px; background:linear-gradient(180deg,#0f172a,#1e40af);
+      color:white; padding:22px; display:flex; flex-direction:column;
+      position:fixed; top:0; bottom:0; left:0;
+      box-shadow:4px 0 30px rgba(2,6,23,0.15);
+    }
+    .sidebar .brand {
+      text-align:center; margin-bottom:24px;
+    }
+    .sidebar .brand img {
+      width:90px; margin:0 auto 6px auto; border-radius:12px;
+    }
+    .sidebar h2 { font-size:18px; font-weight:700; margin:6px 0 0; }
+    .sidebar .school-name { font-size:13px; color:#cbd5e1; }
+    .nav-btn {
+      display:block; width:100%; padding:10px 14px; border:0;
+      background:transparent; text-align:left; border-radius:8px;
+      color:#e2e8f0; font-size:15px; margin-bottom:6px; cursor:pointer;
+    }
+    .nav-btn:hover { background:rgba(255,255,255,0.08); }
+    footer.sidebar-footer {
+      margin-top:auto; text-align:center; font-size:12px; color:#cbd5e1;
+    }
 
-/* ======================================================
-   🔹 Fungsi: Ambil Data Dashboard
-====================================================== */
-async function loadDashboardData(token) {
-  try {
-    const res = await fetch(WEBAPP_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "getDashboardData", token_sekolah: token })
-    });
-    const data = await res.json();
+    /* Main content kanan */
+    .main-wrap {
+      margin-left:260px; flex:1; padding:22px; transition:margin-left .3s;
+    }
 
-    if (!data.success) throw new Error("Gagal memuat data dashboard");
+    /* Header */
+    .topbar {
+      display:flex; justify-content:space-between; align-items:center;
+      flex-wrap:wrap; margin-bottom:18px; background:white;
+      border-radius:12px; box-shadow:0 3px 12px rgba(0,0,0,0.05);
+      padding:14px 18px;
+    }
+    .topbar-left { display:flex; align-items:center; gap:12px; }
+    .topbar-left img { width:60px; border-radius:10px; }
+    .welcome-text { font-weight:700; font-size:18px; color:var(--blue-dark); }
+    .logout-btn {
+      background:#ef4444; color:white; border:0; padding:8px 14px;
+      border-radius:8px; cursor:pointer;
+    }
 
-    // Isi angka-angka dashboard
-    setText("totalGuru", data.total_guru);
-    setText("totalSiswa", data.total_siswa);
-    setText("totalMapel", data.total_mapel);
-    setText("totalKelas", data.total_kelas);
-    setText("totalBimbingan", data.total_bimbingan);
+    /* Grid card */
+    .card-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:14px; margin-bottom:20px;
+    }
+    .card {
+      background:white; border-radius:12px; padding:16px; text-align:center;
+      box-shadow:0 4px 16px rgba(0,0,0,0.05);
+    }
+    .card-icon {
+      font-size:28px; margin-bottom:8px; color:var(--blue);
+    }
+    .card h3 {
+      font-size:14px; color:#475569; margin:4px 0;
+    }
+    .card p {
+      font-size:22px; font-weight:700; margin:0; color:var(--blue-dark);
+    }
 
-    // Chart nilai rata-rata
-    initChart(data.statistik);
+    /* Chart dan progress */
+    .chart-section, .progress-section {
+      background:white; border-radius:12px; padding:20px; margin-bottom:20px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.05);
+    }
+    .progress-row {
+      display:flex; align-items:center; margin-bottom:10px; gap:10px;
+    }
+    .progress-row .mapel-label { flex:1; font-size:14px; }
+    .progress-bar {
+      flex:3; background:#e2e8f0; border-radius:10px; height:10px; overflow:hidden;
+    }
+    .progress-fill {
+      background:var(--blue); height:100%; width:0; border-radius:10px;
+      transition:width .6s ease;
+    }
+    .progress-row .percent { width:50px; text-align:right; font-size:13px; }
 
-    // Progress total siswa & guru
-    animateProgress("progressSiswa", data.progres_siswa);
-    animateProgress("progressGuru", data.progres_guru);
-  } catch (e) {
-    console.error(e);
-    Swal.fire("Kesalahan", "Tidak dapat memuat data dashboard.", "error");
-  }
-}
+    /* Footer bawah */
+    footer.main-footer {
+      text-align:center; font-size:13px; color:#64748b; margin-top:30px;
+      line-height:1.5;
+    }
 
-/* ======================================================
-   🔹 Fungsi: Ambil Progress Tiap Mapel
-====================================================== */
-async function loadProgressMapel(token) {
-  try {
-    const res = await fetch(WEBAPP_URL, {
-      method: "POST",
-      body: JSON.stringify({ action: "getProgressMapel", token_sekolah: token })
-    });
-    const data = await res.json();
+    /* Responsif */
+    @media(max-width:900px){
+      .sidebar{position:fixed; transform:translateX(-100%); z-index:50; transition:.3s;}
+      .sidebar.show{transform:translateX(0);}
+      .main-wrap{margin-left:0;}
+    }
+  </style>
+</head>
+<body>
 
-    if (!data.success) throw new Error("Data progres tidak tersedia");
+  <!-- Sidebar kiri -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/logo-erapor.png" alt="Logo eRapor Quantum">
+      <h2>e-Rapor Quantum</h2>
+      <div class="school-name" id="schoolNameTop">Nama Sekolah</div>
+    </div>
 
-    const container = document.getElementById("progressMapelContainer");
-    if (!container) return;
+    <nav>
+      <button class="nav-btn" onclick="goto('home')">🏠 Dashboard</button>
+      <button class="nav-btn" onclick="goto('siswa')">👨‍🎓 Data Siswa</button>
+      <button class="nav-btn" onclick="goto('guru')">👩‍🏫 Data Guru</button>
+      <button class="nav-btn" onclick="goto('mapel')">📘 Data Mapel</button>
+      <button class="nav-btn" onclick="goto('pengembang')">💡 Tentang Pengembang</button>
+    </nav>
 
-    container.innerHTML = "";
-    data.progress.forEach((p) => {
-      const row = document.createElement("div");
-      row.className = "mapel-progress-row";
-      row.innerHTML = `
-        <div class="mapel-label">${p.mapel}</div>
-        <div class="mapel-bar">
-          <div class="mapel-fill" style="width:${p.persen}%;"></div>
+    <footer class="sidebar-footer">© 2025 e-Rapor Quantum</footer>
+  </aside>
+
+  <!-- Main content kanan -->
+  <div class="main-wrap" id="mainWrap">
+    <!-- Header -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <img id="logoSekolah" src="assets/logo-sekolah.png" alt="Logo Sekolah">
+        <div>
+          <div class="welcome-text">Selamat Datang, <span id="namaUser">User</span></div>
+          <div style="font-size:13px;color:#64748b;">(<span id="usernameUser">username</span>)</div>
         </div>
-        <div class="mapel-percent">${p.persen}%</div>
-      `;
-      container.appendChild(row);
-    });
-  } catch (err) {
-    console.error(err);
-  }
-}
+      </div>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
+    </div>
 
-/* ======================================================
-   🔹 Fungsi Tambahan Utility
-====================================================== */
-function setText(id, val) {
-  const el = document.getElementById(id);
-  if (el) el.innerText = val ?? "-";
-}
+    <!-- Cards -->
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">👨‍🎓</div>
+        <h3>Total Siswa</h3>
+        <p id="totalSiswa">0</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👩‍🏫</div>
+        <h3>Total Guru</h3>
+        <p id="totalGuru">0</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📘</div>
+        <h3>Total Mapel</h3>
+        <p id="totalMapel">0</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏫</div>
+        <h3>Total Kelas</h3>
+        <p id="totalKelas">0</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💬</div>
+        <h3>Siswa Perlu Bimbingan</h3>
+        <p id="totalBimbingan">0</p>
+      </div>
+    </div>
 
-function animateProgress(id, val) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.style.width = "0%";
-  setTimeout(() => (el.style.width = (val || 0) + "%"), 100);
-}
+    <!-- Chart Section -->
+    <div class="chart-section">
+      <h3 style="margin-bottom:10px;font-weight:700;color:var(--blue-dark)">Statistik Nilai Rata-rata</h3>
+      <canvas id="chartOverview" height="120"></canvas>
+    </div>
 
-/* ======================================================
-   🔹 Fungsi: Inisialisasi Chart Nilai
-====================================================== */
-function initChart(statistik = {}) {
-  const ctx = document.getElementById("chartOverview");
-  if (!ctx) return;
+    <!-- Progress Section -->
+    <div class="progress-section">
+      <h3 style="margin-bottom:10px;font-weight:700;color:var(--blue-dark)">Progres Pengisian Nilai per Mapel</h3>
+      <div id="progressMapelContainer">
+        <!-- progress bar tiap mapel dimuat lewat JS -->
+      </div>
+    </div>
 
-  new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: statistik.labels || ["Q1", "Q2", "Q3", "Q4"],
-      datasets: [
-        {
-          label: "Rata-rata Nilai",
-          data: statistik.values || [70, 75, 80, 85],
-          backgroundColor: "#3B82F6",
-          borderRadius: 8
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, max: 100 } }
-    }
-  });
-}
+    <!-- Informasi Sekolah -->
+    <div class="chart-section">
+      <h3 style="margin-bottom:10px;font-weight:700;color:var(--blue-dark)">Informasi Sekolah</h3>
+      <div id="infoSchool">Memuat data sekolah...</div>
+    </div>
 
-/* ======================================================
-   🔹 Tentang Pengembang
-====================================================== */
-function showDeveloperInfo() {
-  Swal.fire({
-    title: "Tentang e-Rapor Quantum",
-    html: `
-      <p><strong>e-Rapor Quantum</strong> adalah e-Rapor modern berbasis cloud
-      yang dikembangkan oleh <strong>Dedi Agus Mustofa, S.Pd.SD</strong>.</p>
-      <ul style="text-align:left;margin-top:10px;">
-        <li>⚡ Terintegrasi penuh dengan Google Workspace</li>
-        <li>🔒 Keamanan tinggi dengan token sekolah & login terenkripsi</li>
-        <li>📊 Dashboard premium dengan data real-time</li>
-        <li>🧠 Sistem cerdas otomatisasi deskripsi dan rekap nilai</li>
-      </ul>
-      <p style="margin-top:10px;">Versi 2025 — <strong>e-Rapor Quantum</strong></p>
-    `,
-    icon: "info",
-    confirmButtonText: "Tutup"
-  });
-}
+    <!-- Footer -->
+    <footer class="main-footer">
+      © 2025 e-Rapor Quantum<br>
+      Developed by:<br>
+      <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+    </footer>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
