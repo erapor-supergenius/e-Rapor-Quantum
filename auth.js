@@ -83,10 +83,7 @@ async function registerUser() {
     const data = await resp.json();
 
     if (data && data.success) {
-      // success -> autoplogin
       Swal.fire({ icon:"success", title:"Registrasi Berhasil", text:"Masuk ke dashboard...", showConfirmButton:false, timer:1400, timerProgressBar:true });
-
-      // call login after short delay to ensure storage timing
       setTimeout(() => loginUser(username.trim(), password), 1400);
     } else {
       Swal.fire("Gagal", data.error || data.message || "Gagal registrasi", "error");
@@ -113,18 +110,13 @@ async function loginUser(forceUsername, forcePassword) {
     const data = await resp.json();
 
     if (data && data.success) {
-      // simpan sesi di localStorage
       localStorage.setItem("token_sesi", data.token_sesi || "");
       localStorage.setItem("username", data.username || username.trim());
       localStorage.setItem("nama", data.nama_lengkap || data.username || username.trim());
-
-      // simpan token sekolah expiry (opsional) dan waktu login expire (1 jam)
       const expireAt = Date.now() + (60 * 60 * 1000); // 1 jam
       localStorage.setItem("login_expire", String(expireAt));
 
       Swal.fire({ icon:"success", title:"Login Berhasil", text:"Mengalihkan ke dashboard...", showConfirmButton:false, timer:1200, timerProgressBar:true });
-
-      // berikan sedikit delay agar localStorage benar-benar ready
       setTimeout(()=> { window.location.href = "dashboard.html"; }, 1200);
     } else {
       Swal.fire("Gagal", data.error || data.message || "Login gagal", "error");
@@ -137,3 +129,53 @@ async function loginUser(forceUsername, forcePassword) {
 /* ---------- small helpers for manual navigation ---------- */
 function showRegister(){ _showSection("registerSection"); }
 function showLogin(){ _showSection("loginSection"); }
+
+/* ---------- LUPA PASSWORD (baru) ---------- */
+function lupaPassword() {
+  Swal.fire({
+    title: "Lupa Password?",
+    html: `
+      <input id="lpUsername" class="swal2-input" placeholder="Username">
+      <input id="lpToken" class="swal2-input" placeholder="Token Sekolah">
+      <input id="lpNewPass" type="password" class="swal2-input" placeholder="Password Baru">
+    `,
+    confirmButtonText: "Ubah Password",
+    showCancelButton: true,
+    cancelButtonText: "Batal",
+    preConfirm: () => ({
+      username: document.getElementById("lpUsername").value.trim(),
+      token_unik: document.getElementById("lpToken").value.trim(),
+      password_baru: document.getElementById("lpNewPass").value.trim()
+    })
+  }).then(res => {
+    if (res.isConfirmed) {
+      Swal.fire({
+        title: "Mengubah password...",
+        text: "Mohon tunggu sebentar",
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      fetch(WEBAPP_URL, {
+        method: "POST",
+        body: JSON.stringify({
+          action: "resetPasswordUser",
+          ...res.value
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        Swal.close();
+        Swal.fire({
+          icon: data.success ? "success" : "error",
+          title: data.success ? "Berhasil" : "Gagal",
+          text: data.message
+        });
+      })
+      .catch(() => {
+        Swal.close();
+        Swal.fire("Error", "Gagal terhubung ke server.", "error");
+      });
+    }
+  });
+}
