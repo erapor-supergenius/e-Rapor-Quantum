@@ -3,583 +3,303 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Profil Sekolah — eRapor Quantum</title>
+  <title>e-Rapor Quantum — Profil Sekolah</title>
 
-  <!-- GANTI dengan GAS URL projectmu jika belum ada -->
-  <script>
-    // Jika kamu sudah punya GAS_URL di global project, abaikan atau hapus ini baris:
-    const GAS_URL = "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec"; // <-- GANTI
-  </script>
+  <!-- Chart.js not needed here; SweetAlert2 used for notifications -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    /* ===== Reset & dasar ===== */
     :root{
-      --bg:#0f1724;
-      --card:#0b1220;
-      --muted:#9aa6b2;
-      --accent:#0d6efd; /* biru elegan (active) */
-      --accent-2:#0b5ed7;
-      --glass: rgba(255,255,255,0.03);
-      --radius:12px;
-      --soft: 12px;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      color-scheme: dark;
+      --blue:#1d4ed8;
+      --blue-dark:#0b4ea2;
+      --bg:#f4f7fb;
+      --card-shadow: 0 6px 20px rgba(2,6,23,0.06);
+      --sidebar-grad1:#071030;
+      --sidebar-grad2:#0d3a8a;
+      --accent:#3B82F6;
     }
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#071029 0%, #071a2b 100%); color:#e6eef6}
-    a{color:var(--accent); text-decoration:none}
-    .container{max-width:1100px;margin:28px auto;padding:20px;}
-    .card{
-      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      border: 1px solid rgba(255,255,255,0.04);
-      border-radius: var(--radius);
-      padding:18px;
-      box-shadow: 0 6px 20px rgba(6,11,25,0.6);
-    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#0f172a;min-height:100vh;display:flex;}
 
-    /* ===== Navbar sederhana premium ===== */
-    .navbar {
+    /* SIDEBAR */
+    .sidebar{
+      width:260px;
+      background:linear-gradient(180deg,var(--sidebar-grad1),var(--sidebar-grad2));
+      color:#fff;
+      padding:22px;
       display:flex;
-      align-items:center;
-      gap:16px;
-      padding:12px 16px;
-      border-radius:14px;
-      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-      margin-bottom:18px;
-      box-shadow: inset 0 -1px 0 rgba(255,255,255,0.02);
+      flex-direction:column;
+      position:fixed;
+      left:0; top:0; bottom:0;
+      box-shadow:4px 0 30px rgba(2,6,23,0.14);
+      z-index:40;
     }
-    .brand {
-      display:flex; gap:12px; align-items:center;
-    }
-    .brand .logo {
-      width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      display:inline-flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:18px;
-      box-shadow:0 4px 18px rgba(13,110,253,0.18);
-    }
-    .brand .title { font-size:16px; font-weight:600; color:#eaf4ff; }
+    .brand{ text-align:center; margin-bottom:16px; }
+    .brand .logo-box{ width:88px; height:88px; margin:0 auto 8px; border-radius:12px; display:flex; align-items:center; justify-content:center; background:linear-gradient(135deg,var(--accent),var(--blue-dark)); font-weight:800; font-size:20px; box-shadow:0 8px 24px rgba(11,78,162,0.18); }
+    .brand h2{ margin:0; font-size:18px; font-weight:700; color:#eaf4ff; }
+    .brand .school-name{ font-size:13px; color:#cfe2ff; margin-top:6px; }
 
-    .nav {
-      display:flex; gap:8px; margin-left:24px;
+    nav{ margin-top:12px; display:flex; flex-direction:column; gap:8px; }
+    .nav-item{
+      display:flex; align-items:center; gap:12px; width:100%; text-align:left; padding:10px 12px; border-radius:8px;
+      color:#e6f0ff; background:transparent; border:0; cursor:pointer; margin-bottom:0; font-size:15px; transition: all .18s ease;
     }
-    .nav button {
-      background:transparent;border:0;padding:8px 14px;border-radius:10px;color:var(--muted);font-weight:600;cursor:pointer;
-      transition: all 180ms ease;
-      box-shadow: none;
-    }
-    .nav button:hover { transform: translateY(-2px); color:#fff; background: rgba(255,255,255,0.02); }
-    .nav button.active {
-      background: linear-gradient(180deg, rgba(13,110,253,0.12), rgba(13,110,253,0.08));
-      color: white;
-      border: 1px solid rgba(13,110,253,0.28);
-      box-shadow: 0 6px 18px rgba(13,110,253,0.14);
-      position:relative;
-    }
-    .nav button.active::after{
-      content:""; position:absolute; left:50%; transform:translateX(-50%); bottom:-10px;
-      height:4px; width:36px; border-radius:4px; background:linear-gradient(90deg,var(--accent),var(--accent-2));
-      box-shadow:0 6px 16px rgba(13,110,253,0.12);
-    }
+    .nav-item svg { width:20px; height:20px; flex-shrink:0; }
+    .nav-item:hover{ background: rgba(255,255,255,0.03); transform: translateX(6px); color:#fff; }
+    .nav-item.active{ background: linear-gradient(90deg, rgba(59,130,246,0.12), rgba(11,78,162,0.06)); color:#fff; border-left:4px solid var(--accent); box-shadow:0 8px 20px rgba(11,78,162,0.06); padding-left:10px; }
 
-    /* ===== grid form ===== */
-    .grid {
-      display:grid;
-      grid-template-columns: 1fr 360px;
-      gap:18px;
-    }
-    .form {
-      display:grid;
-      gap:12px;
-    }
-    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px}
-    input[type="text"], input[type="url"], input[type="tel"], input[type="email"], textarea, select {
-      width:100%;
-      padding:10px 12px;
-      border-radius:10px;
-      border:1px solid rgba(255,255,255,0.04);
-      background: rgba(255,255,255,0.02);
-      color: #eaf4ff;
-      outline:none;
-      transition: box-shadow 160ms ease, border-color 160ms ease;
-      font-size:14px;
-    }
-    input:focus, textarea:focus, select:focus {
-      box-shadow: 0 6px 18px rgba(13,110,253,0.08);
-      border-color: rgba(13,110,253,0.6);
-    }
-    textarea{min-height:100px;resize:vertical}
-    .field-row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
-    .btn {
-      display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;border:0;cursor:pointer;font-weight:600;
-      background: linear-gradient(90deg,var(--accent),var(--accent-2));
-      color:#fff; box-shadow: 0 10px 30px rgba(11,78,190,0.18);
-    }
-    .btn.ghost { background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted); box-shadow:none; }
+    .sidebar-footer{ margin-top:auto; font-size:13px; color:#dbeafe; text-align:center; }
 
-    /* ===== panel kanan (preview/logo/info) ===== */
-    .side {
-      display:flex;flex-direction:column;gap:12px;
-      align-items:stretch;
-    }
-    .logo-preview {
-      height:140px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-      border:1px dashed rgba(255,255,255,0.03); background:var(--glass);
-    }
-    .meta { font-size:13px; color:var(--muted); }
+    /* MAIN */
+    .main-wrap{ margin-left:260px; padding:20px; flex:1; transition:margin-left .28s ease; }
 
-    /* ===== toast notifications ===== */
-    #toast-container {
-      position: fixed;
-      right: 20px;
-      bottom: 24px;
-      z-index: 9999;
-      display:flex; flex-direction: column; gap:10px;
+    /* HEADER (top bar inside main) */
+    .topbar{
+      display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px;
     }
-    .toast {
-      min-width: 260px;
-      max-width: 420px;
-      padding: 12px 14px;
-      border-radius: 10px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
-      border: 1px solid rgba(255,255,255,0.04);
-      box-shadow: 0 8px 28px rgba(2,6,23,0.6);
-      color: #eaf4ff;
-      font-weight:600;
+    .topbar .left{
       display:flex; align-items:center; gap:12px;
+      background:#fff; padding:12px; border-radius:12px; box-shadow:var(--card-shadow);
     }
-    .toast.success { border-left: 4px solid #2dd36f; }
-    .toast.error { border-left: 4px solid #ff6b6b; }
-    .small { font-size:13px; color:var(--muted); font-weight:500 }
+    .school-logo{ width:72px; height:72px; object-fit:cover; border-radius:10px; border:2px solid rgba(11,78,162,0.06); }
+    .welcome { line-height:1; }
+    .welcome .title{ font-weight:700; font-size:16px; color:var(--blue-dark); }
+    .welcome .subtitle{ font-size:13px; color:#64748b; }
 
-    /* responsive */
-    @media (max-width: 920px){
-      .grid{ grid-template-columns: 1fr; }
-      .nav { margin-left:12px; flex-wrap:wrap; }
+    .topbar .right { display:flex; align-items:center; gap:12px; }
+    .logout-btn { background:#ef4444; color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; }
+
+    /* card / form */
+    .card-grid{ display:grid; grid-template-columns:1fr; gap:14px; margin-bottom:18px; }
+    .card{ background:#fff; border-radius:12px; padding:14px; box-shadow:var(--card-shadow); }
+    .grid { display:grid; grid-template-columns: 1fr 360px; gap:18px; align-items:start; }
+
+    label{font-size:13px;color:#64748b;display:block;margin-bottom:6px}
+    input, textarea, select { width:100%; padding:10px 12px;border-radius:10px;border:1px solid rgba(15,23,42,0.06); background:#fbfdff; color:#0f172a; outline:none; }
+    input:focus, textarea:focus, select:focus { box-shadow: 0 6px 18px rgba(59,130,246,0.08); border-color: rgba(59,130,246,0.4); }
+
+    .field-row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    .btn { display:inline-flex; gap:10px; align-items:center; padding:10px 14px; border-radius:10px; border:0; cursor:pointer; font-weight:700;
+           background: linear-gradient(90deg,var(--accent),var(--blue-dark)); color:#fff; box-shadow: 0 10px 30px rgba(11,78,190,0.12);}
+    .btn.ghost { background:transparent; border:1px solid rgba(15,23,42,0.04); color:#0f172a; box-shadow:none; }
+
+    .logo-preview { height:140px;border-radius:10px;display:flex;align-items:center;justify-content:center;border:1px dashed rgba(15,23,42,0.04); background:#fbfdff; }
+
+    .small { font-size:13px; color:#64748b; }
+
+    @media (max-width: 980px){
+      .sidebar{ transform:translateX(-100%); position:fixed; z-index:50; }
+      .sidebar.show{ transform:translateX(0); }
+      .main-wrap{ margin-left:0; padding:12px; }
+      .grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card">
-      <div class="navbar">
-        <div class="brand">
-          <div class="logo">EQ</div>
-          <div>
-            <div class="title">e-Rapor Quantum</div>
-            <div class="small">Profil Sekolah</div>
-          </div>
-        </div>
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="logo-box">EQ</div>
+      <h2>e-Rapor Quantum</h2>
+      <div class="school-name" id="schoolNameTop">Nama Sekolah</div>
+    </div>
 
-        <div class="nav" role="navigation" aria-label="Main nav">
-          <button data-link="dashboard" id="nav-dashboard">Dashboard</button>
-          <button data-link="profil" id="nav-profil" class="active">Profil</button>
-          <button data-link="siswa" id="nav-siswa">Siswa</button>
-          <button data-link="nilai" id="nav-nilai">Nilai</button>
-        </div>
+    <nav aria-label="Main navigation">
+      <button class="nav-item" data-link="dashboard.html" onclick="navigateTo('dashboard.html')">
+        <!-- SVG: chart / dashboard -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M3 13h4V3H3v10zM10 21h4V3h-4v18zM17 21h4V11h-4v10z" fill="currentColor"/></svg>
+        <span>Dashboard</span>
+      </button>
 
-        <div style="margin-left:auto; display:flex; gap:8px; align-items:center">
-          <button class="btn ghost" id="btn-logout">Logout</button>
-          <button class="btn" id="btn-save">Simpan Profil</button>
+      <button class="nav-item active" data-link="profil_sekolah.html" onclick="navigateTo('profil_sekolah.html')">
+        <!-- SVG: building / school -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M12 2L2 7v2h20V7L12 2zM6 12v8h4v-6h4v6h4v-8H6z" fill="currentColor"/></svg>
+        <span>Profil Sekolah</span>
+      </button>
+
+      <button class="nav-item" data-link="data_siswa.html" onclick="navigateTo('data_siswa.html')">
+        <!-- SVG: graduation cap (elegant) -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M12 2L1 7l11 5 9-4.09V17h2V7L12 2zM11 12.2L3.1 8 11 4.8 18.9 9 11 12.2z" fill="currentColor"/></svg>
+        <span>Data Siswa</span>
+      </button>
+
+      <button class="nav-item" data-link="input_nilai_cp.html" onclick="navigateTo('input_nilai_cp.html')">
+        <!-- SVG: document-edit -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M14 2H6a2 2 0 0 0-2 2v16l4-2h8a2 2 0 0 0 2-2V6l-4-4zM7 7h6v2H7V7z" fill="currentColor"/></svg>
+        <span>Input Nilai CP</span>
+      </button>
+
+      <button class="nav-item" data-link="cetak.html" onclick="navigateTo('cetak.html')">
+        <!-- SVG: printer -->
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden focusable="false"><path d="M19 8H5V3h14v5zM7 21h10v-6H7v6zM17 12v3H7v-3h10z" fill="currentColor"/></svg>
+        <span>Cetak Rapor</span>
+      </button>
+    </nav>
+
+    <footer class="sidebar-footer">
+      © 2025 e-Rapor Quantum<br>
+      <strong>Dedi Agus M.</strong>
+    </footer>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-wrap">
+    <div class="topbar">
+      <div class="left">
+        <img id="logoSekolah" class="school-logo" src="assets/logo_erapor.png" alt="Logo Sekolah">
+        <div class="welcome">
+          <div class="title">Selamat Datang, <span id="namaUser">Admin</span></div>
+          <div class="subtitle" id="usernameUser">username</div>
         </div>
       </div>
 
-      <div class="grid" style="margin-top:12px">
-        <!-- FORM UTAMA -->
-        <div>
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-            <h3 style="margin:0">Data Profil Sekolah</h3>
-            <div class="small meta">Semua field sesuai header sheet <strong>profil_sekolah</strong>.</div>
-          </div>
-
-          <form id="formProfil" class="form" autocomplete="off" onsubmit="return false;">
-            <!-- baris 1 -->
-            <div class="field-row">
-              <div>
-                <label for="token_sekolah">Token Sekolah</label>
-                <input id="token_sekolah" name="token_sekolah" type="text" placeholder="Token sekolah (digunakan utk identifikasi)">
-              </div>
-              <div>
-                <label for="nama_sekolah">Nama Sekolah</label>
-                <input id="nama_sekolah" name="nama_sekolah" type="text" placeholder="Nama sekolah">
-              </div>
-            </div>
-
-            <!-- baris 2 -->
-            <div class="field-row">
-              <div>
-                <label for="nss">NSS</label>
-                <input id="nss" name="nss" type="text" placeholder="NSS">
-              </div>
-              <div>
-                <label for="npsn">NPSN</label>
-                <input id="npsn" name="npsn" type="text" placeholder="NPSN">
-              </div>
-            </div>
-
-            <!-- alamat & status -->
-            <div class="field-row">
-              <div>
-                <label for="status_sekolah">Status Sekolah</label>
-                <select id="status_sekolah" name="status_sekolah">
-                  <option value="">Pilih status</option>
-                  <option value="Negeri">Negeri</option>
-                  <option value="Swasta">Swasta</option>
-                </select>
-              </div>
-              <div>
-                <label for="alamat_sekolah">Alamat Sekolah</label>
-                <input id="alamat_sekolah" name="alamat_sekolah" type="text" placeholder="Alamat lengkap">
-              </div>
-            </div>
-
-            <!-- locality -->
-            <div class="field-row">
-              <div>
-                <label for="kelurahan_desa">Kelurahan / Desa</label>
-                <input id="kelurahan_desa" name="kelurahan_desa" type="text">
-              </div>
-              <div>
-                <label for="kecamatan">Kecamatan</label>
-                <input id="kecamatan" name="kecamatan" type="text">
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div>
-                <label for="kabupaten_kota">Kabupaten / Kota</label>
-                <input id="kabupaten_kota" name="kabupaten_kota" type="text">
-              </div>
-              <div>
-                <label for="provinsi">Provinsi</label>
-                <input id="provinsi" name="provinsi" type="text">
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div>
-                <label for="website">Website</label>
-                <input id="website" name="website" type="url" placeholder="https://">
-              </div>
-              <div>
-                <label for="email">Email</label>
-                <input id="email" name="email" type="email" placeholder="admin@sekolah.sch.id">
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div>
-                <label for="telepon">Telepon</label>
-                <input id="telepon" name="telepon" type="tel" placeholder="(021) 123456">
-              </div>
-              <div>
-                <label for="kepala_sekolah">Kepala Sekolah</label>
-                <input id="kepala_sekolah" name="kepala_sekolah" type="text" placeholder="Nama kepala sekolah">
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div>
-                <label for="nip_kepsek">NIP Kepala Sekolah</label>
-                <input id="nip_kepsek" name="nip_kepsek" type="text">
-              </div>
-              <div>
-                <label for="url_logo">URL Logo</label>
-                <input id="url_logo" name="url_logo" type="url" placeholder="https://.../logo.png">
-              </div>
-            </div>
-
-            <div class="field-row">
-              <div>
-                <label for="kabupaten_kota_rapor">Kab/Kota Rapor</label>
-                <input id="kabupaten_kota_rapor" name="kabupaten_kota_rapor" type="text">
-              </div>
-              <div>
-                <label for="tanggal_rapor">Tanggal Rapor (YYYY-MM-DD)</label>
-                <input id="tanggal_rapor" name="tanggal_rapor" type="text" placeholder="2025-10-23">
-              </div>
-            </div>
-
-            <div>
-              <label for="alamat_lain">Catatan / Alamat tambahan</label>
-              <textarea id="alamat_lain" name="alamat_lain" placeholder="Optional..."></textarea>
-            </div>
-
-            <div style="display:flex; gap:10px; margin-top:6px;">
-              <button id="btn-save-2" class="btn" type="button">Simpan Profil</button>
-              <button id="btn-refresh" class="btn ghost" type="button">Muat Ulang</button>
-            </div>
-          </form>
-        </div>
-
-        <!-- PANEL KANAN -->
-        <div class="side">
-          <div class="card" style="padding:12px">
-            <div style="display:flex;gap:12px;align-items:center">
-              <div class="logo-preview" id="logoPreview">
-                <div style="text-align:center;color:var(--muted)">
-                  <div style="font-weight:700;font-size:20px">EQ</div>
-                  <div class="small">Logo Sekolah</div>
-                </div>
-              </div>
-              <div style="flex:1">
-                <div style="font-weight:700" id="previewNama">Nama Sekolah</div>
-                <div class="meta small" id="previewAlamat">Alamat singkat</div>
-                <div style="margin-top:10px" class="small meta" id="previewKontak">Email / Telepon</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="card" style="padding:12px">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <div style="font-weight:700">Informasi</div>
-                <div class="small meta">Ringkasan profil yang tersimpan</div>
-              </div>
-              <div>
-                <button id="btn-init-ensure" class="btn ghost" title="Pastikan header sheet lengkap">Init Headers</button>
-              </div>
-            </div>
-
-            <div style="margin-top:12px" class="small meta">
-              - Sistem akan menyimpan profil pada baris ke-2 sheet <code>profil_sekolah</code> (sesuai konfigurasi Apps Script).<br>
-              - Field mengikuti header sheet yang didefinisikan di Apps Script. :contentReference[oaicite:1]{index=1}
-            </div>
-          </div>
-
-          <div style="height:1px"></div>
-        </div>
+      <div class="right">
+        <div id="navCenterText" style="color:#0f172a;font-weight:700;">Profil Sekolah</div>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
       </div>
     </div>
-  </div>
 
-  <!-- Toast container -->
-  <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+    <section class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <h3 style="margin:0">Data Profil Sekolah</h3>
+          <div class="small">Kelola data profil sekolah — akan tampil pada header rapor.</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button id="btn-refresh" class="btn ghost">Muat Ulang</button>
+          <button id="btn-save" class="btn">Simpan Profil</button>
+        </div>
+      </div>
+    </section>
 
-  <script>
-    /* =========================
-       Utility notif / toast
-       ========================= */
-    const toastContainer = document.getElementById('toast-container');
-    function showToast(message, type='success', ttl=3800){
-      const t = document.createElement('div');
-      t.className = 'toast ' + (type==='error' ? 'error' : 'success');
-      t.innerHTML = '<div style="flex:1">'+ message +'</div>';
-      toastContainer.appendChild(t);
-      setTimeout(()=> { t.style.opacity = '0'; t.style.transform = 'translateY(10px)'; }, ttl - 450);
-      setTimeout(()=> t.remove(), ttl);
-    }
+    <div class="grid">
+      <!-- FORM -->
+      <section class="card">
+        <form id="formProfil" onsubmit="return false;">
+          <div class="field-row">
+            <div>
+              <label for="nama_sekolah">Nama Sekolah</label>
+              <input id="nama_sekolah" name="nama_sekolah" type="text" placeholder="Nama sekolah">
+            </div>
+            <div>
+              <label for="nss">NSS</label>
+              <input id="nss" name="nss" type="text">
+            </div>
+          </div>
 
-    /* =========================
-       Navbar active handling
-       ========================= */
-    document.querySelectorAll('.nav button').forEach(btn=>{
-      btn.addEventListener('click', (e)=>{
-        document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
-        btn.classList.add('active');
-        // jika kamu ingin redirect ke halaman lain: gunakan data-link
-        // contoh: location.href = btn.dataset.link + '.html';
-      });
-    });
+          <div class="field-row">
+            <div>
+              <label for="npsn">NPSN</label>
+              <input id="npsn" name="npsn" type="text">
+            </div>
+            <div>
+              <label for="status_sekolah">Status Sekolah</label>
+              <select id="status_sekolah" name="status_sekolah">
+                <option value="">Pilih</option><option value="Negeri">Negeri</option><option value="Swasta">Swasta</option>
+              </select>
+            </div>
+          </div>
 
-    /* =========================
-       Helper: form <-> object mapping
-       Fields sesuai header profil_sekolah pada kode GS yang dikirim. :contentReference[oaicite:2]{index=2}
-       Headers: token_sekolah, nama_sekolah, nss, npsn, status_sekolah,
-                alamat_sekolah, kelurahan_desa, kecamatan, kabupaten_kota,
-                provinsi, website, email, telepon, kepala_sekolah,
-                nip_kepsek, url_logo, kabupaten_kota_rapor, tanggal_rapor
-    ========================= */
-    const FIELDS = [
-      'token_sekolah','nama_sekolah','nss','npsn','status_sekolah','alamat_sekolah',
-      'kelurahan_desa','kecamatan','kabupaten_kota','provinsi','website','email',
-      'telepon','kepala_sekolah','nip_kepsek','url_logo','kabupaten_kota_rapor','tanggal_rapor'
-    ];
+          <div>
+            <label for="alamat_sekolah">Alamat Sekolah</label>
+            <input id="alamat_sekolah" name="alamat_sekolah" type="text">
+          </div>
 
-    function getFormData(){
-      const o = {};
-      FIELDS.forEach(f => {
-        const el = document.getElementById(f);
-        if (el) o[f] = el.value.trim();
-      });
-      // include extra if any
-      const extra = document.getElementById('alamat_lain');
-      if(extra) o.alamat_lain = extra.value.trim();
-      return o;
-    }
-    function setFormData(obj){
-      FIELDS.forEach(f => {
-        const el = document.getElementById(f);
-        if (el) el.value = obj[f] || '';
-      });
-      const extra = document.getElementById('alamat_lain');
-      if(extra) extra.value = obj.alamat_lain || '';
-      refreshPreview();
-    }
+          <div class="field-row">
+            <div>
+              <label for="kelurahan_desa">Kelurahan / Desa</label>
+              <input id="kelurahan_desa" name="kelurahan_desa" type="text">
+            </div>
+            <div>
+              <label for="kecamatan">Kecamatan</label>
+              <input id="kecamatan" name="kecamatan" type="text">
+            </div>
+          </div>
 
-    /* =========================
-       Preview logo + info
-    ========================= */
-    const logoPreview = document.getElementById('logoPreview');
-    function refreshPreview(){
-      const nama = document.getElementById('nama_sekolah').value || 'Nama Sekolah';
-      const alamat = document.getElementById('alamat_sekolah').value || '';
-      const email = document.getElementById('email').value || '';
-      const telepon = document.getElementById('telepon').value || '';
+          <div class="field-row">
+            <div>
+              <label for="kabupaten_kota">Kabupaten / Kota</label>
+              <input id="kabupaten_kota" name="kabupaten_kota" type="text">
+            </div>
+            <div>
+              <label for="provinsi">Provinsi</label>
+              <input id="provinsi" name="provinsi" type="text">
+            </div>
+          </div>
 
-      document.getElementById('previewNama').textContent = nama;
-      document.getElementById('previewAlamat').textContent = alamat;
-      document.getElementById('previewKontak').textContent = [email, telepon].filter(Boolean).join(' • ');
+          <div class="field-row">
+            <div>
+              <label for="website">Website</label>
+              <input id="website" name="website" type="url" placeholder="https://">
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email">
+            </div>
+          </div>
 
-      const url = document.getElementById('url_logo').value || '';
-      if (url) {
-        logoPreview.innerHTML = '<img src="'+escapeHtml(url)+'" alt="Logo" style="max-height:120px; max-width:100%; object-fit:contain; border-radius:8px;">';
-      } else {
-        logoPreview.innerHTML = '<div style="text-align:center;color:var(--muted)"><div style="font-weight:700;font-size:20px">EQ</div><div class="small">Logo Sekolah</div></div>';
-      }
-    }
-    function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+          <div class="field-row">
+            <div>
+              <label for="telepon">Telepon</label>
+              <input id="telepon" name="telepon" type="tel">
+            </div>
+            <div>
+              <label for="kepala_sekolah">Kepala Sekolah</label>
+              <input id="kepala_sekolah" name="kepala_sekolah" type="text">
+            </div>
+          </div>
 
-    /* update preview on url/nama/.. change */
-    ['url_logo','nama_sekolah','alamat_sekolah','email','telepon'].forEach(id=>{
-      const el = document.getElementById(id);
-      if (el) el.addEventListener('input', refreshPreview);
-    });
+          <div class="field-row">
+            <div>
+              <label for="nip_kepsek">NIP Kepala Sekolah</label>
+              <input id="nip_kepsek" name="nip_kepsek" type="text">
+            </div>
+            <div>
+              <label for="url_logo">URL Logo</label>
+              <input id="url_logo" name="url_logo" type="url" placeholder="https://.../logo.png">
+            </div>
+          </div>
 
-    /* =========================
-       Fetch wrapper untuk doPost
-       expects { action: "...", ...payload }
-    ========================= */
-    async function gsPost(body){
-      if (!window.GAS_URL && !GAS_URL) {
-        console.error('GAS_URL tidak ditemukan. Set GAS_URL di file JS/HTML kamu.');
-        showToast('Gagal: GAS_URL belum diset. Periksa konfigurasi.', 'error', 4200);
-        throw new Error('GAS_URL not set');
-      }
-      const url = (typeof GAS_URL !== 'undefined') ? GAS_URL : window.GAS_URL;
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {'Content-Type':'application/json'},
-        body: JSON.stringify(body)
-      });
-      return res.json();
-    }
+          <div class="field-row">
+            <div>
+              <label for="kabupaten_kota_rapor">Kab/Kota Rapor</label>
+              <input id="kabupaten_kota_rapor" name="kabupaten_kota_rapor" type="text">
+            </div>
+            <div>
+              <label for="tanggal_rapor">Tanggal Rapor (YYYY-MM-DD)</label>
+              <input id="tanggal_rapor" name="tanggal_rapor" type="text" placeholder="2025-10-23">
+            </div>
+          </div>
 
-    /* =========================
-       Load profil dari server (getProfilSekolah)
-       - body.action = "getProfilSekolah"
-       - expects token in payload (token_sekolah or token_sesi)
-    ========================= */
-    async function loadProfil(token){
-      try {
-        const payload = { action: 'getProfilSekolah', token_sekolah: token || document.getElementById('token_sekolah').value || '' };
-        const r = await gsPost(payload);
-        if (r && r.success && r.profil){
-          // r.profil may have keys normalized (see gs) - so use direct mapping by header names
-          setFormData(r.profil || {});
-          showToast('Profil berhasil dimuat.');
-        } else {
-          // Jika sheet kosong, kosongkan form
-          setFormData({});
-          if(r && r.message) showToast(r.message, 'error');
-          else showToast('Profil tidak ditemukan atau belum terisi.', 'error');
-        }
-      } catch (err) {
-        console.error(err);
-        showToast('Gagal memuat profil: ' + (err.message||err), 'error', 5200);
-      }
-    }
+          <div style="display:flex;gap:10px;margin-top:12px">
+            <button id="btn-save-2" class="btn" type="button">Simpan Profil</button>
+            <button id="btn-init-ensure" class="btn ghost" type="button">Init Headers</button>
+          </div>
+        </form>
+      </section>
 
-    /* =========================
-       Simpan profil (saveProfilSekolah)
-    ========================= */
-    async function saveProfil(){
-      try {
-        const data = getFormData();
-        if (!data.token_sekolah || data.token_sekolah.length < 3){
-          showToast('Token sekolah wajib diisi agar data tersimpan.', 'error', 3800);
-          return;
-        }
-        const payload = { action: 'saveProfilSekolah', token_sekolah: data.token_sekolah, data: data };
-        const r = await gsPost(payload);
-        if (r && r.success){
-          showToast('Profil tersimpan ✔');
-        } else {
-          showToast('Gagal simpan: ' + (r.error || r.message || 'unknown'), 'error', 5200);
-        }
-      } catch (err) {
-        console.error(err);
-        showToast('Gagal simpan: ' + (err.message||err), 'error', 5200);
-      }
-    }
+      <!-- PREVIEW -->
+      <aside class="card">
+        <div style="display:flex;gap:12px;align-items:center">
+          <div class="logo-preview" id="logoPreview">
+            <div style="text-align:center;color:#64748b"><div style="font-weight:700;font-size:20px">EQ</div><div style="font-size:13px">Logo Sekolah</div></div>
+          </div>
+          <div>
+            <div id="previewNama" style="font-weight:700">Nama Sekolah</div>
+            <div id="previewAlamat" style="color:#64748b;font-size:13px">Alamat singkat</div>
+            <div id="previewKontak" style="color:#64748b;font-size:13px;margin-top:8px">Email • Telp</div>
+          </div>
+        </div>
 
-    /* =========================
-       Event listeners untuk tombol
-    ========================= */
-    document.getElementById('btn-save').addEventListener('click', saveProfil);
-    document.getElementById('btn-save-2').addEventListener('click', saveProfil);
-    document.getElementById('btn-refresh').addEventListener('click', ()=> {
-      const tok = document.getElementById('token_sekolah').value || '';
-      if (!tok) return showToast('Masukkan token sekolah lalu klik Muat Ulang.', 'error');
-      loadProfil(tok);
-    });
+        <hr style="margin:12px 0;border:none;border-top:1px solid rgba(15,23,42,0.04)" />
+        <div class="small">Sistem menyimpan profil pada baris ke-2 sheet <code>profil_sekolah</code>. Pastikan token/unik identifier benar saat load/save.</div>
+      </aside>
+    </div>
 
-    document.getElementById('btn-init-ensure').addEventListener('click', async ()=>{
-      try {
-        const token = document.getElementById('token_sekolah').value || '';
-        if(!token) return showToast('Token sekolah diperlukan untuk inisialisasi headers.', 'error');
-        const r = await gsPost({ action: 'initEnsure', token_sekolah: token });
-        if (r && r.success) {
-          showToast('Headers berhasil dipastikan di spreadsheet.');
-        } else {
-          showToast('Gagal inisialisasi: ' + (r.error || r.message || 'unknown'), 'error');
-        }
-      } catch (e){
-        console.error(e); showToast('Gagal inisialisasi: ' + (e.message||e), 'error');
-      }
-    });
+    <footer style="text-align:center;margin-top:20px;color:#94a3b8">© 2025 e-Rapor Quantum — Developed by Dedi Agus Mustofa</footer>
+  </main>
 
-    /* Logout placeholder (sesuaikan dengan mekanisme autentikasi di projectmu) */
-    document.getElementById('btn-logout').addEventListener('click', async ()=>{
-      try {
-        // Jika kamu menyimpan token_sesi di localStorage: kirim ke backend logout
-        const token_sesi = localStorage.getItem('token_sesi') || '';
-        if (!token_sesi) {
-          localStorage.removeItem('token_sesi');
-          showToast('Logout (lokal) berhasil.');
-          return;
-        }
-        const r = await gsPost({ action: 'logout', token_sesi: token_sesi });
-        if (r && r.success) {
-          localStorage.removeItem('token_sesi');
-          showToast('Logout berhasil.');
-        } else showToast('Logout gagal: ' + (r.error||r.message), 'error');
-      } catch (e){
-        console.error(e); showToast('Logout error: ' + (e.message||e), 'error');
-      }
-    });
-
-    /* =========================
-       Auto load if token_sesi or token_sekolah sudah ada
-    ========================= */
-    (function init(){
-      // try token_sekolah from localStorage or input
-      const token_sesi = localStorage.getItem('token_sesi') || '';
-      const token_sekolah = document.getElementById('token_sekolah').value || localStorage.getItem('token_sekolah') || '';
-      if (token_sekolah) {
-        document.getElementById('token_sekolah').value = token_sekolah;
-        loadProfil(token_sekolah);
-      } else if (token_sesi) {
-        // if only token_sesi, pass as payload
-        (async ()=> {
-          try {
-            const r = await gsPost({ action: 'getProfilSekolah', token_sesi: token_sesi });
-            if (r && r.success && r.profil) {
-              setFormData(r.profil);
-              showToast('Profil dimuat (token sesi).');
-            }
-          } catch(e){}
-        })();
-      }
-    })();
-
-  </script>
+  <!-- external script (letakkan di root: profil_sekolah.js) -->
+  <script src="profil_sekolah.js"></script>
 </body>
 </html>
