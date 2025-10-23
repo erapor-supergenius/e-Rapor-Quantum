@@ -82,6 +82,17 @@
 
     /* spacing helper */
     .space-y-3 > * + *{ margin-top:12px; }
+
+    <style>
+    .text-blue-700 {
+      transition: all 0.3s ease;
+    }
+    .text-blue-700:hover {
+      color: #1d4ed8; /* biru lebih gelap */
+      text-decoration: underline;
+    }
+    </style>
+
   </style>
 </head>
 <body>
@@ -110,7 +121,13 @@
     <div id="loginSection" class="mt-4 space-y-3 fade hidden" style="display:none">
       <input id="usernameLogin" class="input" placeholder="Username" aria-label="Username login">
       <input id="passwordLogin" class="input" type="password" placeholder="Password" aria-label="Password login">
+      
       <button id="btnLogin" onclick="loginUser()" class="btn btn-blue">Masuk</button>
+
+      <!-- Tambahkan ini di bawah tombol login -->
+      <div class="text-sm text-blue-700 cursor-pointer hover:underline mt-2 text-center"
+       onclick="lupaPassword()">Lupa password?</div>
+
       <div>
         <span class="small-link" onclick="showRegister()">Belum punya akun? Daftar</span>
       </div>
