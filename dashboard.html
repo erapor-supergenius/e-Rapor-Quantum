@@ -2,274 +2,213 @@
 <html lang="id">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>e-Rapor Quantum — Dashboard</title>
 
-  <!-- SweetAlert2 & Chart.js (dipakai oleh dashboard.js) -->
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    /* ===== GLOBAL ===== */
-    * { box-sizing: border-box; }
-    body { margin:0; font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background:#f4f7fb; color:#0f172a; }
-    a{ color:inherit; text-decoration:none; }
-
-    /* ===== HEADER (Logo e-Rapor centered above navbar) ===== */
-    .header-top {
-      text-align:center;
-      padding:22px 12px 12px 12px;
-      background: linear-gradient(180deg,#ffffff00,#ffffff00);
+    :root {
+      --blue:#1d4ed8;
+      --blue-dark:#1e3a8a;
+      --bg:#f8fafc;
     }
-    .erapor-logo {
-      width:110px; height:110px; object-fit:cover; border-radius:18px;
-      border:4px solid rgba(13,74,161,0.12); background:linear-gradient(180deg,#e6f0ff,#fff);
-      display:block; margin:0 auto;
+    body {
+      margin:0; font-family:"Inter",system-ui,sans-serif;
+      background:var(--bg); color:#0f172a;
+      display:flex; min-height:100vh; overflow-x:hidden;
     }
-    .erapor-title { font-size:22px; color:#0b4ea2; font-weight:800; margin-top:10px; }
-    .school-name-top { margin-top:6px; color:#475569; font-weight:600; font-size:14px; }
-
-    /* ===== NAVBAR ===== */
-    .navbar {
-      display:flex; align-items:center; justify-content:space-between;
-      background:linear-gradient(90deg,#0b4ea2,#0057b8);
-      padding:10px 18px; color:#fff;
-      box-shadow: 0 6px 18px rgba(11,78,162,0.08);
+    /* Sidebar kiri */
+    .sidebar {
+      width:260px; background:linear-gradient(180deg,#0f172a,#1e40af);
+      color:white; padding:22px; display:flex; flex-direction:column;
+      position:fixed; top:0; bottom:0; left:0;
+      box-shadow:4px 0 30px rgba(2,6,23,0.15);
     }
-    .nav-left { display:flex; align-items:center; gap:12px; }
-    .menu-btn { background:transparent; border:1px solid rgba(255,255,255,0.16); color:#fff; padding:8px 10px; border-radius:8px; cursor:pointer; font-weight:700; }
-    .nav-center { color:#fff; font-weight:700; }
-    .nav-right { display:flex; align-items:center; gap:12px; }
-    .user-welcome { font-weight:700; }
-    .logout-btn { background:#ff5a5f; border:0; color:#fff; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; }
-
-    /* ===== LAYOUT ===== */
-    .container { display:flex; gap:20px; padding:20px; max-width:1200px; margin:0 auto; }
-    .main { flex:1; }
-
-    /* logo sekolah + user row */
-    .top-row { display:flex; gap:18px; align-items:center; margin-bottom:14px; }
-    .sekolah-logo {
-      width:88px; height:88px; border-radius:10px; object-fit:cover; border:2px solid rgba(11,78,162,0.08);
+    .sidebar .brand {
+      text-align:center; margin-bottom:24px;
     }
-    .welcome-block { flex:1; }
-    .welcome-block .welcome-text { font-size:16px; color:#0b4ea2; font-weight:700; }
-    .welcome-block .welcome-sub { font-size:13px; color:#64748b; }
+    .sidebar .brand img {
+      width:90px; margin:0 auto 6px auto; border-radius:12px;
+    }
+    .sidebar h2 { font-size:18px; font-weight:700; margin:6px 0 0; }
+    .sidebar .school-name { font-size:13px; color:#cbd5e1; }
+    .nav-btn {
+      display:block; width:100%; padding:10px 14px; border:0;
+      background:transparent; text-align:left; border-radius:8px;
+      color:#e2e8f0; font-size:15px; margin-bottom:6px; cursor:pointer;
+    }
+    .nav-btn:hover { background:rgba(255,255,255,0.08); }
+    footer.sidebar-footer {
+      margin-top:auto; text-align:center; font-size:12px; color:#cbd5e1;
+    }
 
-    /* ===== CARDS ===== */
-    .cards { display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:16px; margin-bottom:18px; }
-    .card { background:#fff; border-radius:12px; padding:14px; box-shadow:0 8px 20px rgba(2,6,23,0.05); display:flex; gap:12px; align-items:center; }
-    .card .icon { width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:20px; color:#fff; }
-    .card .meta { flex:1; }
-    .card .meta .label { font-size:13px; color:#64748b; font-weight:600; }
-    .card .meta .value { font-size:20px; font-weight:800; color:#0b4ea2; margin-top:6px; }
+    /* Main content kanan */
+    .main-wrap {
+      margin-left:260px; flex:1; padding:22px; transition:margin-left .3s;
+    }
 
-    .icon.guru { background:linear-gradient(135deg,#06b6d4,#0078d7); }
-    .icon.siswa { background:linear-gradient(135deg,#f97316,#fb8c00); }
-    .icon.mapel { background:linear-gradient(135deg,#7c3aed,#5b21b6); }
-    .icon.kelas { background:linear-gradient(135deg,#16a34a,#059669); }
-    .icon.bimbingan { background:linear-gradient(135deg,#ef4444,#f97316); }
+    /* Header */
+    .topbar {
+      display:flex; justify-content:space-between; align-items:center;
+      flex-wrap:wrap; margin-bottom:18px; background:white;
+      border-radius:12px; box-shadow:0 3px 12px rgba(0,0,0,0.05);
+      padding:14px 18px;
+    }
+    .topbar-left { display:flex; align-items:center; gap:12px; }
+    .topbar-left img { width:60px; border-radius:10px; }
+    .welcome-text { font-weight:700; font-size:18px; color:var(--blue-dark); }
+    .logout-btn {
+      background:#ef4444; color:white; border:0; padding:8px 14px;
+      border-radius:8px; cursor:pointer;
+    }
 
-    /* ===== CHART & PROGRESS ===== */
-    .card-full { background:#fff; border-radius:12px; padding:18px; box-shadow:0 8px 20px rgba(2,6,23,0.05); margin-bottom:18px; }
-    .chart-title { font-weight:700; color:#0b4ea2; margin-bottom:8px; }
-    .mapel-progress { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
-    .mapel-row { display:flex; align-items:center; gap:12px; }
-    .mapel-name { flex:1; color:#0f172a; font-weight:600; }
-    .mapel-bar { width:320px; max-width:45%; height:12px; background:#e6eefb; border-radius:999px; overflow:hidden; }
-    .mapel-bar > span { display:block; height:100%; width:0%; background:linear-gradient(90deg,#00b4d8,#0078d7); transition: width .9s ease-in-out; }
+    /* Grid card */
+    .card-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+      gap:14px; margin-bottom:20px;
+    }
+    .card {
+      background:white; border-radius:12px; padding:16px; text-align:center;
+      box-shadow:0 4px 16px rgba(0,0,0,0.05);
+    }
+    .card-icon {
+      font-size:28px; margin-bottom:8px; color:var(--blue);
+    }
+    .card h3 {
+      font-size:14px; color:#475569; margin:4px 0;
+    }
+    .card p {
+      font-size:22px; font-weight:700; margin:0; color:var(--blue-dark);
+    }
 
-    /* ===== INFO SEKOLAH ===== */
-    .info-school { margin-top:14px; color:#475569; }
+    /* Chart dan progress */
+    .chart-section, .progress-section {
+      background:white; border-radius:12px; padding:20px; margin-bottom:20px;
+      box-shadow:0 4px 16px rgba(0,0,0,0.05);
+    }
+    .progress-row {
+      display:flex; align-items:center; margin-bottom:10px; gap:10px;
+    }
+    .progress-row .mapel-label { flex:1; font-size:14px; }
+    .progress-bar {
+      flex:3; background:#e2e8f0; border-radius:10px; height:10px; overflow:hidden;
+    }
+    .progress-fill {
+      background:var(--blue); height:100%; width:0; border-radius:10px;
+      transition:width .6s ease;
+    }
+    .progress-row .percent { width:50px; text-align:right; font-size:13px; }
 
-    /* ===== FOOTER ===== */
-    .footer { text-align:center; margin:26px 0 30px 0; color:#64748b; font-size:14px; line-height:1.6; }
-    .footer strong { color:#0b4ea2; }
+    /* Footer bawah */
+    footer.main-footer {
+      text-align:center; font-size:13px; color:#64748b; margin-top:30px;
+      line-height:1.5;
+    }
 
-    /* ===== RESPONSIVE ===== */
-    @media (max-width:900px){
-      .container { padding:16px; flex-direction:column; }
-      .mapel-bar { max-width:100%; width:100%; }
-      .chart-canvas { height:180px !important; }
+    /* Responsif */
+    @media(max-width:900px){
+      .sidebar{position:fixed; transform:translateX(-100%); z-index:50; transition:.3s;}
+      .sidebar.show{transform:translateX(0);}
+      .main-wrap{margin-left:0;}
     }
   </style>
 </head>
 <body>
 
-  <!-- HEADER (logo e-Rapor centered) -->
-  <div class="header-top">
-    <img src="assets/logo-erapor.png" alt="e-Rapor Quantum" class="erapor-logo" id="eraporLogo">
-    <div class="erapor-title">e-Rapor Quantum</div>
-    <div class="school-name-top" id="schoolNameTop">Nama Sekolah</div>
-  </div>
-
-  <!-- NAVBAR -->
-  <div class="navbar">
-    <div class="nav-left">
-      <button class="menu-btn" id="menuBtn">☰</button>
+  <!-- Sidebar kiri -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <img src="assets/logo-erapor.png" alt="Logo eRapor Quantum">
+      <h2>e-Rapor Quantum</h2>
+      <div class="school-name" id="schoolNameTop">Nama Sekolah</div>
     </div>
 
-    <div class="nav-center" id="navCenterText">Dashboard</div>
+    <nav>
+      <button class="nav-btn" onclick="goto('home')">🏠 Dashboard</button>
+      <button class="nav-btn" onclick="goto('siswa')">👨‍🎓 Data Siswa</button>
+      <button class="nav-btn" onclick="goto('guru')">👩‍🏫 Data Guru</button>
+      <button class="nav-btn" onclick="goto('mapel')">📘 Data Mapel</button>
+      <button class="nav-btn" onclick="goto('pengembang')">💡 Tentang Pengembang</button>
+    </nav>
 
-    <div class="nav-right">
-      <div class="user-welcome" id="userWelcome">Selamat datang, <span id="userShort">Guru</span></div>
-      <button class="logout-btn" id="logoutBtnTop">Logout</button>
+    <footer class="sidebar-footer">© 2025 e-Rapor Quantum</footer>
+  </aside>
+
+  <!-- Main content kanan -->
+  <div class="main-wrap" id="mainWrap">
+    <!-- Header -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <img id="logoSekolah" src="assets/logo-sekolah.png" alt="Logo Sekolah">
+        <div>
+          <div class="welcome-text">Selamat Datang, <span id="namaUser">User</span></div>
+          <div style="font-size:13px;color:#64748b;">(<span id="usernameUser">username</span>)</div>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">Logout</button>
     </div>
+
+    <!-- Cards -->
+    <div class="card-grid">
+      <div class="card">
+        <div class="card-icon">👨‍🎓</div>
+        <h3>Total Siswa</h3>
+        <p id="totalSiswa">0</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">👩‍🏫</div>
+        <h3>Total Guru</h3>
+        <p id="totalGuru">0</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">📘</div>
+        <h3>Total Mapel</h3>
+        <p id="totalMapel">0</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">🏫</div>
+        <h3>Total Kelas</h3>
+        <p id="totalKelas">0</p>
+      </div>
+      <div class="card">
+        <div class="card-icon">💬</div>
+        <h3>Siswa Perlu Bimbingan</h3>
+        <p id="totalBimbingan">0</p>
+      </div>
+    </div>
+
+    <!-- Chart Section -->
+    <div class="chart-section">
+      <h3 style="margin-bottom:10px;font-weight:700;color:var(--blue-dark)">Statistik Nilai Rata-rata</h3>
+      <canvas id="chartOverview" height="120"></canvas>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-section">
+      <h3 style="margin-bottom:10px;font-weight:700;color:var(--blue-dark)">Progres Pengisian Nilai per Mapel</h3>
+      <div id="progressMapelContainer">
+        <!-- progress bar tiap mapel dimuat lewat JS -->
+      </div>
+    </div>
+
+    <!-- Informasi Sekolah -->
+    <div class="chart-section">
+      <h3 style="margin-bottom:10px;font-weight:700;color:var(--blue-dark)">Informasi Sekolah</h3>
+      <div id="infoSchool">Memuat data sekolah...</div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+      © 2025 e-Rapor Quantum<br>
+      Developed by:<br>
+      <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+    </footer>
   </div>
 
-  <!-- MAIN LAYOUT -->
-  <div class="container">
-    <main class="main">
-
-      <!-- top row: logo sekolah + welcome -->
-      <div class="top-row">
-        <img src="assets/img/logo-sekolah.png" alt="Logo Sekolah" class="sekolah-logo" id="logoSekolah">
-        <div class="welcome-block">
-          <div class="welcome-text" id="welcomeText">Selamat datang, <span id="namaUser">User</span></div>
-          <div class="welcome-sub" id="usernameUser">username</div>
-        </div>
-      </div>
-
-      <!-- CARDS -->
-      <section class="cards">
-        <div class="card">
-          <div class="icon guru">👩‍🏫</div>
-          <div class="meta">
-            <div class="label">Jumlah Guru</div>
-            <div class="value" id="totalGuru">0</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="icon siswa">👨‍🎓</div>
-          <div class="meta">
-            <div class="label">Jumlah Siswa</div>
-            <div class="value" id="totalSiswa">0</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="icon mapel">📘</div>
-          <div class="meta">
-            <div class="label">Jumlah Mapel</div>
-            <div class="value" id="totalMapel">0</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="icon kelas">🏫</div>
-          <div class="meta">
-            <div class="label">Jumlah Kelas</div>
-            <div class="value" id="totalKelas">0</div>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="icon bimbingan">⚠️</div>
-          <div class="meta">
-            <div class="label">Siswa Memerlukan Bimbingan</div>
-            <div class="value" id="totalBimbingan">0</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CHART -->
-      <div class="card-full">
-        <div class="chart-title">Statistik Nilai Rata-rata per Mapel</div>
-        <canvas id="chartOverview" class="chart-canvas" height="140"></canvas>
-      </div>
-
-      <!-- PROGRESS PER MAPEL -->
-      <div class="card-full">
-        <div class="chart-title">Progress Pengerjaan Rapor per Mapel</div>
-        <div id="mapelProgress" class="mapel-progress">
-          <!-- JS akan render bar per mapel di sini -->
-          <div style="color:#64748b">Memuat data progress...</div>
-        </div>
-      </div>
-
-      <!-- INFO SEKOLAH -->
-      <div class="card-full">
-        <div class="chart-title">Informasi Sekolah</div>
-        <div class="info-school" id="infoSchool">Memuat profil sekolah...</div>
-      </div>
-
-    </main>
-  </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    © 2025 e-Rapor Quantum<br>
-    Developed by:<br>
-    <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
-  </div>
-
-  <!-- External JS (main dashboard logic) -->
   <script src="dashboard.js"></script>
-
-  <!-- Small inline script to fetch mapel progress and render bars (calls your WebApp) -->
-  <script>
-    // This small script only renders the per-mapel progress UI by calling the same WebApp.
-    (function(){
-      const WEBAPP_URL = (window.WEBAPP_URL) ? window.WEBAPP_URL : (typeof window !== 'undefined' ? undefined : undefined);
-      // If your external dashboard.js defines WEBAPP_URL, use it; otherwise set it here:
-      const endpoint = (typeof window !== 'undefined' && window.WEBAPP_URL) ? window.WEBAPP_URL : "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec";
-
-      async function loadProgressMapel() {
-        try {
-          const token = localStorage.getItem("token_unik") || localStorage.getItem("token_sesi") || "";
-          const res = await fetch(endpoint, {
-            method: "POST",
-            body: JSON.stringify({ action: "getProgressMapel", token_sekolah: token })
-          });
-          const data = await res.json();
-          const container = document.getElementById("mapelProgress");
-          if (!container) return;
-          container.innerHTML = "";
-          if (!data || !data.success) {
-            container.innerHTML = "<div style='color:#ef4444'>Tidak ada data progress.</div>";
-            return;
-          }
-
-          if (!data.progress || !data.progress.length) {
-            container.innerHTML = "<div style='color:#64748b'>Belum ada data progress untuk mapel.</div>";
-            return;
-          }
-
-          data.progress.forEach(item => {
-            const row = document.createElement("div");
-            row.className = "mapel-row";
-            const name = document.createElement("div");
-            name.className = "mapel-name";
-            name.textContent = item.mapel;
-            const pct = document.createElement("div");
-            pct.style.width = "60px";
-            pct.style.textAlign = "right";
-            pct.style.color = "#0b4ea2";
-            pct.textContent = item.persen + "%";
-            const barWrap = document.createElement("div");
-            barWrap.className = "mapel-bar";
-            const inner = document.createElement("span");
-            inner.style.width = "0%";
-            // set initial then animate
-            setTimeout(()=> inner.style.width = (item.persen||0) + "%", 60);
-            barWrap.appendChild(inner);
-
-            row.appendChild(name);
-            row.appendChild(barWrap);
-            row.appendChild(pct);
-            container.appendChild(row);
-          });
-        } catch (err) {
-          console.error("loadProgressMapel:", err);
-          const container = document.getElementById("mapelProgress");
-          if (container) container.innerHTML = "<div style='color:#ef4444'>Gagal memuat progress.</div>";
-        }
-      }
-
-      // wait small time to ensure dashboard.js loaded and session validated
-      window.addEventListener("load", () => setTimeout(loadProgressMapel, 700));
-    })();
-  </script>
 </body>
 </html>
