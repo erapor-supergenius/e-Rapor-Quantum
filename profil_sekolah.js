@@ -1,10 +1,8 @@
 /****************************************************
- * e-Rapor Quantum — profil_sekolah.js (Final Premium)
- * Kode ini 100% kompatibel dengan dashboard Quantum.
- * Pastikan WEBAPP_URL sesuai dengan deployment Apps Script.
+ * e-Rapor Quantum — profil_sekolah.js (Final Premium Fix)
+ * Kompatibel penuh dengan dashboard Quantum.
+ * ✅ Fix: WEBAPP_URL conflict, fungsi global, dan kompatibilitas HTML lama.
  ****************************************************/
-
-
 
 /* ---------- Helper ---------- */
 const $ = id => document.getElementById(id);
@@ -89,7 +87,7 @@ function refreshPreview(){
 /* ---------- Fetch Helper ---------- */
 async function gsPost(body){
   try{
-    const res = await fetch(WEBAPP_URL,{
+    const res = await fetch(WEBAPP_URL,{ // ❗ pastikan WEBAPP_URL dari core.js
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(body)
@@ -181,7 +179,7 @@ $('btn-refresh')?.addEventListener('click', ()=>{
 });
 $('btn-init-ensure')?.addEventListener('click', initEnsureHeaders);
 
-/* ---------- Logout (sama seperti dashboard) ---------- */
+/* ---------- Logout ---------- */
 $('logoutBtn')?.addEventListener('click', async ()=>{
   const token = localStorage.getItem('token_sesi') || '';
   try{
@@ -204,8 +202,9 @@ window.addEventListener('load', async ()=>{
   if(token) loadProfilSekolah(token);
 });
 
-/* ---------- ✅ Tambahan untuk kompatibilitas HTML lama ---------- */
-function simpanProfil(){
-  // Alias untuk kompatibilitas, agar onclick="simpanProfil()" tetap berfungsi
-  saveProfilSekolah();
-}
+/* ---------- ✅ Kompatibilitas & Global ---------- */
+// Agar HTML lama tetap berfungsi
+function simpanProfil(){ saveProfilSekolah(); }
+// Pastikan fungsi bisa diakses dari onclick di HTML
+window.saveProfilSekolah = saveProfilSekolah;
+window.simpanProfil = simpanProfil;
