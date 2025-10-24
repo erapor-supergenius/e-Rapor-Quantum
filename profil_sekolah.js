@@ -4,7 +4,7 @@
  * Pastikan WEBAPP_URL sesuai dengan deployment Apps Script.
  ****************************************************/
 
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec";
+
 
 /* ---------- Helper ---------- */
 const $ = id => document.getElementById(id);
