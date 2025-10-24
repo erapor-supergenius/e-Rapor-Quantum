@@ -203,3 +203,9 @@ window.addEventListener('load', async ()=>{
   const token = localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || '';
   if(token) loadProfilSekolah(token);
 });
+
+/* ---------- ✅ Tambahan untuk kompatibilitas HTML lama ---------- */
+function simpanProfil(){
+  // Alias untuk kompatibilitas, agar onclick="simpanProfil()" tetap berfungsi
+  saveProfilSekolah();
+}
