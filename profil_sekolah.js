@@ -1,180 +1,205 @@
 /****************************************************
- * profil_sekolah.js — Logic untuk profil_sekolah.html
- * Pastikan file ini berada di root (sama level dashboard.js)
+ * e-Rapor Quantum — profil_sekolah.js (Final Premium)
+ * Kode ini 100% kompatibel dengan dashboard Quantum.
+ * Pastikan WEBAPP_URL sesuai dengan deployment Apps Script.
  ****************************************************/
 
-// gunakan WEBAPP_URL yang sama dengan dashboard.js (ganti jika perlu)
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec";
 
-/* helper */
+/* ---------- Helper ---------- */
 const $ = id => document.getElementById(id);
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, (m)=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g,(m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-/* FIELDS sesuai sheet profil_sekolah yang kamu kirim */
-const FIELDS = ['nama_sekolah','nss','npsn','status_sekolah','alamat_sekolah','kelurahan_desa','kecamatan','kabupaten_kota','provinsi','website','email','telepon','kepala_sekolah','nip_kepsek','url_logo','kabupaten_kota_rapor','tanggal_rapor'];
+/* ---------- Fields (sesuai header profil_sekolah) ---------- */
+const FIELDS = [
+  'nama_sekolah','nss','npsn','status_sekolah','alamat_sekolah',
+  'kelurahan_desa','kecamatan','kabupaten_kota','provinsi','website',
+  'email','telepon','kepala_sekolah','nip_kepsek','url_logo',
+  'kabupaten_kota_rapor','tanggal_rapor'
+];
 
-/* NAV (shared helper dari dashboard) */
+/* ---------- Navigation ---------- */
 function navigateTo(page){
-  // tetap pakai check sesi yg sederhana
   const username = localStorage.getItem("username");
   const token = localStorage.getItem("token_sesi");
-  if (!username || !token) {
+  if(!username || !token){
     Swal.fire("Sesi Habis","Silakan login kembali.","info");
     localStorage.clear();
-    setTimeout(()=> location.href = "index.html", 900);
+    setTimeout(()=>location.href="index.html",900);
     return;
   }
   window.location.href = page;
 }
 
-/* TOAST menggunakan SweetAlert2 (consistency with dashboard) */
-function toastSuccess(title, text=''){
-  Swal.fire({ icon:'success', title: title, text: text, timer:1200, showConfirmButton:false, toast:true, position:'top-end' });
+/* ---------- SweetAlert Toast ---------- */
+function toastSuccess(title,text=''){
+  Swal.fire({icon:'success',title,text,timer:1300,showConfirmButton:false,toast:true,position:'top-end'});
 }
-function toastError(title, text=''){
-  Swal.fire({ icon:'error', title: title, text: text, timer:2000, showConfirmButton:false, toast:true, position:'top-end' });
+function toastError(title,text=''){
+  Swal.fire({icon:'error',title,text,timer:1800,showConfirmButton:false,toast:true,position:'top-end'});
 }
 
-/* FORM <-> OBJECT */
+/* ---------- Form <-> Object ---------- */
 function getFormData(){
-  const o = {};
-  FIELDS.forEach(f => { const el = $(f); if(el) o[f] = el.value.trim(); });
-  return o;
+  const obj = {};
+  FIELDS.forEach(f=>{
+    const el = $(f);
+    if(el) obj[f] = el.value.trim();
+  });
+  return obj;
 }
-function setFormData(obj){
-  FIELDS.forEach(f => { const el = $(f); if(el) el.value = obj[f] || ''; });
+function setFormData(data){
+  FIELDS.forEach(f=>{
+    const el = $(f);
+    if(el) el.value = data[f] || '';
+  });
   refreshPreview();
 }
 
-/* PREVIEW */
+/* ---------- Preview ---------- */
 function refreshPreview(){
-  const nama = $('nama_sekolah').value || 'Nama Sekolah';
-  const alamat = $('alamat_sekolah').value || '';
-  const email = $('email').value || '';
-  const telepon = $('telepon').value || '';
+  const nama = $('nama_sekolah')?.value || 'Nama Sekolah';
+  const alamat = $('alamat_sekolah')?.value || '';
+  const email = $('email')?.value || '';
+  const telepon = $('telepon')?.value || '';
+  const url = $('url_logo')?.value || '';
+
   $('previewNama').textContent = nama;
   $('previewAlamat').textContent = alamat;
-  $('previewKontak').textContent = [email, telepon].filter(Boolean).join(' • ');
-  const url = $('url_logo').value || '';
+  $('previewKontak').textContent = [email,telepon].filter(Boolean).join(' • ');
+
   const logoPreview = $('logoPreview');
-  if (url){
-    // safe set
-    logoPreview.innerHTML = '<img src="'+escapeHtml(url)+'" alt="Logo" style="max-width:100%;max-height:120px;object-fit:contain;border-radius:8px">';
+  if(!logoPreview) return;
+  if(url){
+    logoPreview.innerHTML = `<img src="${escapeHtml(url)}" alt="Logo Sekolah"
+      style="max-width:100%;max-height:120px;object-fit:contain;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,0.08)">`;
   } else {
-    logoPreview.innerHTML = '<div style="text-align:center;color:#64748b"><div style="font-weight:700;font-size:20px">EQ</div><div style="font-size:13px">Logo Sekolah</div></div>';
+    logoPreview.innerHTML = `<div style="text-align:center;color:#64748b">
+      <div style="font-weight:700;font-size:20px">EQ</div>
+      <div style="font-size:13px">Logo Sekolah</div></div>`;
   }
 }
 
-/* Hook preview inputs */
-['url_logo','nama_sekolah','alamat_sekolah','email','telepon'].forEach(id => {
-  const el = document.getElementById(id);
-  if (el) el.addEventListener('input', refreshPreview);
+/* ---------- Event Live Preview ---------- */
+['url_logo','nama_sekolah','alamat_sekolah','email','telepon'].forEach(id=>{
+  const el = $(id);
+  if(el) el.addEventListener('input',refreshPreview);
 });
 
-/* GS Post helper */
+/* ---------- Fetch Helper ---------- */
 async function gsPost(body){
-  try {
-    const res = await fetch(WEBAPP_URL, {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify(body)
+  try{
+    const res = await fetch(WEBAPP_URL,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)
     });
     return await res.json();
-  } catch (e) {
-    console.error('gsPost error', e);
+  }catch(e){
+    console.error('gsPost error',e);
     throw e;
   }
 }
 
-/* Load profil (action: getProfilSekolah) */
+/* ---------- Load Profil Sekolah ---------- */
 async function loadProfilSekolah(token){
-  try {
-    const payload = { action:'getProfilSekolah', token_sekolah: token || localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || '' };
+  try{
+    const payload = {
+      action:'getProfilSekolah',
+      token_sekolah: token || localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || ''
+    };
     const r = await gsPost(payload);
-    if (r && r.success && r.profil){
+    if(r && r.success && r.profil){
       setFormData(r.profil);
-      // update topbar/sidebar name & logo
-      if (r.profil.nama_sekolah) $('schoolNameTop').innerText = r.profil.nama_sekolah;
-      if (r.profil.url_logo || r.profil.logo_url) {
+      // Update sidebar name & logo
+      if(r.profil.nama_sekolah) $('schoolNameTop').innerText = r.profil.nama_sekolah;
+      if(r.profil.url_logo || r.profil.logo_url){
         const src = r.profil.url_logo || r.profil.logo_url;
-        const ln = $('logoSekolah'); if (ln) ln.src = src;
+        const ln = $('logoSekolah');
+        if(ln) ln.src = src;
       }
       toastSuccess('Profil dimuat');
-    } else {
-      // clear form
+    }else{
       setFormData({});
-      if (r && r.message) toastError('Perhatian', r.message);
-      else toastError('Profil tidak ditemukan');
+      toastError('Profil tidak ditemukan', r?.message || '');
     }
-  } catch (e){
-    console.error('loadProfilSekolah', e);
+  }catch(e){
+    console.error('loadProfilSekolah',e);
     toastError('Gagal memuat profil', e.message || '');
   }
 }
 
-/* Save profil (action: saveProfilSekolah) */
+/* ---------- Simpan Profil Sekolah ---------- */
 async function saveProfilSekolah(){
-  try {
+  try{
     const data = getFormData();
-    if (!data.nama_sekolah || data.nama_sekolah.length < 2) { toastError('Isi Nama Sekolah'); return; }
-    // include token_sekolah if stored
+    if(!data.nama_sekolah){ toastError('Nama sekolah wajib diisi'); return; }
+
     const token = localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || '';
-    const payload = { action:'saveProfilSekolah', token_sekolah: token, data: data };
+    if(!token){ toastError('Token sekolah tidak ditemukan. Silakan login ulang.'); return; }
+
+    const payload = { action:'saveProfilSekolah', token_sekolah: token, data };
+    console.log('Kirim data profil:', payload);
+
     const r = await gsPost(payload);
-    if (r && r.success) {
-      toastSuccess('Profil tersimpan');
-      // update sidebar name/logo
-      if (data.nama_sekolah) $('schoolNameTop').innerText = data.nama_sekolah;
-      if (data.url_logo) { const ln = $('logoSekolah'); if (ln) ln.src = data.url_logo; }
-    } else {
-      toastError('Gagal simpan', (r && (r.error||r.message)) || '');
+    console.log('Respon dari server:', r);
+
+    if(r && r.success){
+      toastSuccess('Profil sekolah berhasil disimpan');
+      if(data.nama_sekolah) $('schoolNameTop').innerText = data.nama_sekolah;
+      if(data.url_logo){ const ln = $('logoSekolah'); if(ln) ln.src = data.url_logo; }
+    }else{
+      toastError('Gagal menyimpan', (r && (r.error||r.message)) || 'Tidak ada respon server');
     }
-  } catch (e){
-    console.error('saveProfilSekolah', e);
-    toastError('Gagal menyimpan', e.message || '');
+  }catch(e){
+    console.error('saveProfilSekolah error',e);
+    toastError('Kesalahan koneksi', e.message || '');
   }
 }
 
-/* initEnsure (pastikan headers di sheet) */
+/* ---------- Pastikan Header (admin) ---------- */
 async function initEnsureHeaders(){
-  try {
+  try{
     const token = localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || '';
-    if (!token) { toastError('Token sekolah dibutuhkan untuk inisialisasi.'); return; }
+    if(!token){ toastError('Token sekolah dibutuhkan untuk inisialisasi.'); return; }
     const r = await gsPost({ action:'initEnsure', token_sekolah: token });
-    if (r && r.success) toastSuccess('Headers dipastikan di spreadsheet');
-    else toastError('Gagal memastikan headers', (r && (r.error||r.message)) || '');
-  } catch (e){ console.error('initEnsureHeaders', e); toastError('Inisialisasi error', e.message || ''); }
+    if(r && r.success) toastSuccess('Header dipastikan di spreadsheet');
+    else toastError('Gagal memastikan header', r?.message || '');
+  }catch(e){
+    console.error('initEnsureHeaders',e);
+    toastError('Inisialisasi error', e.message || '');
+  }
 }
 
-/* Events pada tombol */
-document.getElementById('btn-save')?.addEventListener('click', saveProfilSekolah);
-document.getElementById('btn-save-2')?.addEventListener('click', saveProfilSekolah);
-document.getElementById('btn-refresh')?.addEventListener('click', ()=> {
+/* ---------- Tombol Aksi ---------- */
+$('btn-save')?.addEventListener('click', saveProfilSekolah);
+$('btn-save-2')?.addEventListener('click', saveProfilSekolah);
+$('btn-refresh')?.addEventListener('click', ()=>{
   const token = localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || '';
-  if (!token) return toastError('Token sekolah tidak ditemukan. Masuk/isi token dahulu.');
+  if(!token) return toastError('Token sekolah tidak ditemukan.');
   loadProfilSekolah(token);
 });
-document.getElementById('btn-init-ensure')?.addEventListener('click', initEnsureHeaders);
+$('btn-init-ensure')?.addEventListener('click', initEnsureHeaders);
 
-/* Logout (re-use dashboard.js behavior) */
-document.getElementById('logoutBtn')?.addEventListener('click', async ()=>{
+/* ---------- Logout (sama seperti dashboard) ---------- */
+$('logoutBtn')?.addEventListener('click', async ()=>{
   const token = localStorage.getItem('token_sesi') || '';
-  try {
-    await fetch(WEBAPP_URL, { method:'POST', body: JSON.stringify({ action:'logout', token_sesi: token }) });
-  } catch(e){}
-  Swal.fire({ icon:'success', title:'Logout', text:'Anda telah keluar.', timer:900, showConfirmButton:false });
+  try{
+    await fetch(WEBAPP_URL,{method:'POST',body:JSON.stringify({action:'logout',token_sesi:token})});
+  }catch(e){}
+  Swal.fire({icon:'success',title:'Logout',text:'Anda telah keluar.',timer:900,showConfirmButton:false});
   localStorage.clear();
-  setTimeout(()=> location.href = "index.html", 900);
+  setTimeout(()=>location.href="index.html",900);
 });
 
-/* inisialisasi saat load */
+/* ---------- Inisialisasi Saat Load ---------- */
 window.addEventListener('load', async ()=>{
-  await new Promise(r => setTimeout(r, 160)); // sedikit tunggu
+  await new Promise(r=>setTimeout(r,160));
   const username = localStorage.getItem('username') || '';
   const nama = localStorage.getItem('nama') || username;
   $('namaUser').textContent = nama;
   $('usernameUser').textContent = localStorage.getItem('username') || '';
-  // autoload profil jika token ada
+
   const token = localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || '';
-  if (token) { loadProfilSekolah(token); }
+  if(token) loadProfilSekolah(token);
 });
