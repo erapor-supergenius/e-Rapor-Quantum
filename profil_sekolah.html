@@ -150,34 +150,16 @@
       form{ grid-template-columns:1fr; }
     }
 
-    form div {
-      margin-bottom: 12px;
-    }
-    
-    form label {
-      display: block;
-      font-weight: 600;
-      color: #0f172a;
-      margin-bottom: 6px;
-      font-size: 14px;
-    }
-    
+    form div { margin-bottom: 12px; }
+    form label { display: block; font-weight: 600; color: #0f172a; margin-bottom: 6px; font-size: 14px; }
     form input, form select {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #d1d5db;
-      border-radius: 8px;
-      font-size: 15px;
-      background: #fff;
-      color: #0f172a;
-      font-family: inherit;
+      width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 8px;
+      font-size: 15px; background: #fff; color: #0f172a; font-family: inherit;
       box-shadow: 0 1px 3px rgba(0,0,0,0.06);
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
-    
     form input:focus, form select:focus {
-      outline: none;
-      border-color: var(--blue);
+      outline: none; border-color: var(--blue);
       box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
     }
   </style>
@@ -249,7 +231,8 @@
         <div><label>Kabupaten (untuk Rapor)</label><input id="kabupaten_kota_rapor" /></div>
         <div><label>Tanggal Rapor</label><input id="tanggal_rapor" type="date" /></div>
 
-        <button type="button" class="btn-primary" onclick="saveProfilSekolah()">💾 Simpan Perubahan</button>
+        <!-- ✅ Panggil fungsi dengan nama global yang sudah dijamin tersedia -->
+        <button type="button" class="btn-primary" onclick="simpanProfil()">💾 Simpan Perubahan</button>
       </form>
     </section>
 
@@ -261,5 +244,11 @@
   <!-- Core Script -->
   <script src="core.js"></script>
   <script src="profil_sekolah.js"></script>
+
+  <!-- ✅ Tambahan agar fungsi dikenali -->
+  <script>
+    // Pastikan fungsi global agar HTML mengenalinya
+    window.simpanProfil = saveProfilSekolah;
+  </script>
 </body>
 </html>
