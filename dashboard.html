@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>e-Rapor Quantum — Dashboard</title>
 
-  <!-- Chart.js & SweetAlert2 (dipakai oleh dashboard.js) -->
+  <!-- Chart.js & SweetAlert2 -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -20,47 +20,26 @@
     body{margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;background:var(--bg);color:#0f172a;min-height:100vh;display:flex;}
 
     /* SIDEBAR */
-    .sidebar{
-      width:260px;
-      background:linear-gradient(180deg,#071030,#0d3a8a);
-      color:#fff;
-      padding:22px;
-      display:flex;
-      flex-direction:column;
-      position:fixed;
-      left:0; top:0; bottom:0;
-      box-shadow:4px 0 30px rgba(2,6,23,0.14);
-      z-index:40;
-    }
-    .brand{ text-align:center; margin-bottom:16px; }
-    .brand img{ width:88px; border-radius:12px; display:block; margin:0 auto 8px; }
-    .brand h2{ margin:0; font-size:18px; font-weight:700; }
-    .brand .school-name{ font-size:13px; color:#cfe2ff; margin-top:6px; }
-
-    nav{ margin-top:12px; }
-    .nav-btn{
-      display:block; width:100%; text-align:left; padding:10px 12px; border-radius:8px; color:#e6f0ff; background:transparent; border:0; cursor:pointer; margin-bottom:6px; font-size:15px;
-    }
+    .sidebar{ width:260px; background:linear-gradient(180deg,#071030,#0d3a8a); color:#fff; padding:22px; display:flex; flex-direction:column; position:fixed; left:0; top:0; bottom:0; box-shadow:4px 0 30px rgba(2,6,23,0.14); z-index:40; }
+    .brand{text-align:center; margin-bottom:16px;}
+    .brand img{width:88px; border-radius:12px; display:block; margin:0 auto 8px;}
+    .brand h2{margin:0; font-size:18px; font-weight:700;}
+    .brand .school-name{font-size:13px; color:#cfe2ff; margin-top:6px;}
+    nav{margin-top:12px;}
+    .nav-btn{display:block; width:100%; text-align:left; padding:10px 12px; border-radius:8px; color:#e6f0ff; background:transparent; border:0; cursor:pointer; margin-bottom:6px; font-size:15px;}
     .nav-btn:hover{ background: rgba(255,255,255,0.04); }
-
     .sidebar-footer{ margin-top:auto; font-size:13px; color:#dbeafe; text-align:center; }
 
     /* MAIN */
     .main-wrap{ margin-left:260px; padding:20px; flex:1; transition:margin-left .28s ease; }
 
-    /* HEADER (top bar inside main) */
-    .topbar{
-      display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px;
-    }
-    .topbar .left{
-      display:flex; align-items:center; gap:12px;
-      background:#fff; padding:12px; border-radius:12px; box-shadow:var(--card-shadow);
-    }
-    .school-logo{ width:72px; height:72px; object-fit:cover; border-radius:10px; border:2px solid rgba(11,78,162,0.06); }
+    /* HEADER */
+    .topbar{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px; }
+    .topbar .left{ display:flex; align-items:center; gap:12px; background:#fff; padding:12px; border-radius:12px; box-shadow:var(--card-shadow);}
+    .school-logo{ width:72px; height:72px; object-fit:cover; border-radius:10px; border:2px solid rgba(11,78,162,0.06);}
     .welcome { line-height:1; }
     .welcome .title{ font-weight:700; font-size:16px; color:var(--blue-dark); }
     .welcome .subtitle{ font-size:13px; color:#64748b; }
-
     .topbar .right { display:flex; align-items:center; gap:12px; }
     .logout-btn { background:#ef4444; color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; }
 
@@ -71,16 +50,15 @@
     .card .meta{ flex:1; text-align:left; }
     .card .meta .label{ font-size:13px; color:#64748b; font-weight:600; }
     .card .meta .value{ font-size:20px; font-weight:800; color:var(--blue-dark); margin-top:6px; }
-
     .icon-siswa{ background:linear-gradient(135deg,#f97316,#fb8c00); }
     .icon-guru{ background:linear-gradient(135deg,#06b6d4,#0078d7); }
     .icon-mapel{ background:linear-gradient(135deg,#7c3aed,#5b21b6); }
     .icon-kelas{ background:linear-gradient(135deg,#16a34a,#059669); }
     .icon-bimbingan{ background:linear-gradient(135deg,#ef4444,#f97316); }
 
-    /* Chart & Progress */
     .card-full{ background:#fff; border-radius:12px; padding:18px; box-shadow:var(--card-shadow); margin-bottom:18px; }
     .card-full h3{ margin:0 0 12px 0; color:var(--blue-dark); font-weight:700; }
+
     .mapel-progress{ display:flex; flex-direction:column; gap:10px; }
     .mapel-row{ display:flex; align-items:center; gap:12px; }
     .mapel-row .mapel-label{ flex:1; font-weight:600; color:#0f172a; }
@@ -88,8 +66,18 @@
     .mapel-bar span{ display:block; height:100%; width:0; background:linear-gradient(90deg,#00b4d8,#0078d7); transition: width .9s ease-in-out; }
     .mapel-percent{ width:60px; text-align:right; color:var(--blue-dark); font-weight:700; }
 
-    /* INFO SEKOLAH */
-    #infoSchool{ color:#475569; }
+    /* TABEL GURU */
+    table{ width:100%; border-collapse:collapse; margin-top:12px; background:#fff; box-shadow:var(--card-shadow); border-radius:12px; overflow:hidden; }
+    th, td{ padding:10px; text-align:left; border-bottom:1px solid #e5e7eb; }
+    th{ background:#f3f4f6; font-weight:600; }
+    td button{ margin-right:6px; cursor:pointer; }
+
+    /* MODAL */
+    .modal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); justify-content:center; align-items:center; z-index:100; }
+    .modal-content{ background:#fff; padding:20px; border-radius:12px; width:400px; max-width:90%; }
+    .modal-header{ display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+    .modal-header h4{ margin:0; font-weight:700; color:var(--blue-dark); }
+    .close-modal{ cursor:pointer; font-size:18px; font-weight:700; }
 
     /* FOOTER */
     .main-footer{ text-align:center; color:#ffffff; margin-top:28px; font-size:13px; line-height:1.5; }
@@ -122,15 +110,14 @@
     </nav>
 
     <footer class="main-footer">
-      © 2025 e-Rapor Quantum<br>
-      Developed by:<br>
-      <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+    © 2025 e-Rapor Quantum<br>
+    Developed by:<br>
+    <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
     </footer>
   </aside>
 
   <!-- Main content -->
   <main class="main-wrap" id="mainWrap">
-    <!-- top header -->
     <div class="topbar">
       <div class="left">
         <img id="logoSekolah" class="school-logo" src="assets/logo_erapor.png" alt="Logo Sekolah">
@@ -139,7 +126,6 @@
           <div class="subtitle" id="usernameUser">username</div>
         </div>
       </div>
-
       <div class="right">
         <div id="navCenterText" style="color:#0f172a;font-weight:700;">Dashboard</div>
         <button class="logout-btn" id="logoutBtn">Logout</button>
@@ -148,45 +134,11 @@
 
     <!-- cards -->
     <section class="card-grid">
-      <div class="card">
-        <div class="icon icon-siswa">👨‍🎓</div>
-        <div class="meta">
-          <div class="label">Total Siswa</div>
-          <div class="value" id="totalSiswa">0</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="icon icon-guru">👩‍🏫</div>
-        <div class="meta">
-          <div class="label">Total Guru</div>
-          <div class="value" id="totalGuru">0</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="icon icon-mapel">📘</div>
-        <div class="meta">
-          <div class="label">Total Mapel</div>
-          <div class="value" id="totalMapel">0</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="icon icon-kelas">🏫</div>
-        <div class="meta">
-          <div class="label">Total Kelas</div>
-          <div class="value" id="totalKelas">0</div>
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="icon icon-bimbingan">⚠️</div>
-        <div class="meta">
-          <div class="label">Siswa Perlu Bimbingan</div>
-          <div class="value" id="totalBimbingan">0</div>
-        </div>
-      </div>
+      <div class="card"><div class="icon icon-siswa">👨‍🎓</div><div class="meta"><div class="label">Total Siswa</div><div class="value" id="totalSiswa">0</div></div></div>
+      <div class="card"><div class="icon icon-guru">👩‍🏫</div><div class="meta"><div class="label">Total Guru</div><div class="value" id="totalGuru">0</div></div></div>
+      <div class="card"><div class="icon icon-mapel">📘</div><div class="meta"><div class="label">Total Mapel</div><div class="value" id="totalMapel">0</div></div></div>
+      <div class="card"><div class="icon icon-kelas">🏫</div><div class="meta"><div class="label">Total Kelas</div><div class="value" id="totalKelas">0</div></div></div>
+      <div class="card"><div class="icon icon-bimbingan">⚠️</div><div class="meta"><div class="label">Siswa Perlu Bimbingan</div><div class="value" id="totalBimbingan">0</div></div></div>
     </section>
 
     <!-- chart -->
@@ -203,37 +155,56 @@
       </div>
     </section>
 
-    <!-- data guru -->
-    <section class="card-full">
-      <h3>Data Guru</h3>
-      <table id="table-guru" style="width:100%; border-collapse: collapse;">
-        <thead style="background:#f0f4f8;">
-          <tr>
-            <th style="padding:6px; border:1px solid #ccc;">ID Guru</th>
-            <th style="padding:6px; border:1px solid #ccc;">NIP</th>
-            <th style="padding:6px; border:1px solid #ccc;">Nama Guru</th>
-            <th style="padding:6px; border:1px solid #ccc;">Jenis Kelamin</th>
-            <th style="padding:6px; border:1px solid #ccc;">Aksi</th>
-          </tr>
-        </thead>
-        <tbody id="table-guru-body">
-          <tr><td colspan="5" style="text-align:center; padding:10px;">Memuat data guru...</td></tr>
-        </tbody>
-      </table>
-    </section>
-
     <!-- info sekolah -->
     <section class="card-full">
       <h3>Informasi Sekolah</h3>
       <div id="infoSchool">Memuat profil sekolah...</div>
     </section>
 
+    <!-- DATA GURU -->
+    <section class="card-full">
+      <h3>Data Guru
+        <button onclick="openModalTambahGuru()" style="float:right;padding:6px 12px;border:none;background:var(--blue);color:#fff;border-radius:8px;cursor:pointer;">Tambah Guru</button>
+      </h3>
+      <table>
+        <thead>
+          <tr><th>NIP</th><th>Nama Guru</th><th>Jenis Kelamin</th><th>Aksi</th></tr>
+        </thead>
+        <tbody id="table-guru-body">
+          <tr><td colspan="4" style="text-align:center;color:#64748b;">Memuat data guru...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- MODAL TAMBAH / EDIT GURU -->
+    <div class="modal" id="modalGuru">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 id="modalGuruTitle">Tambah Guru</h4>
+          <span class="close-modal" onclick="closeModalGuru()">&times;</span>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="inputIdGuru">
+          <div style="margin-bottom:8px;"><label>NIP:</label><input type="text" id="inputNIP" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:6px;"></div>
+          <div style="margin-bottom:8px;"><label>Nama Guru:</label><input type="text" id="inputNama" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:6px;"></div>
+          <div style="margin-bottom:12px;"><label>Jenis Kelamin:</label>
+            <select id="inputJK" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:6px;">
+              <option value="">Pilih</option>
+              <option value="L">Laki-laki</option>
+              <option value="P">Perempuan</option>
+            </select>
+          </div>
+          <button onclick="simpanGuru()" style="padding:8px 14px;border:none;background:var(--blue);color:#fff;border-radius:8px;cursor:pointer;">Simpan</button>
+        </div>
+      </div>
+    </div>
+
     <footer class="main-footer" id="mainFooter">
       © 2025 e-Rapor Quantum — Developed by: <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
     </footer>
+
   </main>
 
-  <!-- core script -->
   <script src="core.js"></script>
   <script src="dashboard.js"></script>
 </body>
