@@ -122,11 +122,10 @@
     </nav>
 
     <footer class="main-footer">
-    © 2025 e-Rapor Quantum<br>
-    Developed by:<br>
-    <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+      © 2025 e-Rapor Quantum<br>
+      Developed by:<br>
+      <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
     </footer>
-
   </aside>
 
   <!-- Main content -->
@@ -204,6 +203,25 @@
       </div>
     </section>
 
+    <!-- data guru -->
+    <section class="card-full">
+      <h3>Data Guru</h3>
+      <table id="table-guru" style="width:100%; border-collapse: collapse;">
+        <thead style="background:#f0f4f8;">
+          <tr>
+            <th style="padding:6px; border:1px solid #ccc;">ID Guru</th>
+            <th style="padding:6px; border:1px solid #ccc;">NIP</th>
+            <th style="padding:6px; border:1px solid #ccc;">Nama Guru</th>
+            <th style="padding:6px; border:1px solid #ccc;">Jenis Kelamin</th>
+            <th style="padding:6px; border:1px solid #ccc;">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="table-guru-body">
+          <tr><td colspan="5" style="text-align:center; padding:10px;">Memuat data guru...</td></tr>
+        </tbody>
+      </table>
+    </section>
+
     <!-- info sekolah -->
     <section class="card-full">
       <h3>Informasi Sekolah</h3>
@@ -215,8 +233,7 @@
     </footer>
   </main>
 
-  <!-- core script (JS berada di root: dashboard.js) -->
-  
+  <!-- core script -->
   <script src="core.js"></script>
   <script src="dashboard.js"></script>
 </body>
