@@ -1,12 +1,4 @@
-/****************************************************
- * dashboard.js — eRapor Quantum Super Genius
- * Struktur: JS di root (dipanggil oleh dashboard.html)
- * Pastikan WEBAPP_URL sesuai deployment Apps Script Anda
- ****************************************************/
-
 const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec";
-
-/* ----------------- Helpers DOM ----------------- */
 const $ = id => document.getElementById(id);
 
 /* ----------------- Navigation ----------------- */
@@ -36,9 +28,7 @@ logoutBtn?.addEventListener("click", async () => {
 
 /* ----------------- On load ----------------- */
 window.addEventListener("load", async () => {
-  // beri sedikit delay agar localStorage tersedia
   await new Promise(r => setTimeout(r, 200));
-
   const username = localStorage.getItem("username");
   const nama = localStorage.getItem("nama");
   const tokenSesi = localStorage.getItem("token_sesi");
@@ -58,11 +48,11 @@ window.addEventListener("load", async () => {
 
   $("namaUser").innerText = nama || username;
   $("usernameUser").innerText = username;
-  // header school name (sidebar brand)
-  // will be updated in loadProfilSekolah
+
   await loadProfilSekolah(tokenUnik || tokenSesi);
   await loadDashboardData(tokenUnik || tokenSesi);
   await loadProgressMapel(tokenUnik || tokenSesi);
+  await loadDataGuru(tokenUnik || tokenSesi); // <-- load data guru
 });
 
 /* ----------------- Load Profil Sekolah ----------------- */
@@ -72,15 +62,10 @@ async function loadProfilSekolah(token) {
     const data = await res.json();
     if (data && data.success) {
       const p = data.profil || {};
-      // sidebar top name
-      const top = $("schoolNameTop");
-      if (top) top.innerText = p.nama_sekolah || "Sekolah Anda";
-      // main header name/logo
+      $("schoolNameTop").innerText = p.nama_sekolah || "Sekolah Anda";
       const ln = $("logoSekolah");
       if (p.logo_url) ln.src = p.logo_url;
-      // infoSchool
-      const info = $("infoSchool");
-      info.innerHTML = `<strong>${p.nama_sekolah || "-"}</strong><br/>NPSN: ${p.npsn || '-'}<br/>Alamat: ${p.alamat_sekolah || '-'}`;
+      $("infoSchool").innerHTML = `<strong>${p.nama_sekolah || "-"}</strong><br/>NPSN: ${p.npsn || '-'}<br/>Alamat: ${p.alamat_sekolah || '-'}`;
     } else {
       $("infoSchool").innerText = "Profil sekolah tidak tersedia.";
     }
@@ -97,16 +82,12 @@ async function loadDashboardData(token) {
     const data = await res.json();
     if (!data || !data.success) throw new Error('Tidak ada data');
 
-    // cards
     setText('totalSiswa', data.total_siswa);
     setText('totalGuru', data.total_guru);
     setText('totalMapel', data.total_mapel);
     setText('totalKelas', data.total_kelas);
     setText('totalBimbingan', data.total_bimbingan);
-
-    // chart
     initChart(data.statistik || { labels:[], values:[] });
-
   } catch (err) {
     console.error("loadDashboardData:", err);
     Swal.fire("Gagal", "Tidak dapat memuat data dashboard.", "error");
@@ -121,12 +102,10 @@ async function loadProgressMapel(token) {
     const container = $("progressMapelContainer");
     if (!container) return;
     container.innerHTML = '';
-
     if (!data || !data.success || !Array.isArray(data.progress) || data.progress.length === 0) {
       container.innerHTML = '<div style="color:#64748b">Belum ada data progress untuk mapel.</div>';
       return;
     }
-
     data.progress.forEach(item => {
       const row = document.createElement('div');
       row.className = 'mapel-row';
@@ -136,74 +115,91 @@ async function loadProgressMapel(token) {
       row.innerHTML = `
         <div class="mapel-label">${escapeHtml(item.mapel)}</div>
         <div class="mapel-bar"><span style="width:0%"></span></div>
-        <div class="mapel-percent">${item.persen}%</div>
+        <div class="mapel-percent">${item.progress || 0}%</div>
       `;
       container.appendChild(row);
-
-      // animate width
-      setTimeout(()=> {
-        const span = row.querySelector('.mapel-bar span');
-        if (span) span.style.width = (item.persen || 0) + '%';
-      }, 80);
+      setTimeout(()=> row.querySelector('span').style.width = (item.progress||0)+'%', 50);
     });
-
-  } catch (err) {
-    console.error("loadProgressMapel:", err);
-    const container = $("progressMapelContainer");
-    if (container) container.innerHTML = '<div style="color:#ef4444">Gagal memuat progress mapel.</div>';
-  }
+  } catch(e){ console.error(e); }
 }
 
-/* ----------------- Chart (Chart.js) ----------------- */
-let chartInstance = null;
+/* ----------------- Chart ----------------- */
 function initChart(stat) {
-  const ctx = document.getElementById('chartOverview');
-  if (!ctx) return;
-  const labels = stat.labels || [];
-  const values = stat.values || [];
-
-  if (chartInstance) {
-    chartInstance.data.labels = labels;
-    chartInstance.data.datasets[0].data = values;
-    chartInstance.update();
-    return;
-  }
-
-  chartInstance = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Rata-rata Nilai',
-        data: values,
-        backgroundColor: '#3B82F6',
-        borderRadius: 6
+  const ctx = document.getElementById('chartOverview').getContext('2d');
+  new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels: stat.labels || [],
+      datasets:[{
+        label:'Nilai Rata-rata',
+        data: stat.values || [],
+        backgroundColor:'#3b82f6'
       }]
     },
-    options: {
-      responsive: true,
-      plugins: { legend: { display:false } },
-      scales: { y: { beginAtZero:true, max:100 } }
+    options:{
+      responsive:true,
+      plugins:{ legend:{ display:false } },
+      scales:{ y:{ beginAtZero:true, max:100 } }
     }
   });
 }
 
-/* ----------------- Utilities ----------------- */
-function setText(id, val) { const el = $(id); if (el) el.innerText = (val !== undefined && val !== null) ? val : '-'; }
-function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g, (m)=> ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+/* ----------------- Load Data Guru ----------------- */
+async function loadDataGuru(token) {
+  const tbody = $("table-guru-body");
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:10px;">Memuat data guru...</td></tr>';
+  try {
+    const res = await fetch(WEBAPP_URL, { method:'POST', body: JSON.stringify({ action:'getDataGuru', token_sekolah: token }) });
+    const data = await res.json();
+    if (!data || !data.success || !Array.isArray(data.data)) throw new Error('Data guru kosong');
 
-/* ----------------- About / Developer Info (Popup) ----------------- */
-function showDeveloperInfo(){
-  Swal.fire({
-    title: 'Tentang eRapor Quantum',
-    html: `<p><strong>eRapor Quantum Super Genius</strong> — Sistem e-Rapor generasi baru yang dirancang untuk kenyamanan guru dan administrasi sekolah.</p>
-           <ul style="text-align:left">
-             <li>Integrasi Google Sheets & Apps Script</li>
-             <li>Keamanan berbasis token sekolah & sesi</li>
-             <li>Dashboard real-time & progress per mapel</li>
-           </ul>
-           <p style="margin-top:8px">Developed by: <strong>Dedi Agus Mustofa, S.Pd.SD</strong></p>`,
-    icon: 'info',
-    confirmButtonText: 'Tutup'
-  });
+    tbody.innerHTML = '';
+    data.data.forEach(guru => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="border:1px solid #ccc; padding:6px;">${escapeHtml(guru.id_guru)}</td>
+        <td style="border:1px solid #ccc; padding:6px;">${escapeHtml(guru.nip)}</td>
+        <td style="border:1px solid #ccc; padding:6px;">${escapeHtml(guru.nama)}</td>
+        <td style="border:1px solid #ccc; padding:6px;">${escapeHtml(guru.jenis_kelamin)}</td>
+        <td style="border:1px solid #ccc; padding:6px; text-align:center;">
+          <button onclick="hapusGuru('${guru.id_guru}','${token}')" style="background:#ef4444;color:#fff;border:none;padding:4px 8px;border-radius:6px; cursor:pointer;">Hapus</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  } catch(e) {
+    console.error(e);
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:10px;">Gagal memuat data guru.</td></tr>';
+  }
 }
+
+/* ----------------- Hapus Guru ----------------- */
+async function hapusGuru(id_guru, token) {
+  const confirmed = await Swal.fire({
+    title: 'Hapus Guru',
+    text: 'Yakin ingin menghapus guru ini?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Ya, hapus',
+    cancelButtonText: 'Batal'
+  });
+  if (!confirmed.isConfirmed) return;
+
+  try {
+    const res = await fetch(WEBAPP_URL, { method:'POST', body: JSON.stringify({ action:'deleteDataGuru', token_sekolah: token, id_guru }) });
+    const data = await res.json();
+    if (data && data.success) {
+      Swal.fire('Berhasil','Guru berhasil dihapus','success');
+      loadDataGuru(token);
+    } else {
+      Swal.fire('Gagal','Guru gagal dihapus','error');
+    }
+  } catch(e){
+    console.error(e);
+    Swal.fire('Error','Terjadi kesalahan','error');
+  }
+}
+
+/* ----------------- Utility ----------------- */
+function setText(id, value){ const el=$(id); if(el) el.innerText=value; }
+function escapeHtml(text){ return text? text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"):'-'; }
