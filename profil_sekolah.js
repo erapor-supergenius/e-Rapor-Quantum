@@ -1,14 +1,17 @@
 /****************************************************
- * e-Rapor Quantum — profil_sekolah.js (Final Premium Fix)
- * Kompatibel penuh dengan dashboard Quantum.
- * ✅ Fix: WEBAPP_URL conflict, fungsi global, dan kompatibilitas HTML lama.
+ * e-Rapor Quantum — profil_sekolah.js (Final Premium)
+ * ✅ Fix semua error $/_, WEBAPP_URL, tombol, live preview
+ * ✅ Kompatibel HTML lama & dashboard
  ****************************************************/
+
+/* ---------- WEBAPP_URL ---------- */
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec";
 
 /* ---------- Helper ---------- */
 const _ = id => document.getElementById(id);
 function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g,(m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
-/* ---------- Fields (sesuai header profil_sekolah) ---------- */
+/* ---------- Fields Profil Sekolah ---------- */
 const FIELDS = [
   'nama_sekolah','nss','npsn','status_sekolah','alamat_sekolah',
   'kelurahan_desa','kecamatan','kabupaten_kota','provinsi','website',
@@ -29,7 +32,7 @@ function navigateTo(page){
   window.location.href = page;
 }
 
-/* ---------- SweetAlert Toast ---------- */
+/* ---------- Toast ---------- */
 function toastSuccess(title,text=''){
   Swal.fire({icon:'success',title,text,timer:1300,showConfirmButton:false,toast:true,position:'top-end'});
 }
@@ -41,14 +44,14 @@ function toastError(title,text=''){
 function getFormData(){
   const obj = {};
   FIELDS.forEach(f=>{
-    const el = $(f);
+    const el = _(f);
     if(el) obj[f] = el.value.trim();
   });
   return obj;
 }
 function setFormData(data){
   FIELDS.forEach(f=>{
-    const el = $(f);
+    const el = _(f);
     if(el) el.value = data[f] || '';
   });
   refreshPreview();
@@ -56,17 +59,17 @@ function setFormData(data){
 
 /* ---------- Preview ---------- */
 function refreshPreview(){
-  const nama = $('nama_sekolah')?.value || 'Nama Sekolah';
-  const alamat = $('alamat_sekolah')?.value || '';
-  const email = $('email')?.value || '';
-  const telepon = $('telepon')?.value || '';
-  const url = $('url_logo')?.value || '';
+  const nama = _('nama_sekolah')?.value || 'Nama Sekolah';
+  const alamat = _('alamat_sekolah')?.value || '';
+  const email = _('email')?.value || '';
+  const telepon = _('telepon')?.value || '';
+  const url = _('url_logo')?.value || '';
 
-  $('previewNama').textContent = nama;
-  $('previewAlamat').textContent = alamat;
-  $('previewKontak').textContent = [email,telepon].filter(Boolean).join(' • ');
+  _('previewNama').textContent = nama;
+  _('previewAlamat').textContent = alamat;
+  _('previewKontak').textContent = [email,telepon].filter(Boolean).join(' • ');
 
-  const logoPreview = $('logoPreview');
+  const logoPreview = _('logoPreview');
   if(!logoPreview) return;
   if(url){
     logoPreview.innerHTML = `<img src="${escapeHtml(url)}" alt="Logo Sekolah"
@@ -80,14 +83,14 @@ function refreshPreview(){
 
 /* ---------- Event Live Preview ---------- */
 ['url_logo','nama_sekolah','alamat_sekolah','email','telepon'].forEach(id=>{
-  const el = $(id);
+  const el = _(id);
   if(el) el.addEventListener('input',refreshPreview);
 });
 
 /* ---------- Fetch Helper ---------- */
 async function gsPost(body){
   try{
-    const res = await fetch(WEBAPP_URL,{ // ❗ pastikan WEBAPP_URL dari core.js
+    const res = await fetch(WEBAPP_URL,{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify(body)
@@ -109,11 +112,11 @@ async function loadProfilSekolah(token){
     const r = await gsPost(payload);
     if(r && r.success && r.profil){
       setFormData(r.profil);
-      // Update sidebar name & logo
-      if(r.profil.nama_sekolah) $('schoolNameTop').innerText = r.profil.nama_sekolah;
+      // Update sidebar & logo
+      if(r.profil.nama_sekolah) _('schoolNameTop').innerText = r.profil.nama_sekolah;
       if(r.profil.url_logo || r.profil.logo_url){
         const src = r.profil.url_logo || r.profil.logo_url;
-        const ln = $('logoSekolah');
+        const ln = _('logoSekolah');
         if(ln) ln.src = src;
       }
       toastSuccess('Profil dimuat');
@@ -144,8 +147,8 @@ async function saveProfilSekolah(){
 
     if(r && r.success){
       toastSuccess('Profil sekolah berhasil disimpan');
-      if(data.nama_sekolah) $('schoolNameTop').innerText = data.nama_sekolah;
-      if(data.url_logo){ const ln = $('logoSekolah'); if(ln) ln.src = data.url_logo; }
+      if(data.nama_sekolah) _('schoolNameTop').innerText = data.nama_sekolah;
+      if(data.url_logo){ const ln = _('logoSekolah'); if(ln) ln.src = data.url_logo; }
     }else{
       toastError('Gagal menyimpan', (r && (r.error||r.message)) || 'Tidak ada respon server');
     }
@@ -155,7 +158,7 @@ async function saveProfilSekolah(){
   }
 }
 
-/* ---------- Pastikan Header (admin) ---------- */
+/* ---------- Pastikan Header Spreadsheet ---------- */
 async function initEnsureHeaders(){
   try{
     const token = localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || '';
@@ -170,21 +173,19 @@ async function initEnsureHeaders(){
 }
 
 /* ---------- Tombol Aksi ---------- */
-$('btn-save')?.addEventListener('click', saveProfilSekolah);
-$('btn-save-2')?.addEventListener('click', saveProfilSekolah);
-$('btn-refresh')?.addEventListener('click', ()=>{
+_('btn-save')?.addEventListener('click', saveProfilSekolah);
+_('btn-save-2')?.addEventListener('click', saveProfilSekolah);
+_('btn-refresh')?.addEventListener('click', ()=>{
   const token = localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || '';
   if(!token) return toastError('Token sekolah tidak ditemukan.');
   loadProfilSekolah(token);
 });
-$('btn-init-ensure')?.addEventListener('click', initEnsureHeaders);
+_('btn-init-ensure')?.addEventListener('click', initEnsureHeaders);
 
 /* ---------- Logout ---------- */
-$('logoutBtn')?.addEventListener('click', async ()=>{
+_('logoutBtn')?.addEventListener('click', async ()=>{
   const token = localStorage.getItem('token_sesi') || '';
-  try{
-    await fetch(WEBAPP_URL,{method:'POST',body:JSON.stringify({action:'logout',token_sesi:token})});
-  }catch(e){}
+  try{ await fetch(WEBAPP_URL,{method:'POST',body:JSON.stringify({action:'logout',token_sesi:token})}); }catch(e){}
   Swal.fire({icon:'success',title:'Logout',text:'Anda telah keluar.',timer:900,showConfirmButton:false});
   localStorage.clear();
   setTimeout(()=>location.href="index.html",900);
@@ -195,16 +196,14 @@ window.addEventListener('load', async ()=>{
   await new Promise(r=>setTimeout(r,160));
   const username = localStorage.getItem('username') || '';
   const nama = localStorage.getItem('nama') || username;
-  $('namaUser').textContent = nama;
-  $('usernameUser').textContent = localStorage.getItem('username') || '';
+  _('namaUser').textContent = nama;
+  _('usernameUser').textContent = localStorage.getItem('username') || '';
 
   const token = localStorage.getItem('token_unik') || localStorage.getItem('token_sesi') || '';
   if(token) loadProfilSekolah(token);
 });
 
-/* ---------- ✅ Kompatibilitas & Global ---------- */
-// Agar HTML lama tetap berfungsi
+/* ---------- Kompatibilitas HTML lama ---------- */
 function simpanProfil(){ saveProfilSekolah(); }
-// Pastikan fungsi bisa diakses dari onclick di HTML
 window.saveProfilSekolah = saveProfilSekolah;
 window.simpanProfil = simpanProfil;
