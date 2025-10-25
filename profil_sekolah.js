@@ -5,7 +5,7 @@
  ****************************************************/
 
 /* ---------- Helper ---------- */
-const $ = id => document.getElementById(id);
+const _ = id => document.getElementById(id);
 function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"']/g,(m)=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 
 /* ---------- Fields (sesuai header profil_sekolah) ---------- */
