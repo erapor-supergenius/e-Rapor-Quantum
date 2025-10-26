@@ -121,10 +121,41 @@
       text-decoration: underline;
     }
 
-    /* PERBAIKAN: Definisi manual 'hidden' jika Tailwind gagal */
+    /* ============================================== */
+    /* == PERBAIKAN 1: CSS MANUAL UNTUK MODAL == */
+    /* ============================================== */
+
+    /* Ini untuk menyembunyikan modal saat awal */
     .hidden {
       display: none;
     }
+
+    /* Ini untuk styling modal overlay (latar belakang) */
+    #resetPasswordModal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 50; /* Tampil di atas segalanya */
+      background-color: rgba(15, 23, 42, 0.6); /* Latar belakang gelap transparan */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Ini untuk styling kotak putih di tengah */
+    #resetPasswordModal > div {
+      background-color: #ffffff;
+      padding: 24px;
+      border-radius: 12px;
+      width: 320px;
+      max-width: 90%;
+      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.45);
+    }
+    /* ============================================== */
+    /* == AKHIR PERBAIKAN 1 == */
+    /* ============================================== */
   </style>
 </head>
 
@@ -185,22 +216,30 @@
       <input type="text" id="resetToken" class="input" placeholder="Token Sekolah" aria-label="Token Sekolah">
       <input type="password" id="resetNewPassword" class="input" placeholder="Password Baru" aria-label="Password Baru">
       <button id="btnResetSubmit" class="btn btn-blue w-full mt-2">Reset Password</button>
-      <button id="btnResetCancel" class="btn w-full mt-2 text-gray-600 hover:underline bg-transparent shadow-none">Batal</button>
+
+      <button id="btnResetCancel" onclick="tutupModalReset()" class="btn w-full mt-2 text-gray-600 hover:underline bg-transparent shadow-none">Batal</button>
     </div>
   </div>
 
   <script src="auth.js"></script>
 
   <script>
+    // ===============================================
+    // == PERBAIKAN 2 (Lanjutan): FUNGSI BARU ==
+    // ===============================================
+
+    // Fungsi baru untuk menutup modal (dipanggil oleh tombol Batal)
+    function tutupModalReset() {
+      document.getElementById('resetPasswordModal').classList.add('hidden');
+    }
+    
     // Tampilkan modal reset password
     function lupaPassword() {
       document.getElementById('resetPasswordModal').classList.remove('hidden');
     }
 
-    // Cancel modal
-    document.getElementById('btnResetCancel').addEventListener('click', () => {
-      document.getElementById('resetPasswordModal').classList.add('hidden');
-    });
+    // Listener tombol Batal yang lama sudah dihapus, karena kita pakai 'onclick'
+    // document.getElementById('btnResetCancel').addEventListener('click', () => { ... }); <-- INI DIHAPUS
 
     // Submit reset password
     document.getElementById('btnResetSubmit').addEventListener('click', async () => {
@@ -214,6 +253,7 @@
       }
 
       try {
+        // Pastikan WEBAPP_URL terdefinisi di auth.js
         const response = await fetch(`${WEBAPP_URL}?action=resetPassword`, {
           method: 'POST',
           body: JSON.stringify({ username, token, newPassword }),
@@ -222,7 +262,7 @@
 
         if (result.success) {
           Swal.fire('Sukses', 'Password berhasil direset!', 'success');
-          document.getElementById('resetPasswordModal').classList.add('hidden');
+          tutupModalReset(); // Memanggil fungsi baru untuk menutup modal
         } else {
           Swal.fire('Error', result.message || 'Gagal mereset password.', 'error');
         }
