@@ -2,9 +2,21 @@
  * e-Rapor Quantum — auth.js (client-side untuk GitHub Pages)
  * ====================================================================== */
 
-/* GANTI URL di bawah dengan URL Web App kamu (Deploy as web app → Anyone even anonymous) */
+/* 
+   GANTI URL di bawah dengan URL Web App kamu 
+   (Deploy as web app → Anyone even anonymous)
+*/
 const GAS_WEBAPP_URL =
   "https://script.google.com/macros/s/AKfycbzOZ6IVfXqvIoWpZe-VM43Kfp3iFJUXbm8rN9xpPf18CeEU117cEiKF2NmV9CmLvQk88w/exec";
+
+/* 
+   Tambahan Proxy (Bypass CORS) ✅ 
+   Gunakan proxy publik untuk melewati pembatasan CORS GitHub Pages
+   Jika suatu hari proxy ini lambat, bisa ganti dengan salah satu di bawah:
+   - https://corsproxy.io/?
+   - https://api.allorigins.win/raw?url=
+*/
+const PROXY_URL = "https://cors.isomorphic-git.org/";
 
 /* ======================================================================
  * UI helpers
@@ -46,22 +58,23 @@ async function callGAS(action, payload) {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000); // timeout 15 detik
 
-    const res = await fetch(GAS_WEBAPP_URL, {
+    // 💡 Gunakan proxy agar bisa lewat CORS di GitHub Pages
+    const response = await fetch(PROXY_URL + GAS_WEBAPP_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, payload }),
-      mode: "cors",
       signal: controller.signal,
     });
+
     clearTimeout(timeout);
 
-    if (!res.ok)
+    if (!response.ok)
       return {
         success: false,
-        error: `Server error (${res.status})`,
+        error: `Server error (${response.status})`,
       };
 
-    const text = await res.text();
+    const text = await response.text();
     try {
       return JSON.parse(text);
     } catch {
