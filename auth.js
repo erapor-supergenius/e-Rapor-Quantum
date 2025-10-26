@@ -1,6 +1,6 @@
 // =======================================================================
-// e-Rapor Quantum — AUTH SYSTEM (Final Terhubung Tanpa Proxy)
-// Sinkron dengan index.html & Notifikasi SweetAlert2 elegan
+// e-Rapor Quantum — AUTH SYSTEM (Final Terhubung Tanpa Proxy + Fitur Ekstra)
+// ✅ Sinkron dengan index.html, KODE.GS terakhir, & Notifikasi SweetAlert2
 // =======================================================================
 
 // Ganti dengan URL WebApp kamu (Deploy as: Me, access: Anyone)
@@ -34,16 +34,10 @@ function _showSection(id) {
 /* ---------- VALIDASI TOKEN ---------- */
 async function validateToken() {
   const el = document.getElementById("tokenInput") || document.getElementById("token");
-  if (!el) {
-    Swal.fire("Error", "Kolom token tidak ditemukan di halaman.", "error");
-    return;
-  }
+  if (!el) return Swal.fire("Error", "Kolom token tidak ditemukan di halaman.", "error");
 
   const token = el.value.trim();
-  if (!token) {
-    Swal.fire("Perhatian", "Masukkan token sekolah!", "warning");
-    return;
-  }
+  if (!token) return Swal.fire("Perhatian", "Masukkan token sekolah!", "warning");
 
   try {
     Swal.fire({
@@ -118,6 +112,10 @@ async function registerUser() {
     Swal.close();
 
     if (data.success) {
+      // Simpan username & password (hashed di backend, tapi disini untuk auto-login)
+      localStorage.setItem("username", username);
+      localStorage.setItem("password", password);
+
       Swal.fire({
         icon: "success",
         title: "Registrasi Berhasil",
@@ -164,6 +162,8 @@ async function loginUser(forceUsername, forcePassword) {
       localStorage.setItem("token_sesi", data.token_sesi);
       localStorage.setItem("username", data.username);
       localStorage.setItem("nama", data.nama_lengkap);
+      localStorage.setItem("token_unik", data.token_unik_sekolah || "");
+      localStorage.setItem("spreadsheet_id", data.spreadsheet_id_sekolah || "");
       localStorage.setItem("login_expire", String(Date.now() + 3600000)); // 1 jam
 
       Swal.fire({
@@ -209,8 +209,14 @@ function lupaPassword() {
       token_unik: document.getElementById("lpToken").value.trim(),
       password_baru: document.getElementById("lpNewPass").value.trim(),
     }),
-  }).then((res) => {
+  }).then(async (res) => {
     if (res.isConfirmed) {
+      const { username, token_unik, password_baru } = res.value;
+      if (!username || !token_unik || !password_baru) {
+        Swal.fire("Perhatian", "Semua kolom harus diisi.", "warning");
+        return;
+      }
+
       Swal.fire({
         title: "Mengubah password...",
         text: "Mohon tunggu sebentar",
@@ -218,26 +224,28 @@ function lupaPassword() {
         didOpen: () => Swal.showLoading(),
       });
 
-      fetch(WEBAPP_URL, {
-        method: "POST",
-        body: JSON.stringify({
-          action: "resetPasswordUser",
-          ...res.value,
-        }),
-      })
-        .then((r) => r.json())
-        .then((data) => {
-          Swal.close();
-          Swal.fire({
-            icon: data.success ? "success" : "error",
-            title: data.success ? "Berhasil" : "Gagal",
-            text: data.message,
-          });
-        })
-        .catch(() => {
-          Swal.close();
-          Swal.fire("Error", "Gagal terhubung ke server.", "error");
+      try {
+        const resp = await fetch(WEBAPP_URL, {
+          method: "POST",
+          body: JSON.stringify({
+            action: "resetPasswordUser",
+            username,
+            token_unik,
+            password_baru,
+          }),
         });
+        const data = await resp.json();
+
+        Swal.close();
+        Swal.fire({
+          icon: data.success ? "success" : "error",
+          title: data.success ? "Berhasil" : "Gagal",
+          text: data.message || (data.success ? "Password diubah." : "Gagal mengubah password."),
+        });
+      } catch (err) {
+        Swal.close();
+        Swal.fire("Error", err.message || "Gagal terhubung ke server.", "error");
+      }
     }
   });
 }
