@@ -1,65 +1,30 @@
-/* ======================================================================
- * e-Rapor Quantum — auth.js (client-side untuk GitHub Pages)
- * ====================================================================== */
+/* =======================================================================
+ * e-Rapor Quantum — AUTH.JS (Frontend untuk GitHub Pages)
+ * Versi Final — Fix CORS + koneksi WebApp GS
+ * ======================================================================= */
 
-/* 
-   GANTI URL di bawah dengan URL Web App kamu 
-   (Deploy as web app → Anyone even anonymous)
-*/
+/* === KONFIGURASI URL WEBAPP ===
+ * Pastikan ini URL WebApp hasil Deploy dengan:
+ *  - Execute as: Me (pemilik)
+ *  - Who has access: Anyone, even anonymous
+ * Ganti URL di bawah dengan milik kamu
+ */
 const GAS_WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbyqVZGaUnL8TiWh8Rb8nRQDiXB2AeDm7Ys8SZHPtphGLpWwXUpf1WPpyGeeffzbFtub5A/exec";
+  "https://script.google.com/macros/s/AKfycbwZ7RLl5khz3h6O7zJvT8zTnVNz1U0kY_R2ya9ytC4PztEOdxgWURQW_9P49bSPjs98/exec";
 
-/* 
-   Tambahan Proxy (Bypass CORS) ✅ 
-   Gunakan proxy publik untuk melewati pembatasan CORS GitHub Pages
-   Jika suatu hari proxy ini lambat, bisa ganti dengan salah satu di bawah:
-   - https://corsproxy.io/?
-   - https://api.allorigins.win/raw?url=
-*/
-const PROXY_URL = "https://cors.isomorphic-git.org/";
+/* === PROXY CORS STABIL === */
+const PROXY_PREFIX = "https://api.allorigins.win/raw?url=";
 
-/* ======================================================================
- * UI helpers
- * ====================================================================== */
-function _showSection(id) {
-  const sections = ["tokenSection", "registerSection", "loginSection"];
-  sections.forEach((s) => {
-    const el = document.getElementById(s);
-    if (!el) return;
-    if (s === id) {
-      el.style.display = "block";
-      el.classList.add("fade");
-      setTimeout(() => el.classList.add("show"), 30);
-    } else {
-      el.classList.remove("show");
-      setTimeout(() => {
-        el.style.display = "none";
-      }, 250);
-    }
-  });
-  const title = document.getElementById("title");
-  if (id === "registerSection") title.innerText = "Registrasi Pengguna Baru";
-  else if (id === "loginSection") title.innerText = "Login Pengguna";
-  else title.innerText = "Masuk ke e-Rapor Quantum";
-}
-
-/* ======================================================================
- * Helper umum
- * ====================================================================== */
-function onApiFailure(err) {
-  Swal.fire("Error", err.message || String(err), "error");
-}
-
-/* ======================================================================
- * Helper utama: panggil GAS via fetch() dengan dukungan CORS
- * ====================================================================== */
+/* === FUNGSI UTAMA UNTUK MEMANGGIL GOOGLE APPS SCRIPT === */
 async function callGAS(action, payload) {
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000); // timeout 15 detik
+    const timeout = setTimeout(() => controller.abort(), 15000);
 
-    // 💡 Gunakan proxy agar bisa lewat CORS di GitHub Pages
-    const response = await fetch(PROXY_URL + GAS_WEBAPP_URL, {
+    // encode URL target (penting agar tidak gagal di proxy)
+    const proxiedUrl = PROXY_PREFIX + encodeURIComponent(GAS_WEBAPP_URL);
+
+    const response = await fetch(proxiedUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ action, payload }),
@@ -69,202 +34,51 @@ async function callGAS(action, payload) {
     clearTimeout(timeout);
 
     if (!response.ok)
-      return {
-        success: false,
-        error: `Server error (${response.status})`,
-      };
+      return { success: false, error: `Server error (${response.status})` };
 
     const text = await response.text();
     try {
       return JSON.parse(text);
-    } catch {
-      return { success: false, error: "Invalid JSON response from server", raw: text };
+    } catch (err) {
+      return { success: false, error: "Invalid JSON response", raw: text };
     }
   } catch (err) {
     return { success: false, error: err.message || String(err) };
   }
 }
 
-/* ======================================================================
- * Validasi Token Sekolah
- * ====================================================================== */
-async function validateToken() {
-  const token = (document.getElementById("token") || {}).value || "";
-  if (!token.trim())
-    return Swal.fire("Perhatian", "Masukkan token sekolah!", "warning");
+/* === EVENT LISTENER UNTUK FORM TOKEN === */
+document.addEventListener("DOMContentLoaded", () => {
+  const tokenForm = document.getElementById("tokenForm");
+  const tokenInput = document.getElementById("tokenInput");
+  const notifBox = document.getElementById("notifBox");
 
-  Swal.fire({
-    title: "Memeriksa Token...",
-    text: "Mohon tunggu, sistem sedang memverifikasi token sekolah Anda.",
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading(),
-  });
+  if (!tokenForm) return;
 
-  const response = await callGAS("validateToken", { token: token.trim() });
-  Swal.close();
+  tokenForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const token = tokenInput.value.trim();
+    if (!token) return showNotif("Token tidak boleh kosong.", "error");
 
-  if (!response) return onApiFailure({ message: "No response" });
+    showNotif("Memeriksa token sekolah...", "info");
 
-  if (response.success) {
-    localStorage.setItem("token_unik", token.trim());
-    if (response.needsRegister) {
-      Swal.fire({
-        icon: "success",
-        title: "Token Diterima!",
-        text: "Mengalihkan ke registrasi...",
-        timer: 1100,
-        showConfirmButton: false,
-      });
-      setTimeout(() => _showSection("registerSection"), 1100);
+    const res = await callGAS("validateToken", { token });
+    if (!res.success) return showNotif(res.error || "Token tidak valid.", "error");
+
+    if (res.needsRegister) {
+      showNotif("Token valid ✅ — Silakan lanjut ke registrasi pengguna.", "success");
+      // redirect ke halaman register.html (jika ada)
+      setTimeout(() => (window.location.href = "register.html?token=" + token), 1200);
     } else {
-      Swal.fire({
-        icon: "info",
-        title: "Token Dikenali",
-        text: "Silakan login.",
-        showConfirmButton: true,
-      });
-      _showSection("loginSection");
-    }
-  } else {
-    Swal.fire("Gagal", response.error || response.message || "Token tidak valid", "error");
-  }
-}
-
-/* ======================================================================
- * Registrasi Pengguna Baru
- * ====================================================================== */
-async function registerUser() {
-  const token = localStorage.getItem("token_unik") || "";
-  const nama = (document.getElementById("nama") || {}).value || "";
-  const username = (document.getElementById("usernameReg") || {}).value || "";
-  const password = (document.getElementById("passwordReg") || {}).value || "";
-
-  if (!token)
-    return Swal.fire("Gagal", "Token sekolah tidak ditemukan. Kembali ke awal.", "error");
-  if (!nama.trim() || !username.trim() || !password)
-    return Swal.fire("Perhatian", "Lengkapi semua kolom.", "warning");
-
-  Swal.fire({
-    title: "Menyimpan Data...",
-    text: "Mohon tunggu, sedang memproses pendaftaran.",
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading(),
-  });
-
-  const payload = {
-    token_unik: token,
-    nama_lengkap: nama.trim(),
-    username: username.trim(),
-    password: password,
-  };
-
-  const response = await callGAS("register", payload);
-  Swal.close();
-
-  if (response && response.success) {
-    Swal.fire({
-      icon: "success",
-      title: "Registrasi Berhasil",
-      text: "Masuk ke dashboard...",
-      showConfirmButton: false,
-      timer: 1200,
-    });
-    setTimeout(() => loginUser(username.trim(), password), 1200);
-  } else {
-    Swal.fire("Gagal", response.error || response.message || "Gagal registrasi", "error");
-  }
-}
-
-/* ======================================================================
- * Login Pengguna
- * ====================================================================== */
-async function loginUser(forceUsername, forcePassword) {
-  const username =
-    forceUsername || (document.getElementById("usernameLogin") || {}).value || "";
-  const password =
-    forcePassword || (document.getElementById("passwordLogin") || {}).value || "";
-
-  if (!username.trim() || !password)
-    return Swal.fire("Perhatian", "Masukkan username & password.", "warning");
-
-  Swal.fire({
-    title: "Memproses Login...",
-    text: "Mohon tunggu, menyiapkan dashboard Anda.",
-    allowOutsideClick: false,
-    didOpen: () => Swal.showLoading(),
-  });
-
-  const payload = { username: username.trim(), password: password };
-  const response = await callGAS("login", payload);
-  Swal.close();
-
-  if (response && response.success) {
-    localStorage.setItem("token_sesi", response.token_sesi || "");
-    localStorage.setItem("username", response.username || "");
-    localStorage.setItem("nama", response.nama_lengkap || response.username || "");
-    localStorage.setItem("token_unik_sekolah", response.token_unik_sekolah || "");
-    localStorage.setItem("spreadsheet_id_sekolah", response.spreadsheet_id_sekolah || "");
-
-    const expireAt = Date.now() + 60 * 60 * 1000; // 1 jam
-    localStorage.setItem("login_expire", String(expireAt));
-
-    Swal.fire({
-      icon: "success",
-      title: "Login Berhasil",
-      text: "Mengalihkan ke dashboard...",
-      showConfirmButton: false,
-      timer: 1200,
-    });
-    setTimeout(() => {
-      window.location.href = "dashboard.html";
-    }, 1200);
-  } else {
-    Swal.fire("Gagal", response.error || response.message || "Login gagal", "error");
-  }
-}
-
-/* ======================================================================
- * Navigasi kecil
- * ====================================================================== */
-function showRegister() { _showSection("registerSection"); }
-function showLogin() { _showSection("loginSection"); }
-
-/* ======================================================================
- * Lupa Password
- * ====================================================================== */
-function lupaPassword() {
-  Swal.fire({
-    title: "Lupa Password?",
-    html: `
-      <input id="lpUsername" class="swal2-input" placeholder="Username">
-      <input id="lpToken" class="swal2-input" placeholder="Token Sekolah">
-      <input id="lpNewPass" type="password" class="swal2-input" placeholder="Password Baru">
-    `,
-    confirmButtonText: "Ubah Password",
-    showCancelButton: true,
-    cancelButtonText: "Batal",
-    preConfirm: () => ({
-      username: (document.getElementById("lpUsername") || {}).value.trim(),
-      token_unik: (document.getElementById("lpToken") || {}).value.trim(),
-      password_baru: (document.getElementById("lpNewPass") || {}).value,
-    }),
-  }).then(async (res) => {
-    if (res.isConfirmed && res.value) {
-      Swal.fire({
-        title: "Mengubah password...",
-        text: "Mohon tunggu sebentar",
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-      });
-      const response = await callGAS("resetPasswordUser", res.value);
-      Swal.close();
-      Swal.fire({
-        icon: response && response.success ? "success" : "error",
-        title: response && response.success ? "Berhasil" : "Gagal",
-        text:
-          (response && (response.message || response.error)) ||
-          "Terjadi kesalahan",
-      });
+      showNotif("Token valid ✅ — Sekolah sudah terdaftar, silakan login.", "success");
+      setTimeout(() => (window.location.href = "login.html?token=" + token), 1200);
     }
   });
-}
+
+  function showNotif(msg, type = "info") {
+    if (!notifBox) return alert(msg);
+    notifBox.innerHTML = msg;
+    notifBox.className = "";
+    notifBox.classList.add("notif", type);
+  }
+});
