@@ -4,7 +4,7 @@
 
 /* GANTI URL di bawah dengan URL Web App kamu (Deploy as web app → Anyone even anonymous) */
 const GAS_WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbxCwt9935KTMmou9cySAQRKKAIUubrdXOr5G-2C9sm18x2-SVAKuyjrTwb78bXZUO7d/exec";
+  "https://script.google.com/macros/s/AKfycbyHGcTTfJhro-SPOZx119c-3NusQ-q3_bZ8AzY2tYdxFOJQ460MffmJKNDWiGeti3tR/exec";
 
 /* ======================================================================
  * UI helpers
