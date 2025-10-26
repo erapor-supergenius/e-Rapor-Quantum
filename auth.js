@@ -1,6 +1,6 @@
 /* =======================================================================
  * e-Rapor Quantum — AUTH.JS (Frontend untuk GitHub Pages)
- * Versi Klik Tombol + Loading Aktif (Final Fix)
+ * Versi Klik Tombol + Notifikasi SweetAlert2 + Fix CORS Final
  * ======================================================================= */
 
 /* === KONFIGURASI URL WEBAPP === */
@@ -10,36 +10,13 @@ const GAS_WEBAPP_URL =
 /* === PROXY CORS STABIL === */
 const PROXY_PREFIX = "https://api.allorigins.win/raw?url=";
 
-/* === Utility umum untuk notifikasi === */
-function showNotif(msg, type = "info") {
-  const box = document.getElementById("notifBox");
-  if (!box) return alert(msg);
-  box.innerHTML = msg;
-  box.className = ""; // reset class
-  box.classList.add("notif", type);
-}
-
-/* === Utility Loading Spinner === */
-function showLoading(text = "Memproses...") {
-  const box = document.getElementById("notifBox");
-  if (!box) return;
-  box.innerHTML = `
-    <div class="loading">
-      <div class="spinner"></div>
-      <span>${text}</span>
-    </div>
-  `;
-  box.className = "notif loading";
-}
-
-/* === Fungsi utama pemanggilan Apps Script === */
+/* === FUNGSI PEMANGGIL APPS SCRIPT === */
 async function callGAS(action, payload) {
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
 
     const proxiedUrl = PROXY_PREFIX + encodeURIComponent(GAS_WEBAPP_URL);
-
     const response = await fetch(proxiedUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -63,63 +40,64 @@ async function callGAS(action, payload) {
   }
 }
 
-/* === Fungsi Klik Tombol: validateToken === */
+/* === FUNGSI KLIK TOMBOL VALIDASI TOKEN === */
 async function validateToken() {
-  const input = document.getElementById("tokenInput");
+  const input = document.getElementById("tokenInput") || document.getElementById("token");
   const token = input?.value.trim();
-  if (!token) return showNotif("Token sekolah tidak boleh kosong.", "error");
+  if (!token) {
+    Swal.fire({
+      icon: "error",
+      title: "Token belum diisi",
+      text: "Silakan masukkan token sekolah Anda terlebih dahulu.",
+      confirmButtonColor: "#1d4ed8",
+    });
+    return;
+  }
 
-  showLoading("Memeriksa token sekolah...");
+  // Tampilkan loading elegan
+  Swal.fire({
+    title: "Memeriksa Token...",
+    text: "Mohon tunggu sebentar",
+    allowOutsideClick: false,
+    didOpen: () => {
+      Swal.showLoading();
+    },
+  });
 
   const res = await callGAS("validateToken", { token });
+
+  // Tutup loading
+  Swal.close();
+
   if (!res.success) {
-    return showNotif(res.error || "Token tidak valid.", "error");
+    Swal.fire({
+      icon: "error",
+      title: "Token Tidak Valid",
+      text: res.error || "Token sekolah tidak ditemukan.",
+      confirmButtonColor: "#1d4ed8",
+    });
+    return;
   }
 
   if (res.needsRegister) {
-    showNotif("✅ Token valid — lanjut ke registrasi pengguna...", "success");
-    setTimeout(() => (window.location.href = "register.html?token=" + token), 1200);
+    Swal.fire({
+      icon: "success",
+      title: "Token Valid ✅",
+      text: "Silakan lanjut ke halaman registrasi pengguna.",
+      confirmButtonText: "Lanjut",
+      confirmButtonColor: "#16a34a",
+    }).then(() => {
+      window.location.href = "register.html?token=" + token;
+    });
   } else {
-    showNotif("✅ Token valid — sekolah sudah terdaftar, lanjut login...", "success");
-    setTimeout(() => (window.location.href = "login.html?token=" + token), 1200);
+    Swal.fire({
+      icon: "success",
+      title: "Token Valid ✅",
+      text: "Sekolah sudah terdaftar. Silakan login.",
+      confirmButtonText: "Masuk",
+      confirmButtonColor: "#1d4ed8",
+    }).then(() => {
+      window.location.href = "login.html?token=" + token;
+    });
   }
 }
-
-/* === Styling Spinner (otomatis dimasukkan jika belum ada) === */
-(function injectSpinnerStyle() {
-  if (document.getElementById("spinner-style")) return;
-  const style = document.createElement("style");
-  style.id = "spinner-style";
-  style.textContent = `
-    .notif {
-      margin-top: 15px;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-family: 'Poppins', sans-serif;
-      transition: all .3s;
-    }
-    .notif.info { background: #e3f2fd; color: #0d47a1; border-left: 4px solid #2196f3; }
-    .notif.error { background: #fdecea; color: #b71c1c; border-left: 4px solid #f44336; }
-    .notif.success { background: #e8f5e9; color: #1b5e20; border-left: 4px solid #4caf50; }
-    .notif.loading { background: #fff3e0; color: #e65100; border-left: 4px solid #ff9800; }
-
-    .loading {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .spinner {
-      width: 18px;
-      height: 18px;
-      border: 3px solid #ffb74d;
-      border-top-color: transparent;
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-    }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-  `;
-  document.head.appendChild(style);
-})();
