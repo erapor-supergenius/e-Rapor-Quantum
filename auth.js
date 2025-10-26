@@ -5,7 +5,7 @@
 
 // Ganti dengan URL WebApp kamu (Deploy as: Me, access: Anyone)
 const WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbyIMIUeOxefGQro-2cpf7c3r6rZpZ6eGLmBjg-OIFvrvTUuUNzv1_kMngxGbCWh8hvUUw/exec";
+  "https://script.google.com/macros/s/AKfycbzci8gIoSbG_Jq_hOftnouTjizyk14CPuEtL3QDsJRjpVA-T-EHCRVe6mf05EFvXBVtGw/exec";
 
 /* ---------- UI helpers ---------- */
 function _showSection(id) {
