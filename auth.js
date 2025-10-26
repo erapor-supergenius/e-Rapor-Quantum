@@ -7,7 +7,7 @@
    (Deploy as web app → Anyone even anonymous)
 */
 const GAS_WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbzOZ6IVfXqvIoWpZe-VM43Kfp3iFJUXbm8rN9xpPf18CeEU117cEiKF2NmV9CmLvQk88w/exec";
+  "https://script.google.com/macros/s/AKfycbyqVZGaUnL8TiWh8Rb8nRQDiXB2AeDm7Ys8SZHPtphGLpWwXUpf1WPpyGeeffzbFtub5A/exec";
 
 /* 
    Tambahan Proxy (Bypass CORS) ✅ 
