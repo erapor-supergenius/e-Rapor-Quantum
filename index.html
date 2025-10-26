@@ -125,13 +125,13 @@
   </style>
 </head>
 
-    <body>
-      <div class="card" role="main" aria-label="Form Login e-Rapor Quantum">
-        <img src="assets/logo-erapor.png" alt="Logo e-Rapor Quantum" class="brand-logo" id="brandLogo">
-        <h1 id="title" class="text-2xl font-semibold" style="color:var(--blue)">Masuk ke e-Rapor Quantum</h1>
-    
-        <!-- TOKEN SECTION -->
-       <div id="tokenSection" class="mt-4 space-y-3 fade show">
+<body>
+  <div class="card" role="main" aria-label="Form Login e-Rapor Quantum">
+    <img src="assets/logo-erapor.png" alt="Logo e-Rapor Quantum" class="brand-logo" id="brandLogo">
+    <h1 id="title" class="text-2xl font-semibold" style="color:var(--blue)">Masuk ke e-Rapor Quantum</h1>
+
+    <!-- TOKEN SECTION -->
+    <div id="tokenSection" class="mt-4 space-y-3 fade show">
       <input
         id="tokenInput"
         class="input"
@@ -145,8 +145,6 @@
       >
         Lanjut
       </button>
-    
-      <!-- Tambahkan elemen ini -->
       <div id="notifBox" class="notif"></div>
     </div>
 
@@ -183,7 +181,61 @@
     </footer>
   </div>
 
+  <!-- RESET PASSWORD MODAL -->
+  <div id="resetPasswordModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-80">
+      <h2 class="text-lg font-semibold mb-4" style="color:var(--blue)">Reset Password</h2>
+      <input type="text" id="resetUsername" class="input" placeholder="Username" aria-label="Username">
+      <input type="text" id="resetToken" class="input" placeholder="Token Sekolah" aria-label="Token Sekolah">
+      <input type="password" id="resetNewPassword" class="input" placeholder="Password Baru" aria-label="Password Baru">
+      <button id="btnResetSubmit" class="btn btn-blue w-full mt-2">Reset Password</button>
+      <button id="btnResetCancel" class="btn w-full mt-2 text-gray-600 hover:underline bg-transparent shadow-none">Batal</button>
+    </div>
+  </div>
+
   <!-- auth.js (external) -->
   <script src="auth.js"></script>
+
+  <!-- Reset password script -->
+  <script>
+    // Tampilkan modal reset password
+    function lupaPassword() {
+      document.getElementById('resetPasswordModal').classList.remove('hidden');
+    }
+
+    // Cancel modal
+    document.getElementById('btnResetCancel').addEventListener('click', () => {
+      document.getElementById('resetPasswordModal').classList.add('hidden');
+    });
+
+    // Submit reset password
+    document.getElementById('btnResetSubmit').addEventListener('click', async () => {
+      const username = document.getElementById('resetUsername').value.trim();
+      const token = document.getElementById('resetToken').value.trim();
+      const newPassword = document.getElementById('resetNewPassword').value.trim();
+
+      if (!username || !token || !newPassword) {
+        Swal.fire('Error', 'Semua field harus diisi!', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${WEBAPP_URL}?action=resetPassword`, {
+          method: 'POST',
+          body: JSON.stringify({ username, token, newPassword }),
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          Swal.fire('Sukses', 'Password berhasil direset!', 'success');
+          document.getElementById('resetPasswordModal').classList.add('hidden');
+        } else {
+          Swal.fire('Error', result.message || 'Gagal mereset password.', 'error');
+        }
+      } catch (err) {
+        Swal.fire('Error', 'Terjadi kesalahan, coba lagi.', 'error');
+      }
+    });
+  </script>
 </body>
 </html>
