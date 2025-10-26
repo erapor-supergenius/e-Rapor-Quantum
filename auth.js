@@ -1,6 +1,6 @@
 // =======================================================================
 // e-Rapor Quantum — AUTH SYSTEM (Final Terhubung Tanpa Proxy)
-// Gabungan versi stabil + tampilan elegan SweetAlert2
+// Sinkron dengan index.html & Notifikasi SweetAlert2 elegan
 // =======================================================================
 
 // Ganti dengan URL WebApp kamu (Deploy as: Me, access: Anyone)
@@ -10,7 +10,7 @@ const WEBAPP_URL =
 /* ---------- UI helpers ---------- */
 function _showSection(id) {
   const sections = ["tokenSection", "registerSection", "loginSection"];
-  sections.forEach(s => {
+  sections.forEach((s) => {
     const el = document.getElementById(s);
     if (!el) return;
     if (s === id) {
@@ -19,7 +19,9 @@ function _showSection(id) {
       setTimeout(() => el.classList.add("show"), 30);
     } else {
       el.classList.remove("show");
-      setTimeout(() => { el.style.display = "none"; }, 250);
+      setTimeout(() => {
+        el.style.display = "none";
+      }, 250);
     }
   });
 
@@ -31,8 +33,17 @@ function _showSection(id) {
 
 /* ---------- VALIDASI TOKEN ---------- */
 async function validateToken() {
-  const token = (document.getElementById("tokenInput") || {}).value.trim();
-  if (!token) return Swal.fire("Perhatian", "Masukkan token sekolah!", "warning");
+  const el = document.getElementById("tokenInput") || document.getElementById("token");
+  if (!el) {
+    Swal.fire("Error", "Kolom token tidak ditemukan di halaman.", "error");
+    return;
+  }
+
+  const token = el.value.trim();
+  if (!token) {
+    Swal.fire("Perhatian", "Masukkan token sekolah!", "warning");
+    return;
+  }
 
   try {
     Swal.fire({
@@ -68,6 +79,7 @@ async function validateToken() {
       Swal.fire("Gagal", data.error || "Token tidak valid", "error");
     }
   } catch (err) {
+    Swal.close();
     Swal.fire("Error", err.message || "Gagal terhubung ke server.", "error");
   }
 }
@@ -75,9 +87,9 @@ async function validateToken() {
 /* ---------- REGISTRASI ---------- */
 async function registerUser() {
   const token = localStorage.getItem("token_unik") || "";
-  const nama = (document.getElementById("nama") || {}).value.trim();
-  const username = (document.getElementById("usernameReg") || {}).value.trim();
-  const password = (document.getElementById("passwordReg") || {}).value.trim();
+  const nama = (document.getElementById("nama") || {}).value?.trim();
+  const username = (document.getElementById("usernameReg") || {}).value?.trim();
+  const password = (document.getElementById("passwordReg") || {}).value?.trim();
 
   if (!token) return Swal.fire("Gagal", "Token sekolah tidak ditemukan.", "error");
   if (!nama || !username || !password)
@@ -103,6 +115,8 @@ async function registerUser() {
     });
     const data = await resp.json();
 
+    Swal.close();
+
     if (data.success) {
       Swal.fire({
         icon: "success",
@@ -117,14 +131,15 @@ async function registerUser() {
       Swal.fire("Gagal", data.error || "Registrasi gagal", "error");
     }
   } catch (err) {
+    Swal.close();
     Swal.fire("Error", err.message || "Gagal terhubung ke server.", "error");
   }
 }
 
 /* ---------- LOGIN ---------- */
 async function loginUser(forceUsername, forcePassword) {
-  const username = forceUsername || (document.getElementById("usernameLogin") || {}).value.trim();
-  const password = forcePassword || (document.getElementById("passwordLogin") || {}).value.trim();
+  const username = forceUsername || (document.getElementById("usernameLogin") || {}).value?.trim();
+  const password = forcePassword || (document.getElementById("passwordLogin") || {}).value?.trim();
 
   if (!username || !password)
     return Swal.fire("Perhatian", "Masukkan username & password.", "warning");
@@ -142,6 +157,8 @@ async function loginUser(forceUsername, forcePassword) {
       body: JSON.stringify({ action: "login", username, password }),
     });
     const data = await resp.json();
+
+    Swal.close();
 
     if (data.success) {
       localStorage.setItem("token_sesi", data.token_sesi);
@@ -162,13 +179,18 @@ async function loginUser(forceUsername, forcePassword) {
       Swal.fire("Gagal", data.error || "Login gagal", "error");
     }
   } catch (err) {
+    Swal.close();
     Swal.fire("Error", err.message || "Gagal terhubung ke server.", "error");
   }
 }
 
 /* ---------- Navigasi manual ---------- */
-function showRegister() { _showSection("registerSection"); }
-function showLogin() { _showSection("loginSection"); }
+function showRegister() {
+  _showSection("registerSection");
+}
+function showLogin() {
+  _showSection("loginSection");
+}
 
 /* ---------- Lupa Password ---------- */
 function lupaPassword() {
