@@ -10,7 +10,7 @@
  * Ganti URL di bawah dengan milik kamu
  */
 const GAS_WEBAPP_URL =
-  "https://script.google.com/macros/s/AKfycbwZ7RLl5khz3h6O7zJvT8zTnVNz1U0kY_R2ya9ytC4PztEOdxgWURQW_9P49bSPjs98/exec";
+  "https://script.google.com/macros/s/AKfycbyIMIUeOxefGQro-2cpf7c3r6rZpZ6eGLmBjg-OIFvrvTUuUNzv1_kMngxGbCWh8hvUUw/exec";
 
 /* === PROXY CORS STABIL === */
 const PROXY_PREFIX = "https://api.allorigins.win/raw?url=";
