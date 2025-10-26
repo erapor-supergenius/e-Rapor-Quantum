@@ -5,18 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>e-Rapor Quantum — Login</title>
 
-  <!-- ✅ Favicon (tersimpan di folder assets) -->
+  <!-- ✅ Favicon -->
   <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
   <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon.png">
   <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
   <meta name="theme-color" content="#1d4ed8">
   
-  <!-- Tailwind (utility) + SweetAlert2 -->
+  <!-- Tailwind + SweetAlert2 -->
   <link href="https://unpkg.com/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    /* Base style (inline) */
     :root {
       --blue: #1d4ed8;
       --blue-dark: #1e40af;
@@ -24,18 +23,15 @@
     }
 
     body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system;
       min-height: 100vh;
       margin: 0;
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       background: linear-gradient(135deg, #071b2a 0%, #0f172a 30%, #1d4ed8 100%);
-      -webkit-font-smoothing: antialiased;
-      color: #0f172a;
     }
 
-    /* Card */
     .card {
       background: #fff;
       width: 420px;
@@ -46,33 +42,27 @@
       text-align: center;
     }
 
-    /* Logo */
     .brand-logo {
       width: 140px;
-      max-width: 46%;
       border-radius: 12px;
       margin: 0 auto 18px auto;
       display: block;
     }
 
-    /* Inputs & buttons */
     .input {
-      width:100%;
-      max-width:100%;
-      box-sizing:border-box;
-      padding:14px;
-      border-radius:12px;
-      border:1px solid #e6eef8;
-      font-size:15px;
-      text-align:center;
-      margin-bottom:12px;
-      transition:box-shadow .25s, border-color .2s, transform .12s;
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      border: 1px solid #e6eef8;
+      font-size: 15px;
+      text-align: center;
+      margin-bottom: 12px;
+      transition: box-shadow 0.25s, border-color 0.2s, transform 0.12s;
     }
-
     .input:focus {
-      outline: none;
       border-color: var(--blue);
       box-shadow: 0 6px 18px rgba(29, 78, 216, 0.12);
+      outline: none;
       transform: translateY(-1px);
     }
 
@@ -82,15 +72,16 @@
       border-radius: 12px;
       font-weight: 700;
       font-size: 15px;
-      border: 0;
+      border: none;
       cursor: pointer;
-      transition: transform 0.12s, box-shadow 0.12s;
-      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.09);
+      box-shadow: 0 6px 18px rgba(2,6,23,0.09);
+      transition: transform 0.12s;
     }
     .btn:active { transform: translateY(1px); }
     .btn-blue { background: var(--blue); color: white; }
     .btn-blue:hover { background: var(--blue-dark); }
     .btn-green { background: var(--green); color: white; }
+
     .small-link { color: var(--blue); cursor: pointer; font-weight: 600; }
 
     footer {
@@ -100,79 +91,62 @@
       line-height: 1.4;
     }
 
-    /* Fade-in animation for sections */
-    .fade {
-      opacity: 0;
-      transform: translateY(18px);
-      transition: all 0.45s ease;
+    /* Modal reset password diperbaiki tampilannya */
+    #resetPasswordModal {
+      transition: opacity 0.3s ease;
     }
-    .fade.show {
-      opacity: 1;
-      transform: translateY(0);
+    .modal-card {
+      background: white;
+      border-radius: 18px;
+      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.30);
+      width: 380px;
+      max-width: 92%;
+      padding: 28px;
     }
-
-    /* spacing helper */
-    .space-y-3 > * + * { margin-top: 12px; }
-
-    /* Hover link animation fix */
-    .text-blue-700 {
-      transition: all 0.3s ease;
+    .modal-card .input {
+      text-align: left;
+      font-size: 14px;
     }
-    .text-blue-700:hover {
-      color: #1d4ed8;
-      text-decoration: underline;
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      box-shadow: none;
+      color: #475569;
+    }
+    .btn-cancel:hover {
+      background: #f1f5f9;
     }
   </style>
 </head>
 
 <body>
-  <div class="card" role="main" aria-label="Form Login e-Rapor Quantum">
-    <img src="assets/logo-erapor.png" alt="Logo e-Rapor Quantum" class="brand-logo" id="brandLogo">
-    <h1 id="title" class="text-2xl font-semibold" style="color:var(--blue)">Masuk ke e-Rapor Quantum</h1>
+  <div class="card" role="main">
+    <img src="assets/logo-erapor.png" alt="Logo e-Rapor Quantum" class="brand-logo">
+    <h1 class="text-2xl font-semibold" style="color:var(--blue)">Masuk ke e-Rapor Quantum</h1>
 
     <!-- TOKEN SECTION -->
     <div id="tokenSection" class="mt-4 space-y-3 fade show">
-      <input
-        id="tokenInput"
-        class="input"
-        placeholder="Masukkan Token Sekolah (contoh: ABCD-1234)"
-        aria-label="Token Sekolah"
-      >
-      <button
-        id="btnToken"
-        onclick="validateToken()"
-        class="btn btn-blue"
-      >
-        Lanjut
-      </button>
-      <div id="notifBox" class="notif"></div>
+      <input id="tokenInput" class="input" placeholder="Masukkan Token Sekolah (contoh: ABCD-1234)">
+      <button id="btnToken" onclick="validateToken()" class="btn btn-blue">Lanjut</button>
+      <div id="notifBox"></div>
     </div>
 
     <!-- REGISTER SECTION -->
     <div id="registerSection" class="mt-4 space-y-3 fade hidden" style="display:none">
-      <input id="nama" class="input" placeholder="Nama Lengkap" aria-label="Nama Lengkap">
-      <input id="usernameReg" class="input" placeholder="Username" aria-label="Username registrasi">
-      <input id="passwordReg" class="input" type="password" placeholder="Password" aria-label="Password registrasi">
+      <input id="nama" class="input" placeholder="Nama Lengkap">
+      <input id="usernameReg" class="input" placeholder="Username">
+      <input id="passwordReg" class="input" type="password" placeholder="Password">
       <button id="btnRegister" onclick="registerUser()" class="btn btn-green">Daftar & Masuk</button>
-      <div>
-        <span class="small-link" onclick="showLogin()">Sudah punya akun? Masuk</span>
-      </div>
+      <div><span class="small-link" onclick="showLogin()">Sudah punya akun? Masuk</span></div>
     </div>
 
     <!-- LOGIN SECTION -->
     <div id="loginSection" class="mt-4 space-y-3 fade hidden" style="display:none">
-      <input id="usernameLogin" class="input" placeholder="Username" aria-label="Username login">
-      <input id="passwordLogin" class="input" type="password" placeholder="Password" aria-label="Password login">
-      
+      <input id="usernameLogin" class="input" placeholder="Username">
+      <input id="passwordLogin" class="input" type="password" placeholder="Password">
       <button id="btnLogin" onclick="loginUser()" class="btn btn-blue">Masuk</button>
-
-      <!-- Lupa Password -->
-      <div class="text-sm text-blue-700 cursor-pointer hover:underline mt-2 text-center"
-       onclick="lupaPassword()">Lupa password?</div>
-
-      <div>
-        <span class="small-link" onclick="showRegister()">Belum punya akun? Daftar</span>
-      </div>
+      <div class="text-sm text-blue-700 cursor-pointer hover:underline mt-2 text-center" onclick="lupaPassword()">Lupa password?</div>
+      <div><span class="small-link" onclick="showRegister()">Belum punya akun? Daftar</span></div>
     </div>
 
     <footer>
@@ -181,34 +155,30 @@
     </footer>
   </div>
 
-  <!-- RESET PASSWORD MODAL -->
+  <!-- ✅ RESET PASSWORD MODAL (sudah dirapikan) -->
   <div id="resetPasswordModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg w-80">
-      <h2 class="text-lg font-semibold mb-4" style="color:var(--blue)">Reset Password</h2>
-      <input type="text" id="resetUsername" class="input" placeholder="Username" aria-label="Username">
-      <input type="text" id="resetToken" class="input" placeholder="Token Sekolah" aria-label="Token Sekolah">
-      <input type="password" id="resetNewPassword" class="input" placeholder="Password Baru" aria-label="Password Baru">
-      <button id="btnResetSubmit" class="btn btn-blue w-full mt-2">Reset Password</button>
-      <button id="btnResetCancel" class="btn w-full mt-2 text-gray-600 hover:underline bg-transparent shadow-none">Batal</button>
+    <div class="modal-card">
+      <h2 class="text-lg font-semibold mb-4 text-center" style="color:var(--blue)">Reset Password</h2>
+      <div class="space-y-3">
+        <input type="text" id="resetUsername" class="input" placeholder="Username">
+        <input type="text" id="resetToken" class="input" placeholder="Token Sekolah">
+        <input type="password" id="resetNewPassword" class="input" placeholder="Password Baru">
+      </div>
+      <button id="btnResetSubmit" class="btn btn-blue w-full mt-4">Reset Password</button>
+      <button id="btnResetCancel" class="btn btn-cancel w-full mt-2">Batal</button>
     </div>
   </div>
 
-  <!-- auth.js (external) -->
   <script src="auth.js"></script>
-
-  <!-- Reset password script -->
   <script>
-    // Tampilkan modal reset password
     function lupaPassword() {
       document.getElementById('resetPasswordModal').classList.remove('hidden');
     }
 
-    // Cancel modal
     document.getElementById('btnResetCancel').addEventListener('click', () => {
       document.getElementById('resetPasswordModal').classList.add('hidden');
     });
 
-    // Submit reset password
     document.getElementById('btnResetSubmit').addEventListener('click', async () => {
       const username = document.getElementById('resetUsername').value.trim();
       const token = document.getElementById('resetToken').value.trim();
@@ -222,17 +192,16 @@
       try {
         const response = await fetch(`${WEBAPP_URL}?action=resetPassword`, {
           method: 'POST',
-          body: JSON.stringify({ username, token, newPassword }),
+          body: JSON.stringify({ username, token, newPassword })
         });
         const result = await response.json();
-
         if (result.success) {
           Swal.fire('Sukses', 'Password berhasil direset!', 'success');
           document.getElementById('resetPasswordModal').classList.add('hidden');
         } else {
           Swal.fire('Error', result.message || 'Gagal mereset password.', 'error');
         }
-      } catch (err) {
+      } catch {
         Swal.fire('Error', 'Terjadi kesalahan, coba lagi.', 'error');
       }
     });
