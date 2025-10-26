@@ -5,121 +5,100 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>e-Rapor Quantum — Login</title>
 
-  <!-- TailwindCSS & SweetAlert -->
+  <!-- Tailwind (utility) + SweetAlert2 -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    :root {
-      --blue-dark: #071b2a;
-      --blue-mid:  #1d4ed8;
-      --blue-light:#3b82f6;
-      --green:#16a34a;
+    /* Base style (inline) */
+    :root{--blue:#1d4ed8;--blue-dark:#1e40af;--green:#16a34a}
+    body{
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      min-height:100vh;
+      margin:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background: linear-gradient(135deg,#071b2a 0%, #0f172a 30%, #1d4ed8 100%);
+      -webkit-font-smoothing:antialiased;
+      color:#0f172a;
     }
 
-    body {
-      font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      min-height: 100vh;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-mid) 40%, var(--blue-light) 100%);
-      -webkit-font-smoothing: antialiased;
-      color: #0f172a;
+    /* Card */
+    .card{
+      background:#fff;
+      width:420px;
+      max-width:95%;
+      border-radius:18px;
+      box-shadow: 0 20px 60px rgba(2,6,23,0.45);
+      padding:32px;
+      text-align:center;
     }
 
-    .card {
-      backdrop-filter: blur(18px);
-      background: rgba(255, 255, 255, 0.82);
-      border-radius: 22px;
-      box-shadow: 0 12px 36px rgba(0,0,0,0.25);
-      width: 420px;
-      max-width: 92%;
-      padding: 42px 36px;
-      text-align: center;
-      animation: fadeIn 0.7s ease;
+    /* Logo */
+    .brand-logo{
+      width:140px;
+      max-width:46%;
+      border-radius:12px;
+      margin:0 auto 18px auto;
+      display:block;
     }
 
-    .brand-logo {
-      width: 130px;
-      max-width: 46%;
-      border-radius: 14px;
-      display: block;
-      margin: 0 auto 18px auto;
-      box-shadow: none; /* bersih, tanpa bayangan */
-    }
-
-    h1 {
-      color: var(--blue-mid);
-      font-weight: 700;
-      font-size: 1.35rem;
-      margin-bottom: 1.2rem;
-    }
-
+    /* Inputs & buttons */
     .input {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #e6eef8;
-      font-size: 15px;
-      text-align: center;
-      margin-bottom: 12px;
-      transition: box-shadow .25s, border-color .2s, transform .12s;
-      background: rgba(255,255,255,0.9);
+      width:100%;
+      padding:14px;
+      border-radius:12px;
+      border:1px solid #e6eef8;
+      font-size:15px;
+      text-align:center;
+      margin-bottom:12px;
+      transition:box-shadow .25s, border-color .2s, transform .12s;
     }
-
-    .input:focus {
-      outline: none;
-      border-color: var(--blue-light);
-      box-shadow: 0 6px 18px rgba(59,130,246,0.15);
-      transform: translateY(-1px);
-    }
+    .input:focus{ outline:none; border-color:var(--blue); box-shadow:0 6px 18px rgba(29,78,216,0.12); transform:translateY(-1px); }
 
     .btn {
-      width: 100%;
-      padding: 13px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 15px;
-      border: 0;
-      cursor: pointer;
-      transition: transform .12s, box-shadow .12s;
-      box-shadow: 0 6px 18px rgba(2,6,23,0.09);
+      width:100%;
+      padding:13px;
+      border-radius:12px;
+      font-weight:700;
+      font-size:15px;
+      border:0;
+      cursor:pointer;
+      transition:transform .12s, box-shadow .12s;
+      box-shadow:0 6px 18px rgba(2,6,23,0.09);
     }
+    .btn:active{ transform:translateY(1px); }
+    .btn-blue{ background:var(--blue); color:white; }
+    .btn-blue:hover{ background:var(--blue-dark); }
+    .btn-green{ background:var(--green); color:white; }
+    .small-link{ color:var(--blue); cursor:pointer; font-weight:600; }
 
-    .btn:active { transform: translateY(1px); }
-    .btn-blue { background: var(--blue-mid); color: white; }
-    .btn-blue:hover { background: var(--blue-light); }
-    .btn-green { background: var(--green); color: white; }
+    footer{ margin-top:18px; font-size:12px; color:#64748b; line-height:1.4; }
 
-    .small-link { color: var(--blue-mid); cursor: pointer; font-weight: 600; }
-    .small-link:hover { text-decoration: underline; }
+    /* Fade-in animation for sections */
+    .fade{ opacity:0; transform: translateY(18px); transition: all .45s ease; }
+    .fade.show{ opacity:1; transform: translateY(0); }
 
-    footer {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #64748b;
-      line-height: 1.4;
+    /* spacing helper */
+    .space-y-3 > * + *{ margin-top:12px; }
+
+    <style>
+    .text-blue-700 {
+      transition: all 0.3s ease;
     }
-
-    .fade { opacity: 0; transform: translateY(18px); transition: all .45s ease; }
-    .fade.show { opacity: 1; transform: translateY(0); }
-
-    .space-y-3 > * + * { margin-top: 12px; }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(18px); }
-      to   { opacity: 1; transform: translateY(0); }
+    .text-blue-700:hover {
+      color: #1d4ed8; /* biru lebih gelap */
+      text-decoration: underline;
     }
+    </style>
+
   </style>
 </head>
-
 <body>
   <div class="card" role="main" aria-label="Form Login e-Rapor Quantum">
     <img src="assets/logo-erapor.png" alt="Logo e-Rapor Quantum" class="brand-logo" id="brandLogo">
-
-    <h1 id="title">Masuk ke e-Rapor Quantum</h1>
+    <h1 id="title" class="text-2xl font-semibold" style="color:var(--blue)">Masuk ke e-Rapor Quantum</h1>
 
     <!-- TOKEN SECTION -->
     <div id="tokenSection" class="mt-4 space-y-3 fade show">
@@ -128,7 +107,7 @@
     </div>
 
     <!-- REGISTER SECTION -->
-    <div id="registerSection" class="mt-4 space-y-3 fade" style="display:none">
+    <div id="registerSection" class="mt-4 space-y-3 fade hidden" style="display:none">
       <input id="nama" class="input" placeholder="Nama Lengkap" aria-label="Nama Lengkap">
       <input id="usernameReg" class="input" placeholder="Username" aria-label="Username registrasi">
       <input id="passwordReg" class="input" type="password" placeholder="Password" aria-label="Password registrasi">
@@ -139,13 +118,15 @@
     </div>
 
     <!-- LOGIN SECTION -->
-    <div id="loginSection" class="mt-4 space-y-3 fade" style="display:none">
+    <div id="loginSection" class="mt-4 space-y-3 fade hidden" style="display:none">
       <input id="usernameLogin" class="input" placeholder="Username" aria-label="Username login">
       <input id="passwordLogin" class="input" type="password" placeholder="Password" aria-label="Password login">
+      
       <button id="btnLogin" onclick="loginUser()" class="btn btn-blue">Masuk</button>
 
+      <!-- Tambahkan ini di bawah tombol login -->
       <div class="text-sm text-blue-700 cursor-pointer hover:underline mt-2 text-center"
-        onclick="lupaPassword()">Lupa password?</div>
+       onclick="lupaPassword()">Lupa password?</div>
 
       <div>
         <span class="small-link" onclick="showRegister()">Belum punya akun? Daftar</span>
@@ -158,7 +139,7 @@
     </footer>
   </div>
 
-  <!-- auth.js -->
+  <!-- auth.js (external) -->
   <script src="auth.js"></script>
 </body>
 </html>
