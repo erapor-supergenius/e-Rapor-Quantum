@@ -57,15 +57,18 @@
 
     /* Inputs & buttons */
     .input {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: 1px solid #e6eef8;
-      font-size: 15px;
-      text-align: center;
-      margin-bottom: 12px;
-      transition: box-shadow 0.25s, border-color 0.2s, transform 0.12s;
+      width:100%;
+      max-width:100%;
+      box-sizing:border-box;
+      padding:14px;
+      border-radius:12px;
+      border:1px solid #e6eef8;
+      font-size:15px;
+      text-align:center;
+      margin-bottom:12px;
+      transition:box-shadow .25s, border-color .2s, transform .12s;
     }
+
     .input:focus {
       outline: none;
       border-color: var(--blue);
