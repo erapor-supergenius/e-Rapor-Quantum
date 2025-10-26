@@ -31,7 +31,7 @@ function _showSection(id) {
 
 /* ---------- VALIDASI TOKEN ---------- */
 async function validateToken() {
-  const token = (document.getElementById("token") || {}).value.trim();
+  const token = (document.getElementById("tokenInput") || {}).value.trim();
   if (!token) return Swal.fire("Perhatian", "Masukkan token sekolah!", "warning");
 
   try {
