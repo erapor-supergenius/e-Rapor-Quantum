@@ -125,15 +125,29 @@
   </style>
 </head>
 
-<body>
-  <div class="card" role="main" aria-label="Form Login e-Rapor Quantum">
-    <img src="assets/logo-erapor.png" alt="Logo e-Rapor Quantum" class="brand-logo" id="brandLogo">
-    <h1 id="title" class="text-2xl font-semibold" style="color:var(--blue)">Masuk ke e-Rapor Quantum</h1>
-
-    <!-- TOKEN SECTION -->
-    <div id="tokenSection" class="mt-4 space-y-3 fade show">
-      <input id="token" class="input" placeholder="Masukkan Token Sekolah (contoh: ABCD-1234)" aria-label="Token Sekolah">
-      <button id="btnToken" onclick="validateToken()" class="btn btn-blue">Lanjut</button>
+    <body>
+      <div class="card" role="main" aria-label="Form Login e-Rapor Quantum">
+        <img src="assets/logo-erapor.png" alt="Logo e-Rapor Quantum" class="brand-logo" id="brandLogo">
+        <h1 id="title" class="text-2xl font-semibold" style="color:var(--blue)">Masuk ke e-Rapor Quantum</h1>
+    
+        <!-- TOKEN SECTION -->
+       <div id="tokenSection" class="mt-4 space-y-3 fade show">
+      <input
+        id="tokenInput"
+        class="input"
+        placeholder="Masukkan Token Sekolah (contoh: ABCD-1234)"
+        aria-label="Token Sekolah"
+      >
+      <button
+        id="btnToken"
+        onclick="validateToken()"
+        class="btn btn-blue"
+      >
+        Lanjut
+      </button>
+    
+      <!-- Tambahkan elemen ini -->
+      <div id="notifBox" class="notif"></div>
     </div>
 
     <!-- REGISTER SECTION -->
