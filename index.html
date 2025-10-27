@@ -14,7 +14,6 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    /* Base style (inline) */
     :root {
       --blue: #1d4ed8;
       --blue-dark: #1e40af;
@@ -33,7 +32,6 @@
       color: #0f172a;
     }
 
-    /* Card */
     .card {
       background: #fff;
       width: 420px;
@@ -44,7 +42,6 @@
       text-align: center;
     }
 
-    /* Logo */
     .brand-logo {
       width: 140px;
       max-width: 46%;
@@ -53,7 +50,6 @@
       display: block;
     }
 
-    /* Inputs & buttons */
     .input {
       width:100%;
       max-width:100%;
@@ -98,7 +94,6 @@
       line-height: 1.4;
     }
 
-    /* Fade-in animation for sections */
     .fade {
       opacity: 0;
       transform: translateY(18px);
@@ -109,10 +104,8 @@
       transform: translateY(0);
     }
 
-    /* spacing helper */
     .space-y-3 > * + * { margin-top: 12px; }
 
-    /* Hover link animation fix */
     .text-blue-700 {
       transition: all 0.3s ease;
     }
@@ -121,30 +114,20 @@
       text-decoration: underline;
     }
 
-    /* ============================================== */
-    /* == PERBAIKAN 1: CSS MANUAL UNTUK MODAL == */
-    /* ============================================== */
-
-    /* Ini untuk menyembunyikan modal saat awal */
-    .hidden {
-      display: none;
-    }
-
-    /* Ini untuk styling modal overlay (latar belakang) */
+    /* Modal Reset Password */
+    .hidden { display: none; }
     #resetPasswordModal {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      z-index: 50; /* Tampil di atas segalanya */
-      background-color: rgba(15, 23, 42, 0.6); /* Latar belakang gelap transparan */
+      z-index: 50;
+      background-color: rgba(15, 23, 42, 0.6);
       display: flex;
       align-items: center;
       justify-content: center;
     }
-
-    /* Ini untuk styling kotak putih di tengah */
     #resetPasswordModal > div {
       background-color: #ffffff;
       padding: 24px;
@@ -153,9 +136,6 @@
       max-width: 90%;
       box-shadow: 0 20px 60px rgba(2, 6, 23, 0.45);
     }
-    /* ============================================== */
-    /* == AKHIR PERBAIKAN 1 == */
-    /* ============================================== */
   </style>
 </head>
 
@@ -165,19 +145,8 @@
     <h1 id="title" class="text-2xl font-semibold" style="color:var(--blue)">Masuk ke e-Rapor Quantum</h1>
 
     <div id="tokenSection" class="mt-4 space-y-3 fade show">
-      <input
-        id="tokenInput"
-        class="input"
-        placeholder="Masukkan Token Sekolah (contoh: ABCD-1234)"
-        aria-label="Token Sekolah"
-      >
-      <button
-        id="btnToken"
-        onclick="validateToken()"
-        class="btn btn-blue"
-      >
-        Lanjut
-      </button>
+      <input id="tokenInput" class="input" placeholder="Masukkan Token Sekolah (contoh: ABCD-1234)" aria-label="Token Sekolah">
+      <button id="btnToken" onclick="validateToken()" class="btn btn-blue">Lanjut</button>
       <div id="notifBox" class="notif"></div>
     </div>
 
@@ -186,88 +155,90 @@
       <input id="usernameReg" class="input" placeholder="Username" aria-label="Username registrasi">
       <input id="passwordReg" class="input" type="password" placeholder="Password" aria-label="Password registrasi">
       <button id="btnRegister" onclick="registerUser()" class="btn btn-green">Daftar & Masuk</button>
-      <div>
-        <span class="small-link" onclick="showLogin()">Sudah punya akun? Masuk</span>
-      </div>
+      <div><span class="small-link" onclick="showLogin()">Sudah punya akun? Masuk</span></div>
     </div>
 
     <div id="loginSection" class="mt-4 space-y-3 fade hidden" style="display:none">
       <input id="usernameLogin" class="input" placeholder="Username" aria-label="Username login">
       <input id="passwordLogin" class="input" type="password" placeholder="Password" aria-label="Password login">
-      
       <button id="btnLogin" onclick="loginUser()" class="btn btn-blue">Masuk</button>
-
-      <div class="text-sm text-blue-700 cursor-pointer hover:underline mt-2 text-center"
-        onclick="lupaPassword()">Lupa password?</div>
-
-      <div>
-        <span class="small-link" onclick="showRegister()">Belum punya akun? Daftar</span>
-      </div>
+      <div class="text-sm text-blue-700 cursor-pointer hover:underline mt-2 text-center" onclick="lupaPassword()">Lupa password?</div>
+      <div><span class="small-link" onclick="showRegister()">Belum punya akun? Daftar</span></div>
     </div>
 
     <footer>
       <div>© 2025 <strong>e-Rapor Quantum</strong></div>
       <div>Dikembangkan oleh: <strong>Dedi Agus Mustofa, S.Pd.SD</strong></div>
     </footer>
-  </div> <div id="resetPasswordModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg w-80">
+  </div>
+
+  <!-- Modal Reset Password -->
+  <div id="resetPasswordModal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg w-80 relative">
       <h2 class="text-lg font-semibold mb-4" style="color:var(--blue)">Reset Password</h2>
       <input type="text" id="resetUsername" class="input" placeholder="Username" aria-label="Username">
       <input type="text" id="resetToken" class="input" placeholder="Token Sekolah" aria-label="Token Sekolah">
       <input type="password" id="resetNewPassword" class="input" placeholder="Password Baru" aria-label="Password Baru">
       <button id="btnResetSubmit" class="btn btn-blue w-full mt-2">Reset Password</button>
-      
-      <button id="btnResetCancel" onclick="tutupModalReset()" class="btn w-full mt-2 text-gray-600 hover:underline bg-transparent shadow-none">Batal</button>
+      <button type="button" id="btnResetCancel" class="btn w-full mt-2 text-gray-600 bg-transparent shadow-none border border-gray-300 hover:bg-gray-100">Batal</button>
     </div>
   </div>
+
   <script src="auth.js"></script>
-
   <script>
-    // ===============================================
-    // == PERBAIKAN 2 (Lanjutan): FUNGSI BARU ==
-    // ===============================================
+    document.addEventListener('DOMContentLoaded', function() {
+      const resetModal = document.getElementById('resetPasswordModal');
+      const cancelBtn = document.getElementById('btnResetCancel');
 
-    // Fungsi baru untuk menutup modal (dipanggil oleh tombol Batal)
-    function tutupModalReset() {
-      document.getElementById('resetPasswordModal').classList.add('hidden');
-    }
-    
-    // Tampilkan modal reset password
-    function lupaPassword() {
-      document.getElementById('resetPasswordModal').classList.remove('hidden');
-    }
+      // Modal disembunyikan saat awal
+      resetModal.classList.add('hidden');
 
-    // Listener tombol Batal yang lama sudah dihapus, karena kita pakai 'onclick'
-    // document.getElementById('btnResetCancel').addEventListener('click', () => { ... }); <-- INI DIHAPUS
-
-    // Submit reset password
-    document.getElementById('btnResetSubmit').addEventListener('click', async () => {
-      const username = document.getElementById('resetUsername').value.trim();
-      const token = document.getElementById('resetToken').value.trim();
-      const newPassword = document.getElementById('resetNewPassword').value.trim();
-
-      if (!username || !token || !newPassword) {
-        Swal.fire('Error', 'Semua field harus diisi!', 'error');
-        return;
+      // Fungsi buka modal
+      window.lupaPassword = function() {
+        resetModal.classList.remove('hidden');
       }
 
-      try {
-        // Pastikan WEBAPP_URL terdefinisi di auth.js
-        const response = await fetch(`${WEBAPP_URL}?action=resetPassword`, {
-          method: 'POST',
-          body: JSON.stringify({ username, token, newPassword }),
+      // Fungsi tutup modal
+      window.tutupModalReset = function() {
+        resetModal.classList.add('hidden');
+      }
+
+      // Tombol Batal
+      if (cancelBtn) {
+        cancelBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          tutupModalReset();
         });
-        const result = await response.json();
-
-        if (result.success) {
-          Swal.fire('Sukses', 'Password berhasil direset!', 'success');
-          tutupModalReset(); // Memanggil fungsi baru untuk menutup modal
-        } else {
-          Swal.fire('Error', result.message || 'Gagal mereset password.', 'error');
-        }
-      } catch (err) {
-        Swal.fire('Error', 'Terjadi kesalahan, coba lagi.', 'error');
       }
+
+      // Submit Reset Password
+      document.getElementById('btnResetSubmit').addEventListener('click', async () => {
+        const username = document.getElementById('resetUsername').value.trim();
+        const token = document.getElementById('resetToken').value.trim();
+        const newPassword = document.getElementById('resetNewPassword').value.trim();
+
+        if (!username || !token || !newPassword) {
+          Swal.fire('Error', 'Semua field harus diisi!', 'error');
+          return;
+        }
+
+        try {
+          const response = await fetch(`${WEBAPP_URL}?action=resetPassword`, {
+            method: 'POST',
+            body: JSON.stringify({ username, token, newPassword }),
+          });
+          const result = await response.json();
+
+          if (result.success) {
+            Swal.fire('Sukses', 'Password berhasil direset!', 'success');
+            tutupModalReset();
+          } else {
+            Swal.fire('Error', result.message || 'Gagal mereset password.', 'error');
+          }
+        } catch (err) {
+          Swal.fire('Error', 'Terjadi kesalahan, coba lagi.', 'error');
+        }
+      });
     });
   </script>
 </body>
