@@ -189,21 +189,27 @@
     document.addEventListener('DOMContentLoaded', function() {
       const resetModal = document.getElementById('resetPasswordModal');
       const cancelBtn = document.getElementById('btnResetCancel');
+      const registerSection = document.getElementById('registerSection');
+      const loginSection = document.getElementById('loginSection');
+      const tokenSection = document.getElementById('tokenSection');
 
-      // Modal disembunyikan saat awal
+      // Sembunyikan modal saat awal
       resetModal.classList.add('hidden');
 
-      // Fungsi buka modal
+      // Tampilkan modal reset
       window.lupaPassword = function() {
         resetModal.classList.remove('hidden');
-      }
+      };
 
-      // Fungsi tutup modal
+      // Tutup modal dan kembali ke form registrasi
       window.tutupModalReset = function() {
         resetModal.classList.add('hidden');
-      }
+        tokenSection.style.display = 'none';
+        loginSection.style.display = 'none';
+        registerSection.style.display = 'block';
+      };
 
-      // Tombol Batal
+      // Tombol batal
       if (cancelBtn) {
         cancelBtn.addEventListener('click', function(e) {
           e.preventDefault();
@@ -211,7 +217,7 @@
         });
       }
 
-      // Submit Reset Password
+      // Tombol Reset Password
       document.getElementById('btnResetSubmit').addEventListener('click', async () => {
         const username = document.getElementById('resetUsername').value.trim();
         const token = document.getElementById('resetToken').value.trim();
@@ -231,7 +237,7 @@
 
           if (result.success) {
             Swal.fire('Sukses', 'Password berhasil direset!', 'success');
-            tutupModalReset();
+            tutupModalReset(); // kembali ke form registrasi
           } else {
             Swal.fire('Error', result.message || 'Gagal mereset password.', 'error');
           }
