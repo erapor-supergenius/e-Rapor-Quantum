@@ -187,42 +187,100 @@
 
   <script src="auth.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const resetModal = document.getElementById('resetPasswordModal');
-      const cancelBtn = document.getElementById('btnResetCancel');
-      const registerSection = document.getElementById('registerSection');
-      const loginSection = document.getElementById('loginSection');
-      const tokenSection = document.getElementById('tokenSection');
+  // ===== Robust modal handlers — replace the old inline script with this =====
+  (function () {
+    // Ambil elemen penting
+    const resetModal = document.getElementById('resetPasswordModal');
+    const cancelBtn = document.getElementById('btnResetCancel');
+    const registerSection = document.getElementById('registerSection');
+    const loginSection = document.getElementById('loginSection');
+    const tokenSection = document.getElementById('tokenSection');
+    const resetSubmit = document.getElementById('btnResetSubmit');
 
-      // Sembunyikan modal saat awal
-      resetModal.classList.add('hidden');
+    if (!resetModal) {
+      console.error('Modal reset tidak ditemukan: #resetPasswordModal');
+      return;
+    }
 
-      // Tampilkan modal reset
-      window.lupaPassword = function() {
+    // Pastikan modal tersembunyi di awal
+    resetModal.classList.add('hidden');
+
+    // Global functions (pastikan tidak tertimpa): tampilkan modal
+    window.lupaPassword = function () {
+      try {
         resetModal.classList.remove('hidden');
-      };
-
-      // Tutup modal dan kembali ke form registrasi
-      window.tutupModalReset = function() {
-        resetModal.classList.add('hidden');
-        tokenSection.style.display = 'none';
-        loginSection.style.display = 'none';
-        registerSection.style.display = 'block';
-      };
-
-      // Tombol batal
-      if (cancelBtn) {
-        cancelBtn.addEventListener('click', function(e) {
-          e.preventDefault();
-          tutupModalReset();
-        });
+        // Optional: fokus ke input pertama
+        const first = document.getElementById('resetUsername') || document.getElementById('resetToken') || document.getElementById('resetNewPassword');
+        if (first) first.focus();
+        console.log('lupaPassword() dipanggil — modal terbuka');
+      } catch (err) {
+        console.error('Error lupaPassword():', err);
       }
+    };
 
-      // Tombol Reset Password
-      document.getElementById('btnResetSubmit').addEventListener('click', async () => {
-        const username = document.getElementById('resetUsername').value.trim();
-        const token = document.getElementById('resetToken').value.trim();
-        const newPassword = document.getElementById('resetNewPassword').value.trim();
+    // Tutup modal dan tunjukkan registerSection
+    window.tutupModalReset = function () {
+      try {
+        resetModal.classList.add('hidden');
+
+        // tampilkan kembali registerSection (seperti permintaan)
+        if (tokenSection) tokenSection.style.display = 'none';
+        if (loginSection) loginSection.style.display = 'none';
+        if (registerSection) {
+          registerSection.style.display = 'block';
+          // beri animasi show agar konsisten
+          registerSection.classList.add('fade');
+          setTimeout(() => registerSection.classList.add('show'), 30);
+        }
+        console.log('tutupModalReset() dipanggil — modal tertutup, registerSection ditampilkan');
+      } catch (err) {
+        console.error('Error tutupModalReset():', err);
+      }
+    };
+
+    // Tombol Batal: pastikan bertipe button dan pasang listener yang kuat
+    if (cancelBtn) {
+      // pastikan tipe button bukan submit
+      try {
+        cancelBtn.setAttribute('type', 'button');
+      } catch (_) {}
+      cancelBtn.removeEventListener('click', window._internCancelHandler); // safe remove
+      window._internCancelHandler = function (e) {
+        e && e.preventDefault();
+        tutupModalReset();
+      };
+      cancelBtn.addEventListener('click', window._internCancelHandler);
+      console.log('Listener tombol Batal terpasang.');
+    } else {
+      console.warn('Tombol Batal (#btnResetCancel) tidak ditemukan.');
+    }
+
+    // Klik di overlay (diluar kotak) akan menutup modal juga
+    resetModal.addEventListener('click', function (ev) {
+      if (ev.target === resetModal) {
+        tutupModalReset();
+      }
+    });
+
+    // ESC untuk menutup modal
+    document.addEventListener('keydown', function (ev) {
+      if (ev.key === 'Escape' || ev.key === 'Esc') {
+        if (!resetModal.classList.contains('hidden')) {
+          tutupModalReset();
+        }
+      }
+    });
+
+    // Pastikan event submit reset terpasang — fallback bila auth.js tidak memasangnya
+    if (resetSubmit) {
+      // unbind jika sudah ada (hindari double handler)
+      resetSubmit.replaceWith(resetSubmit.cloneNode(true));
+      const newResetSubmit = document.getElementById('btnResetSubmit');
+
+      newResetSubmit.addEventListener('click', async function () {
+        const username = document.getElementById('resetUsername')?.value.trim();
+        const token = document.getElementById('resetToken')?.value.trim();
+        const newPassword = document.getElementById('resetNewPassword')?.value.trim();
 
         if (!username || !token || !newPassword) {
           Swal.fire('Error', 'Semua field harus diisi!', 'error');
@@ -236,17 +294,28 @@
           });
           const result = await response.json();
 
-          if (result.success) {
+          if (result && result.success) {
             Swal.fire('Sukses', 'Password berhasil direset!', 'success');
-            tutupModalReset(); // kembali ke form registrasi
+            // setelah sukses kembali ke register
+            setTimeout(() => {
+              tutupModalReset();
+            }, 600);
           } else {
-            Swal.fire('Error', result.message || 'Gagal mereset password.', 'error');
+            Swal.fire('Error', result?.message || 'Gagal mereset password.', 'error');
           }
         } catch (err) {
+          console.error('Error fetch resetPassword:', err);
           Swal.fire('Error', 'Terjadi kesalahan, coba lagi.', 'error');
         }
       });
-    });
-  </script>
+      console.log('Listener tombol Reset Password terpasang (inline fallback).');
+    } else {
+      console.warn('Tombol Reset Submit (#btnResetSubmit) tidak ditemukan.');
+    }
+
+    console.log('Modal reset handlers siap (robust).');
+  })();
+</script>
+
 </body>
 </html>
