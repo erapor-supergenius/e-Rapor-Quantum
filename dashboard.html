@@ -10,10 +10,10 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
   <style>
-    :root{
-      --blue:#1d4ed8;
-      --blue-dark:#0b4ea2;
-      --bg:#f4f7fb;
+    :root {
+      --blue: #1d4ed8;
+      --blue-dark: #0b4ea2;
+      --bg: #f4f7fb;
       --card-shadow: 0 6px 20px rgba(2,6,23,0.06);
     }
     *{box-sizing:border-box}
@@ -21,105 +21,72 @@
 
     /* SIDEBAR */
     .sidebar{
-      width:260px;
-      background:linear-gradient(180deg,#071030,#0d3a8a);
-      color:#fff;
-      padding:22px;
-      display:flex;
-      flex-direction:column;
-      position:fixed;
-      left:0; top:0; bottom:0;
-      box-shadow:4px 0 30px rgba(2,6,23,0.14);
-      z-index:40;
+      width:260px;background:linear-gradient(180deg,#071030,#0d3a8a);color:#fff;padding:22px;
+      display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;box-shadow:4px 0 30px rgba(2,6,23,0.14);z-index:40;
     }
-    .brand{ text-align:center; margin-bottom:16px; }
-    .brand img{ width:88px; border-radius:12px; display:block; margin:0 auto 8px; }
-    .brand h2{ margin:0; font-size:18px; font-weight:700; }
-    .brand .school-name{ font-size:13px; color:#cfe2ff; margin-top:6px; }
+    .brand{text-align:center;margin-bottom:16px;}
+    .brand img{width:88px;border-radius:12px;display:block;margin:0 auto 8px;}
+    .brand h2{margin:0;font-size:18px;font-weight:700;}
+    .brand .school-name{font-size:13px;color:#cfe2ff;margin-top:6px;}
 
-    nav{ margin-top:12px; }
-    .nav-btn{
-      display:block; width:100%; text-align:left; padding:10px 12px; border-radius:8px; color:#e6f0ff; background:transparent; border:0; cursor:pointer; margin-bottom:6px; font-size:15px;
-    }
-    .nav-btn:hover{ background: rgba(255,255,255,0.04); }
-
-    .sidebar-footer{ margin-top:auto; font-size:13px; color:#dbeafe; text-align:center; }
+    nav{margin-top:12px;}
+    .nav-btn{display:block;width:100%;text-align:left;padding:10px 12px;border-radius:8px;color:#e6f0ff;background:transparent;border:0;cursor:pointer;margin-bottom:6px;font-size:15px;}
+    .nav-btn:hover{background:rgba(255,255,255,0.04);}
+    .sidebar-footer{margin-top:auto;font-size:13px;color:#dbeafe;text-align:center;}
 
     /* MAIN */
-    .main-wrap{ margin-left:260px; padding:20px; flex:1; transition:margin-left .28s ease; }
+    .main-wrap{margin-left:260px;padding:20px;flex:1;transition:margin-left .28s ease;}
 
-    /* HEADER (top bar inside main) */
-    .topbar{
-      display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:18px;
-    }
-    .topbar .left{
-      display:flex; align-items:center; gap:12px;
-      background:#fff; padding:12px; border-radius:12px; box-shadow:var(--card-shadow);
-    }
-    .school-logo{ width:72px; height:72px; object-fit:cover; border-radius:10px; border:2px solid rgba(11,78,162,0.06); }
-    .welcome { line-height:1; }
-    .welcome .title{ font-weight:700; font-size:16px; color:var(--blue-dark); }
-    .welcome .subtitle{ font-size:13px; color:#64748b; }
-
-    .topbar .right { display:flex; align-items:center; gap:12px; }
-    .logout-btn { background:#ef4444; color:#fff; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; }
+    /* HEADER */
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;}
+    .topbar .left{display:flex;align-items:center;gap:12px;background:#fff;padding:12px;border-radius:12px;box-shadow:var(--card-shadow);}
+    .school-logo{width:72px;height:72px;object-fit:cover;border-radius:10px;border:2px solid rgba(11,78,162,0.06);}
+    .welcome .title{font-weight:700;font-size:16px;color:var(--blue-dark);}
+    .welcome .subtitle{font-size:13px;color:#64748b;}
+    .logout-btn{background:#ef4444;color:#fff;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:700;}
 
     /* CARDS */
-    .card-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px; margin-bottom:18px; }
-    .card{ background:#fff; border-radius:12px; padding:14px; box-shadow:var(--card-shadow); display:flex; align-items:center; gap:12px; }
-    .card .icon{ width:52px; height:52px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; color:#fff; }
-    .card .meta{ flex:1; text-align:left; }
-    .card .meta .label{ font-size:13px; color:#64748b; font-weight:600; }
-    .card .meta .value{ font-size:20px; font-weight:800; color:var(--blue-dark); margin-top:6px; }
+    .card-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:18px;}
+    .card{background:#fff;border-radius:12px;padding:14px;box-shadow:var(--card-shadow);display:flex;align-items:center;gap:12px;}
+    .card .icon{width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;color:#fff;}
+    .icon-siswa{background:linear-gradient(135deg,#f97316,#fb8c00);}
+    .icon-guru{background:linear-gradient(135deg,#06b6d4,#0078d7);}
+    .icon-mapel{background:linear-gradient(135deg,#7c3aed,#5b21b6);}
+    .icon-kelas{background:linear-gradient(135deg,#16a34a,#059669);}
+    .icon-bimbingan{background:linear-gradient(135deg,#ef4444,#f97316);}
+    .meta .label{font-size:13px;color:#64748b;font-weight:600;}
+    .meta .value{font-size:20px;font-weight:800;color:var(--blue-dark);margin-top:6px;}
 
-    .icon-siswa{ background:linear-gradient(135deg,#f97316,#fb8c00); }
-    .icon-guru{ background:linear-gradient(135deg,#06b6d4,#0078d7); }
-    .icon-mapel{ background:linear-gradient(135deg,#7c3aed,#5b21b6); }
-    .icon-kelas{ background:linear-gradient(135deg,#16a34a,#059669); }
-    .icon-bimbingan{ background:linear-gradient(135deg,#ef4444,#f97316); }
-
-    /* Chart & Progress */
-    .card-full{ background:#fff; border-radius:12px; padding:18px; box-shadow:var(--card-shadow); margin-bottom:18px; }
-    .card-full h3{ margin:0 0 12px 0; color:var(--blue-dark); font-weight:700; }
-    .mapel-progress{ display:flex; flex-direction:column; gap:10px; }
-    .mapel-row{ display:flex; align-items:center; gap:12px; }
-    .mapel-row .mapel-label{ flex:1; font-weight:600; color:#0f172a; }
-    .mapel-bar{ flex:2; height:12px; background:#eef5ff; border-radius:999px; overflow:hidden; }
-    .mapel-bar span{ display:block; height:100%; width:0; background:linear-gradient(90deg,#00b4d8,#0078d7); transition: width .9s ease-in-out; }
-    .mapel-percent{ width:60px; text-align:right; color:var(--blue-dark); font-weight:700; }
-
-    /* DATA GURU TABLE */
-    #guruTableContainer table{width:100%;border-collapse:collapse;margin-top:12px;}
-    #guruTableContainer th,#guruTableContainer td{border:1px solid #ddd;padding:6px 8px;text-align:left;}
-    .btn-action{padding:4px 8px;border:none;border-radius:4px;margin-right:4px;cursor:pointer;font-size:12px;}
-    .btn-edit{background:#3b82f6;color:#fff;}
-    .btn-delete{background:#ef4444;color:#fff;}
-    .btn-primary{background:#10b981;color:#fff;padding:6px 12px;border:none;border-radius:6px;margin-bottom:6px;cursor:pointer;}
+    /* CARD FULL */
+    .card-full{background:#fff;border-radius:12px;padding:18px;box-shadow:var(--card-shadow);margin-bottom:18px;}
+    .card-full h3{margin:0 0 12px;color:var(--blue-dark);font-weight:700;}
+    .mapel-progress{display:flex;flex-direction:column;gap:10px;}
+    .mapel-row{display:flex;align-items:center;gap:12px;}
+    .mapel-row .mapel-label{flex:1;font-weight:600;color:#0f172a;}
+    .mapel-bar{flex:2;height:12px;background:#eef5ff;border-radius:999px;overflow:hidden;}
+    .mapel-bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#00b4d8,#0078d7);transition:width .9s ease-in-out;}
+    .mapel-percent{width:60px;text-align:right;color:var(--blue-dark);font-weight:700;}
 
     /* MODAL */
     #modalGuru{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);justify-content:center;align-items:center;z-index:999;}
     #modalContent{background:#fff;padding:20px;border-radius:12px;width:320px;position:relative;}
-    #modalContent label{display:block;margin-top:10px;font-weight:600;}
-    #modalContent input, #modalContent select{width:100%;padding:6px;margin-top:4px;border-radius:6px;border:1px solid #ccc;}
     #closeModalGuru{position:absolute;top:8px;right:12px;cursor:pointer;font-weight:700;}
+    #modalContent label{display:block;margin-top:10px;font-weight:600;}
+    #modalContent input,#modalContent select{width:100%;padding:6px;margin-top:4px;border-radius:6px;border:1px solid #ccc;}
+    .btn-primary{background:#10b981;color:#fff;padding:6px 12px;border:none;border-radius:6px;margin-bottom:6px;cursor:pointer;}
 
-    /* FOOTER */
-    .main-footer{ text-align:center; color:#ffffff; margin-top:28px; font-size:13px; line-height:1.5; }
-
-    @media (max-width: 900px){
-      .sidebar{ transform:translateX(-100%); position:fixed; z-index:50; }
-      .sidebar.show{ transform:translateX(0); }
-      .main-wrap{ margin-left:0; padding:12px; }
-      .topbar .left{ width:100%; }
+    @media (max-width:900px){
+      .sidebar{transform:translateX(-100%);position:fixed;z-index:50;}
+      .sidebar.show{transform:translateX(0);}
+      .main-wrap{margin-left:0;padding:12px;}
+      .topbar .left{width:100%;}
     }
   </style>
 </head>
 <body>
-
-  <!-- Sidebar kiri -->
   <aside class="sidebar" id="sidebar">
     <div class="brand">
-      <img src="assets/logo-erapor.png" alt="eRapor" />
+      <img src="assets/logo-erapor.png" alt="eRapor">
       <h2>e-Rapor Quantum</h2>
       <div class="school-name" id="schoolNameTop">Nama Sekolah</div>
     </div>
@@ -132,16 +99,13 @@
       <button class="nav-btn" onclick="navigateTo('cetak.html')">🖨️ Cetak Rapor</button>
     </nav>
 
-    <footer class="main-footer">
-    © 2025 e-Rapor Quantum<br>
-    Developed by:<br>
-    <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+    <footer class="main-footer sidebar-footer">
+      © 2025 e-Rapor Quantum<br>
+      Developed by:<br><strong>Dedi Agus Mustofa, S.Pd.SD</strong>
     </footer>
   </aside>
 
-  <!-- Main content -->
-  <main class="main-wrap" id="mainWrap">
-    <!-- top header -->
+  <main class="main-wrap">
     <div class="topbar">
       <div class="left">
         <img id="logoSekolah" class="school-logo" src="assets/logo-erapor.png" alt="Logo Sekolah">
@@ -150,105 +114,39 @@
           <div class="subtitle" id="usernameUser">username</div>
         </div>
       </div>
-
       <div class="right">
         <div id="navCenterText" style="color:#0f172a;font-weight:700;">Dashboard</div>
         <button class="logout-btn" id="logoutBtn">Logout</button>
       </div>
     </div>
 
-    <!-- cards -->
     <section class="card-grid">
-      <div class="card">
-        <div class="icon icon-siswa">👨‍🎓</div>
-        <div class="meta">
-          <div class="label">Total Siswa</div>
-          <div class="value" id="totalSiswa">0</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="icon icon-guru">👩‍🏫</div>
-        <div class="meta">
-          <div class="label">Total Guru</div>
-          <div class="value" id="totalGuru">0</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="icon icon-mapel">📘</div>
-        <div class="meta">
-          <div class="label">Total Mapel</div>
-          <div class="value" id="totalMapel">0</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="icon icon-kelas">🏫</div>
-        <div class="meta">
-          <div class="label">Total Kelas</div>
-          <div class="value" id="totalKelas">0</div>
-        </div>
-      </div>
-      <div class="card">
-        <div class="icon icon-bimbingan">⚠️</div>
-        <div class="meta">
-          <div class="label">Siswa Perlu Bimbingan</div>
-          <div class="value" id="totalBimbingan">0</div>
-        </div>
-      </div>
+      <div class="card"><div class="icon icon-siswa">👨‍🎓</div><div class="meta"><div class="label">Total Siswa</div><div class="value" id="totalSiswa">0</div></div></div>
+      <div class="card"><div class="icon icon-guru">👩‍🏫</div><div class="meta"><div class="label">Total Guru</div><div class="value" id="totalGuru">0</div></div></div>
+      <div class="card"><div class="icon icon-mapel">📘</div><div class="meta"><div class="label">Total Mapel</div><div class="value" id="totalMapel">0</div></div></div>
+      <div class="card"><div class="icon icon-kelas">🏫</div><div class="meta"><div class="label">Total Kelas</div><div class="value" id="totalKelas">0</div></div></div>
+      <div class="card"><div class="icon icon-bimbingan">⚠️</div><div class="meta"><div class="label">Perlu Bimbingan</div><div class="value" id="totalBimbingan">0</div></div></div>
     </section>
 
-    <!-- chart -->
-    <section class="card-full">
-      <h3>Statistik Nilai Rata-rata per Mapel</h3>
-      <canvas id="chartOverview" height="140"></canvas>
-    </section>
+    <section class="card-full"><h3>Statistik Nilai Rata-rata per Mapel</h3><canvas id="chartOverview" height="140"></canvas></section>
+    <section class="card-full"><h3>Progres Pengisian Nilai per Mapel</h3><div id="progressMapelContainer" class="mapel-progress"><div style="color:#64748b">Memuat data progress...</div></div></section>
+    <section class="card-full"><h3>Informasi Sekolah</h3><div id="infoSchool">Memuat profil sekolah...</div></section>
+    <section class="card-full"><h3>Data Guru</h3><button class="btn-primary" id="btnTambahGuru">➕ Tambah Guru</button><div id="guruTableContainer">Memuat data guru...</div></section>
 
-    <!-- progress per mapel -->
-    <section class="card-full">
-      <h3>Progres Pengisian Nilai per Mapel</h3>
-      <div id="progressMapelContainer" class="mapel-progress">
-        <div style="color:#64748b">Memuat data progress...</div>
-      </div>
-    </section>
-
-    <!-- info sekolah -->
-    <section class="card-full">
-      <h3>Informasi Sekolah</h3>
-      <div id="infoSchool">Memuat profil sekolah...</div>
-    </section>
-
-    <!-- data guru -->
-    <section class="card-full">
-      <h3>Data Guru</h3>
-      <button class="btn-primary" id="btnTambahGuru">➕ Tambah Guru</button>
-      <div id="guruTableContainer">Memuat data guru...</div>
-    </section>
-
-    <!-- modal tambah/edit guru -->
-    <div id="modalGuru">
-      <div id="modalContent">
-        <span id="closeModalGuru">×</span>
-        <h3 id="modalTitle">Tambah Guru</h3>
-        <input type="hidden" id="guruId">
-        <label>Nama Lengkap</label>
-        <input type="text" id="guruNama" placeholder="Nama Lengkap">
-        <label>Username</label>
-        <input type="text" id="guruUsername" placeholder="Username">
-        <label>Password</label>
-        <input type="text" id="guruPassword" placeholder="Password">
-        <label>Level</label>
-        <select id="guruLevel">
-          <option value="guru">Guru</option>
-          <option value="admin">Admin</option>
-        </select>
-        <button class="btn-primary" id="saveGuruBtn">Simpan</button>
-      </div>
-    </div>
+    <!-- MODAL -->
+    <div id="modalGuru"><div id="modalContent"><span id="closeModalGuru">×</span><h3 id="modalTitle">Tambah Guru</h3>
+      <input type="hidden" id="guruId">
+      <label>Nama Lengkap</label><input type="text" id="guruNama">
+      <label>Username</label><input type="text" id="guruUsername">
+      <label>Password</label><input type="text" id="guruPassword">
+      <label>Level</label><select id="guruLevel"><option value="guru">Guru</option><option value="admin">Admin</option></select>
+      <button class="btn-primary" id="saveGuruBtn">Simpan</button>
+    </div></div>
 
     <footer class="main-footer" id="mainFooter">
       © 2025 e-Rapor Quantum — Developed by: <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
     </footer>
   </main>
-
   <script src="dashboard.js"></script>
 </body>
 </html>
