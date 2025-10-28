@@ -5,7 +5,7 @@
  ****************************************************/
 
 /* ---------- WEBAPP_URL ---------- */
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzci8gIoSbG_Jq_hOftnouTjizyk14CPuEtL3QDsJRjpVA-T-EHCRVe6mf05EFvXBVtGw/exec";
 
 /* ---------- Helper ---------- */
 const _ = id => document.getElementById(id);
