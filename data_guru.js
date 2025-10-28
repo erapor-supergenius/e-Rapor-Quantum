@@ -1,5 +1,5 @@
 // ========== KONFIGURASI DASAR ==========
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwZ7RLl5khzAy0IMGfgA5Oe9DdgmaNDtHIvf2iqjyyVgMRnOXMeHU5gz0lUahEfN3Wg/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwR-1WBxIhP6JnuGoLe_j8lxczr5NiM8K-D5qjWHaZiH8fMxa_qY4RzgiO47Eo71eZU9A/exec";
 const TOKEN_SEKOLAH = localStorage.getItem("token_sekolah");
 
 // ========== SIMPAN DATA GURU ==========
