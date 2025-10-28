@@ -101,34 +101,54 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /* =============================
-   DASHBOARD DATA
+   DASHBOARD DATA (versi Super Genius)
 ============================= */
-async function loadDashboardData(token) {
+async function loadDashboardData(token, retry = 0) {
   try {
     const res = await fetch(WEBAPP_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "getDashboardData", payload: { token } }),
+      body: JSON.stringify({
+        action: "getDashboardData",
+        payload: { token },
+      }),
     });
+
+    // Cek status koneksi
+    if (!res.ok) throw new Error(`HTTP ${res.status} - ${res.statusText}`);
+
     const data = await res.json();
-    if (!data.success) throw new Error(data.error);
+    if (!data.success) throw new Error(data.error || "Respon tidak valid dari server.");
 
-    // Isi data ke kartu
-    setText("totalSiswa", data.total_siswa);
-    setText("totalGuru", data.total_guru);
-    setText("totalMapel", data.total_mapel);
-    setText("totalKelas", data.total_kelas);
-    setText("totalBimbingan", data.total_bimbingan);
+    // Isi data ke kartu dashboard
+    setText("totalSiswa", data.total_siswa ?? 0);
+    setText("totalGuru", data.total_guru ?? 0);
+    setText("totalMapel", data.total_mapel ?? 0);
+    setText("totalKelas", data.total_kelas ?? 0);
+    setText("totalBimbingan", data.total_bimbingan ?? 0);
 
-    // Render chart & progress mapel
-    renderChart(data.statistik);
-    renderProgress(data.statistik);
+    // Tampilkan grafik & progres mapel (termasuk muatan lokal)
+    renderChart(data.statistik || {});
+    renderProgress(data.statistik || {});
+
   } catch (err) {
-    console.error(err);
+    console.error("loadDashboardData Error:", err);
+
+    // Coba ulang sekali jika gagal pertama kali
+    if (retry < 1) {
+      console.warn("Mengulang permintaan getDashboardData...");
+      setTimeout(() => loadDashboardData(token, retry + 1), 2000);
+      return;
+    }
+
+    // Jika tetap gagal setelah retry
     Swal.fire({
       icon: "error",
       title: "Gagal Memuat Dashboard",
-      text: err.message || "Terjadi kesalahan.",
+      text: err.message.includes("Failed to fetch")
+        ? "Koneksi ke server gagal. Pastikan internet stabil atau periksa URL WebApp."
+        : err.message,
+      confirmButtonColor: "#2563eb",
     });
   }
 }
