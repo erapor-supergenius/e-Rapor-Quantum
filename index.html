@@ -221,13 +221,12 @@
       document.getElementById('resetPasswordModal').classList.add('hidden');
     }
     
-    // Fungsi untuk menampilkan modal
+    // Fungsi untuk menampilkan modal (dipanggil oleh link "Lupa password?")
     function lupaPassword() {
       document.getElementById('resetPasswordModal').classList.remove('hidden');
     }
 
     // Submit reset password
-    // Tombol submit ini memiliki ID unik 'btnResetSubmit'
     document.getElementById('btnResetSubmit').addEventListener('click', async () => {
       const username = document.getElementById('resetUsername').value.trim();
       const token = document.getElementById('resetToken').value.trim();
