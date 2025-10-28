@@ -6,11 +6,12 @@
 
 // Ganti dengan URL WebApp kamu (Deploy as: Me, access: Anyone)
 const WEBAPP_URL =
-"[https://script.google.com/macros/s/AKfycbzci8gIoSbG_Jq_hOftnouTjizyk14CPuEtL3QDsJRjpVA-T-EHCRVe6mf05EFvXBVtGw/exec](https://script.google.com/macros/s/AKfycbzci8gIoSbG_Jq_hOftnouTjizyk14CPuEtL3QDsJRjpVA-T-EHCRVe6mf05EFvXBVtGw/exec)";
+"https://script.google.com/macros/s/AKfycbzci8gIoSbG_Jq_hOftnouTjizyk14CPuEtL3QDsJRjpVA-T-EHCRVe6mf05EFvXBVtGw/exec";
 
 /* ---------- UI helpers ---------- */
 function _showSection(id) {
-const sections = ["tokenSection", "registerSection", "loginSection", "resetSection"];
+// "resetSection" dihapus karena kita menggunakan modal (resetPasswordModal)
+const sections = ["tokenSection", "registerSection", "loginSection"];
 sections.forEach((s) => {
 const el = document.getElementById(s);
 if (!el) return;
@@ -30,7 +31,7 @@ const title = document.getElementById("title");
 if (!title) return;
 if (id === "registerSection") title.innerText = "Registrasi Pengguna Baru";
 else if (id === "loginSection") title.innerText = "Login Pengguna";
-else if (id === "resetSection") title.innerText = "Reset Password Pengguna";
+// Referensi 'resetSection' dihapus
 else title.innerText = "Masuk ke e-Rapor Quantum";
 }
 
@@ -50,7 +51,7 @@ allowOutsideClick: false,
 didOpen: () => Swal.showLoading(),
 });
 
-```
+// PERBAIKAN: Tanda ``` telah dihapus
 const resp = await fetch(WEBAPP_URL, {
   method: "POST",
   body: JSON.stringify({ action: "validateToken", token_unik: token }),
@@ -76,7 +77,6 @@ if (data.success) {
 } else {
   Swal.fire("Gagal", data.error || "Token tidak valid", "error");
 }
-```
 
 } catch (err) {
 Swal.close();
@@ -103,7 +103,7 @@ allowOutsideClick: false,
 didOpen: () => Swal.showLoading(),
 });
 
-```
+// PERBAIKAN: Tanda ``` telah dihapus
 const resp = await fetch(WEBAPP_URL, {
   method: "POST",
   body: JSON.stringify({
@@ -133,7 +133,6 @@ if (data.success) {
 } else {
   Swal.fire("Gagal", data.error || "Registrasi gagal", "error");
 }
-```
 
 } catch (err) {
 Swal.close();
@@ -157,7 +156,7 @@ allowOutsideClick: false,
 didOpen: () => Swal.showLoading(),
 });
 
-```
+// PERBAIKAN: Tanda ``` telah dihapus
 const resp = await fetch(WEBAPP_URL, {
   method: "POST",
   body: JSON.stringify({ action: "login", username, password }),
@@ -185,7 +184,6 @@ if (data.success) {
 } else {
   Swal.fire("Gagal", data.error || "Login gagal", "error");
 }
-```
 
 } catch (err) {
 Swal.close();
@@ -194,68 +192,18 @@ Swal.fire("Error", err.message || "Gagal terhubung ke server.", "error");
 }
 
 /* ---------- Navigasi manual ---------- */
+// Ini dipanggil oleh link "Belum punya akun?"
 function showRegister() {
 _showSection("registerSection");
 }
+// Ini dipanggil oleh link "Sudah punya akun?"
 function showLogin() {
 _showSection("loginSection");
 }
 
-/* ---------- RESET PASSWORD (Form bawaan index.html) ---------- */
-async function resetPasswordUser() {
-const username = document.getElementById("resetUsername")?.value.trim();
-const token_unik = document.getElementById("resetToken")?.value.trim();
-const password_baru = document.getElementById("resetPassword")?.value.trim();
-
-if (!username || !token_unik || !password_baru) {
-Swal.fire("Perhatian", "Semua kolom harus diisi.", "warning");
-return;
-}
-
-Swal.fire({
-title: "Mengubah password...",
-text: "Mohon tunggu sebentar",
-allowOutsideClick: false,
-didOpen: () => Swal.showLoading(),
-});
-
-try {
-const resp = await fetch(WEBAPP_URL, {
-method: "POST",
-body: JSON.stringify({
-action: "resetPasswordUser",
-username,
-token_unik,
-password_baru,
-}),
-});
-const data = await resp.json();
-
-```
-Swal.close();
-if (data.success) {
-  Swal.fire({
-    icon: "success",
-    title: "Berhasil",
-    text: data.message || "Password berhasil diubah.",
-    timer: 1500,
-    showConfirmButton: false,
-  });
-  setTimeout(() => {
-    _showSection("registerSection");
-  }, 1500);
-} else {
-  Swal.fire("Gagal", data.message || "Gagal mengubah password.", "error");
-}
-```
-
-} catch (err) {
-Swal.close();
-Swal.fire("Error", err.message || "Gagal terhubung ke server.", "error");
-}
-}
-
-/* ---------- Tombol Batal di form reset ---------- */
-function batalResetPassword() {
-_showSection("registerSection");
-}
+/* PERBAIKAN: 
+  Fungsi 'resetPasswordUser' dan 'batalResetPassword' dihapus dari auth.js 
+  karena logikanya sudah ditangani langsung di dalam <script> di index.html 
+  untuk mengontrol modal 'resetPasswordModal'. 
+  Ini mencegah konflik dan error duplikat.
+*/
