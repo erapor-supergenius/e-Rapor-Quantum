@@ -133,20 +133,52 @@
       <div class="card"><div class="icon icon-bimbingan">⚠️</div><div class="meta"><div class="label">Perlu Bimbingan</div><div class="value" id="totalBimbingan">0</div></div></div>
     </section>
 
-    <section class="card-full"><h3>Statistik Nilai Rata-rata per Mapel</h3><canvas id="chartOverview" height="140"></canvas></section>
-    <section class="card-full"><h3>Progres Pengisian Nilai per Mapel</h3><div id="progressMapelContainer" class="mapel-progress"><div style="color:#64748b">Memuat data progress...</div></div></section>
-    <section class="card-full"><h3>Informasi Sekolah</h3><div id="infoSchool">Memuat profil sekolah...</div></section>
-    <section class="card-full"><h3>Data Guru</h3><button class="btn-primary" id="btnTambahGuru">➕ Tambah Guru</button><div id="guruTableContainer">Memuat data guru...</div></section>
+    <section class="card-full">
+      <h3>Statistik Nilai Rata-rata per Mapel</h3>
+      <canvas id="chartOverview" height="140"></canvas>
+    </section>
+
+    <section class="card-full">
+      <h3>Progres Pengisian Nilai per Mapel</h3>
+      <div id="progressMapelContainer" class="mapel-progress">
+        <div style="color:#64748b">Memuat data progress...</div>
+      </div>
+    </section>
+
+    <!-- ✅ Tambahan baru: Daftar Muatan Lokal -->
+    <section class="card-full">
+      <h3>Daftar Muatan Lokal</h3>
+      <ul id="listMuatanLokal" class="list-disc list-inside text-gray-600 text-sm">
+        <li>Memuat data muatan lokal...</li>
+      </ul>
+    </section>
+    <!-- ✅ Selesai tambahan -->
+
+    <section class="card-full">
+      <h3>Informasi Sekolah</h3>
+      <div id="infoSchool">Memuat profil sekolah...</div>
+    </section>
+
+    <section class="card-full">
+      <h3>Data Guru</h3>
+      <button class="btn-primary" id="btnTambahGuru">➕ Tambah Guru</button>
+      <div id="guruTableContainer">Memuat data guru...</div>
+    </section>
 
     <!-- MODAL -->
-    <div id="modalGuru"><div id="modalContent"><span id="closeModalGuru">×</span><h3 id="modalTitle">Tambah Guru</h3>
-      <input type="hidden" id="guruId">
-      <label>Nama Lengkap</label><input type="text" id="guruNama">
-      <label>Username</label><input type="text" id="guruUsername">
-      <label>Password</label><input type="text" id="guruPassword">
-      <label>Level</label><select id="guruLevel"><option value="guru">Guru</option><option value="admin">Admin</option></select>
-      <button class="btn-primary" id="saveGuruBtn">Simpan</button>
-    </div></div>
+    <div id="modalGuru">
+      <div id="modalContent">
+        <span id="closeModalGuru">×</span>
+        <h3 id="modalTitle">Tambah Guru</h3>
+        <input type="hidden" id="guruId">
+        <label>Nama Lengkap</label><input type="text" id="guruNama">
+        <label>Username</label><input type="text" id="guruUsername">
+        <label>Password</label><input type="text" id="guruPassword">
+        <label>Level</label>
+        <select id="guruLevel"><option value="guru">Guru</option><option value="admin">Admin</option></select>
+        <button class="btn-primary" id="saveGuruBtn">Simpan</button>
+      </div>
+    </div>
 
     <footer class="main-footer" id="mainFooter">
       © 2025 e-Rapor Quantum — Developed by: <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
