@@ -4,7 +4,7 @@
  * ===================================================================== */
 
 // URL WebApp (ubah sesuai milikmu)
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbzSNseVpWuNseMTG0ilYHXb8y8xndFDe4DjS7BLFB36OsC3WHZ6YSYv6n4fjkhYTfesrA/exec";
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbx3rKmrDTnz7SBzIsWOTaS7dWbP8cFgs_Q-LmRIoFWLYk3ZAReRUEH_Mdz2o3o8xkNZgA/exec";
 
 /* =============================
    HELPER & UTILITAS
