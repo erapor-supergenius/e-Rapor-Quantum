@@ -1,180 +1,263 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>e-Rapor Quantum — Login</title>
-
-  <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
-  <link rel="icon" type="image/png" sizes="192x192" href="assets/favicon.png">
-  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-  <meta name="theme-color" content="#1d4ed8">
-  
-  <link href="https://unpkg.com/tailwindcss@3.4.1/dist/tailwind.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-  <style>
-    /* Base style (inline) */
-    :root {
-      --blue: #1d4ed8;
-      --blue-dark: #1e40af;
-      --green: #16a34a;
-    }
-
-    body {
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-      min-height: 100vh;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #071b2a 0%, #0f172a 30%, #1d4ed8 100%);
-      -webkit-font-smoothing: antialiased;
-      color: #0f172a;
-    }
-
-    /* Card */
-    .card {
-      background: #fff;
-      width: 420px;
-      max-width: 95%;
-      border-radius: 18px;
-      box-shadow: 0 20px 60px rgba(2, 6, 23, 0.45);
-      padding: 32px;
-      text-align: center;
-    }
-
-    /* Logo */
-    .brand-logo {
-      width: 140px;
-      max-width: 46%;
-      border-radius: 12px;
-      margin: 0 auto 18px auto;
-      display: block;
-    }
-
-    /* Inputs & buttons */
-    .input {
-      width:100%;
-      max-width:100%;
-      box-sizing:border-box;
-      padding:14px;
-      border-radius:12px;
-      border:1px solid #e6eef8;
-      font-size:15px;
-      text-align:center;
-      margin-bottom:12px;
-      transition:box-shadow .25s, border-color .2s, transform .12s;
-    }
-
-    .input:focus {
-      outline: none;
-      border-color: var(--blue);
-      box-shadow: 0 6px 18px rgba(29, 78, 216, 0.12);
-      transform: translateY(-1px);
-    }
-
-    .btn {
-      width: 100%;
-      padding: 13px;
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 15px;
-      border: 0;
-      cursor: pointer;
-      transition: transform 0.12s, box-shadow 0.12s;
-      box-shadow: 0 6px 18px rgba(2, 6, 23, 0.09);
-    }
-    .btn:active { transform: translateY(1px); }
-    .btn-blue { background: var(--blue); color: white; }
-    .btn-blue:hover { background: var(--blue-dark); }
-    .btn-green { background: var(--green); color: white; }
-    .small-link { color: var(--blue); cursor: pointer; font-weight: 600; }
-
-    footer {
-      margin-top: 18px;
-      font-size: 12px;
-      color: #64748b;
-      line-height: 1.4;
-    }
-
-    /* Fade-in animation for sections */
-    .fade {
-      opacity: 0;
-      transform: translateY(18px);
-      transition: all 0.45s ease;
-    }
-    .fade.show {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* spacing helper */
-    .space-y-3 > * + * { margin-top: 12px; }
-
-    /* Hover link animation fix */
-    .text-blue-700 {
-      transition: all 0.3s ease;
-    }
-    .text-blue-700:hover {
-      color: #1d4ed8;
-      text-decoration: underline;
-    }
-
-    /* CSS UNTUK MODAL RESET PASSWORD SUDAH DIHAPUS 
-      karena kita tidak menggunakannya lagi.
-    */
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>e-Rapor Quantum - Login & Input</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+        section { margin-bottom: 30px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        input[type="text"], input[type="password"], input[type="number"] { width: 100%; padding: 10px; margin: 5px 0 15px 0; display: inline-block; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover:not(:disabled) { background-color: #0056b3; }
+        button:disabled { background-color: #cccccc; cursor: not-allowed; }
+        .message { margin-top: 10px; font-weight: bold; }
+    </style>
 </head>
-
 <body>
-  <div class="card" role="main" aria-label="Form Login e-Rapor Quantum">
-    <img src="assets/logo-erapor.png" alt="Logo e-Rapor Quantum" class="brand-logo" id="brandLogo">
-    <h1 id="title" class="text-2xl font-semibold" style="color:var(--blue)">Masuk ke e-Rapor Quantum</h1>
 
-    <div id="tokenSection" class="mt-4 space-y-3 fade show">
-      <input
-        id="tokenInput"
-        class="input"
-        placeholder="Masukkan Token Sekolah (contoh: ABCD-1234)"
-        aria-label="Token Sekolah"
-      >
-      <button
-        id="btnToken"
-        onclick="validateToken()"
-        class="btn btn-blue"
-      >
-        Lanjut
-      </button>
-      <div id="notifBox" class="notif"></div>
-    </div>
+    <h1>Aplikasi Input Nilai e-Rapor</h1>
+    <p>Akses melalui GitHub Pages</p>
+    <hr>
 
-    <div id="registerSection" class="mt-4 space-y-3 fade hidden" style="display:none">
-      <input id="nama" class="input" placeholder="Nama Lengkap" aria-label="Nama Lengkap">
-      <input id="usernameReg" class="input" placeholder="Username" aria-label="Username registrasi">
-      <input id="passwordReg" class="input" type="password" placeholder="Password" aria-label="Password registrasi">
-      <button id="btnRegister" onclick="registerUser()" class="btn btn-green">Daftar & Masuk</button>
-      <div>
-        <span class="small-link" onclick="showLogin()">Sudah punya akun? Masuk</span>
-      </div>
-    </div>
+    <section id="token-section">
+        <h3>1. Masukkan Token Sekolah</h3>
+        <form id="tokenForm">
+            <input type="hidden" name="action" value="check_token"> 
+            
+            <label for="token_sekolah">Token Sekolah:</label>
+            <input type="text" id="token_sekolah" name="token_sekolah" required>
+            <button type="submit" id="btn-token">Cek Token</button>
+        </form>
+        <p class="message" id="token-message"></p>
+    </section>
 
-    <div id="loginSection" class="mt-4 space-y-3 fade hidden" style="display:none">
-      <input id="usernameLogin" class="input" placeholder="Username" aria-label="Username login">
-      <input id="passwordLogin" class="input" type="password" placeholder="Password" aria-label="Password login">
-      
-      <button id="btnLogin" onclick="loginUser()" class="btn btn-blue">Masuk</button>
+    <section id="auth-section" style="display:none;">
+        
+        <div id="login-container">
+            <h3>2. Login Pengguna</h3>
+            <form id="loginForm">
+                <input type="hidden" name="action" value="login_user">
+                <label for="username-login">Username:</label>
+                <input type="text" id="username-login" name="username" required>
+                <label for="password-login">Password:</label>
+                <input type="password" id="password-login" name="password" required>
+                <button type="submit" id="btn-login">Login</button>
+            </form>
+            <p class="message" id="login-message"></p>
+            <button id="showRegister" style="background-color: #28a745; margin-top: 10px;">Belum punya akun? Daftar di sini</button>
+        </div>
 
-      <div>
-        <span class="small-link" onclick="showRegister()">Belum punya akun? Daftar</span>
-      </div>
-    </div>
+        <div id="register-container" style="display:none;">
+            <h3>2. Pendaftaran Akun Baru</h3>
+            <form id="registerForm">
+                <input type="hidden" name="action" value="register_user">
+                <input type="hidden" name="token" id="reg-token-field"> 
+                
+                <label for="reg-nama">Nama Lengkap:</label><input type="text" id="reg-nama" name="nama" required>
+                <label for="reg-username">Username (Akun Anda):</label><input type="text" id="reg-username" name="username" required>
+                <label for="reg-password">Password:</label><input type="password" id="reg-password" name="password" required>
+                <button type="submit" id="btn-register">Daftar Akun</button>
+                <button type="button" id="showLogin" style="background-color: #6c757d; margin-top: 10px;">Kembali ke Login</button>
+            </form>
+            <p class="message" id="register-message"></p>
+        </div>
 
-    <footer>
-      <div>© 2025 <strong>e-Rapor Quantum</strong></div>
-      <div>Dikembangkan oleh: <strong>Dedi Agus Mustofa, S.Pd.SD</strong></div>
-    </footer>
-  </div> <script src="auth.js"></script>
+    </section>
 
-  </body>
+    <section id="dashboard-section" style="display:none;">
+        <h2>Dashboard Input Nilai</h2>
+        <p>Selamat datang, **<span id="user-display"></span>**. (Sheet ID: <span id="sheet-id-display"></span>)</p>
+        
+        <form id="inputNilaiForm">
+            <input type="hidden" name="spreadsheet_id" id="nilai-sheet-id">
+            <input type="hidden" name="email_guru" id="nilai-email-guru">
+            
+            <label>ID Siswa:</label><input type="text" name="id_siswa" required>
+            <label>Nilai Pengetahuan:</label><input type="number" name="nilai_p" required>
+            <button type="submit" id="btn-input-nilai">Simpan Nilai</button>
+        </form>
+        <p class="message" id="nilai-message"></p>
+        <button id="logout-button" style="background-color: #dc3545; margin-top: 20px;">Logout</button>
+    </section>
+
+    <script>
+        // ========================================================
+        // 🚨 GANTI DENGAN URL WEB APP GAS ANDA 🚨
+        const AUTH_WEB_APP_URL = "URL_WEB_APP_1_AUTH_ANDA"; 
+        const INPUT_WEB_APP_URL = "URL_WEB_APP_2_INPUT_ANDA"; 
+        // ========================================================
+
+        // Helper untuk menampilkan/menyembunyikan bagian
+        function showSection(id) {
+            document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+        }
+        
+        // --- FUNGSI UTAMA PENGGANTI google.script.run ---
+        function sendToGas(url, formId, buttonId) {
+            const form = document.getElementById(formId);
+            const button = document.getElementById(buttonId);
+            const formData = new FormData(form);
+
+            button.disabled = true;
+
+            return fetch(url, {
+                method: 'POST',
+                body: formData 
+            })
+            .then(response => response.json())
+            .finally(() => {
+                button.disabled = false;
+            });
+        }
+        // 
+
+        // --- HANDLER TOKEN CHECK ---
+        document.getElementById('tokenForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const msgEl = document.getElementById('token-message');
+            msgEl.textContent = 'Memvalidasi token...';
+            msgEl.style.color = 'orange';
+
+            sendToGas(AUTH_WEB_APP_URL, 'tokenForm', 'btn-token')
+                .then(data => {
+                    if (data.status === 'success') {
+                        msgEl.textContent = '✅ Token Valid. Silakan Login atau Daftar.';
+                        msgEl.style.color = 'green';
+                        
+                        // Simpan data sesi penting
+                        sessionStorage.setItem('temp_token', data.token); 
+                        sessionStorage.setItem('temp_sheetId', data.spreadsheetId);
+                        
+                        showSection('auth-section');
+                    } else {
+                        msgEl.textContent = `❌ ${data.message}`;
+                        msgEl.style.color = 'red';
+                    }
+                })
+                .catch(error => { msgEl.textContent = 'Error koneksi ke server.'; msgEl.style.color = 'red'; console.error(error); });
+        });
+
+        // --- HANDLER LOGIN ---
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const msgEl = document.getElementById('login-message');
+            msgEl.textContent = 'Sedang Login...';
+            msgEl.style.color = 'orange';
+            
+            sendToGas(AUTH_WEB_APP_URL, 'loginForm', 'btn-login')
+                .then(data => {
+                    if (data.status === 'success') {
+                        msgEl.textContent = '✅ Login Berhasil!';
+                        msgEl.style.color = 'green';
+                        
+                        // **SIMPAN DATA SESI UTAMA**
+                        sessionStorage.setItem('spreadsheetId', data.spreadsheetId);
+                        sessionStorage.setItem('namaUser', data.namaUser);
+                        sessionStorage.setItem('role', data.role);
+                        sessionStorage.setItem('username', document.getElementById('username-login').value); 
+
+                        // Alihkan ke dashboard
+                        loadDashboard(data.namaUser, data.spreadsheetId, document.getElementById('username-login').value);
+
+                    } else {
+                        msgEl.textContent = `❌ Gagal Login: ${data.message}`;
+                        msgEl.style.color = 'red';
+                    }
+                })
+                .catch(error => { msgEl.textContent = 'Error koneksi saat login.'; msgEl.style.color = 'red'; console.error(error); });
+        });
+        
+        // --- HANDLER REGISTRASI ---
+        document.getElementById('registerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const msgEl = document.getElementById('register-message');
+            msgEl.textContent = 'Sedang Mendaftar...';
+            msgEl.style.color = 'orange';
+            
+            // Isi hidden field token dari sesi sementara
+            document.getElementById('reg-token-field').value = sessionStorage.getItem('temp_token');
+
+            sendToGas(AUTH_WEB_APP_URL, 'registerForm', 'btn-register')
+                .then(data => {
+                    if (data.status === 'success') {
+                        msgEl.textContent = '✅ Pendaftaran berhasil. Silakan Login.';
+                        msgEl.style.color = 'green';
+                        document.getElementById('register-container').style.display = 'none';
+                        document.getElementById('login-container').style.display = 'block';
+                    } else {
+                        msgEl.textContent = `❌ Gagal Mendaftar: ${data.message}`;
+                        msgEl.style.color = 'red';
+                    }
+                });
+        });
+
+        // --- HANDLER INPUT NILAI ---
+        document.getElementById('inputNilaiForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const msgEl = document.getElementById('nilai-message');
+            msgEl.textContent = 'Menyimpan nilai...';
+            msgEl.style.color = 'orange';
+
+            // Mengirim data ke Web App 2 (Input Data)
+            sendToGas(INPUT_WEB_APP_URL, 'inputNilaiForm', 'btn-input-nilai')
+                .then(data => {
+                    if (data.status === 'success') {
+                        msgEl.textContent = '✅ Nilai Berhasil Disimpan!';
+                        msgEl.style.color = 'green';
+                        document.getElementById('inputNilaiForm').reset(); // Reset form input nilai
+                    } else {
+                        msgEl.textContent = `❌ Gagal Simpan Nilai: ${data.message}`;
+                        msgEl.style.color = 'red';
+                    }
+                })
+                .catch(error => { msgEl.textContent = 'Error koneksi saat input nilai.'; msgEl.style.color = 'red'; console.error(error); });
+        });
+        
+        // --- Logika Navigasi UI ---
+        document.getElementById('showRegister').addEventListener('click', function() {
+            document.getElementById('login-container').style.display = 'none';
+            document.getElementById('register-container').style.display = 'block';
+        });
+        document.getElementById('showLogin').addEventListener('click', function() {
+            document.getElementById('register-container').style.display = 'none';
+            document.getElementById('login-container').style.display = 'block';
+        });
+        document.getElementById('logout-button').addEventListener('click', function() {
+            sessionStorage.clear();
+            showSection('token-section');
+            document.getElementById('token-message').textContent = 'Anda telah logout.';
+            document.getElementById('token-message').style.color = 'green';
+        });
+
+        function loadDashboard(nama, sheetId, username) {
+            showSection('dashboard-section');
+            document.getElementById('user-display').textContent = nama;
+            document.getElementById('sheet-id-display').textContent = sheetId;
+            document.getElementById('nilai-sheet-id').value = sheetId;
+            document.getElementById('nilai-email-guru').value = username; // Mengirim username sebagai email_guru untuk pencatatan
+            
+            // Hapus token sementara setelah berhasil login
+            sessionStorage.removeItem('temp_token'); 
+            sessionStorage.removeItem('temp_sheetId');
+        }
+
+        // --- Pengecekan Sesi Awal ---
+        document.addEventListener('DOMContentLoaded', function() {
+            if (sessionStorage.getItem('spreadsheetId')) {
+                 // Jika sudah ada sesi, langsung tampilkan dashboard
+                 loadDashboard(
+                    sessionStorage.getItem('namaUser'), 
+                    sessionStorage.getItem('spreadsheetId'),
+                    sessionStorage.getItem('username')
+                 );
+            } else {
+                 // Jika belum ada sesi, mulai dari cek token
+                 showSection('token-section');
+            }
+        });
+    </script>
+
+</body>
 </html>
