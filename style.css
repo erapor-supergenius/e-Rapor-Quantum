@@ -1,1 +1,81 @@
+/* NAMA FILE: style.css */
 
+/* --- Tampilan Dasar --- */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f7f6;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+h1 {
+    color: #007bff;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+}
+
+section { 
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 25px;
+}
+
+/* --- Formulir dan Input --- */
+label {
+    display: block;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: 600;
+}
+
+input[type="text"], input[type="password"], input[type="number"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+/* --- Tombol --- */
+button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+    margin-right: 10px;
+}
+
+#btn-token, #btn-login { background-color: #007bff; color: white; }
+#btn-token:hover, #btn-login:hover { background-color: #0056b3; }
+
+#showRegister { background-color: #28a745; color: white; }
+#showRegister:hover { background-color: #1e7e34; }
+
+#logout-button { background-color: #dc3545; color: white; }
+#logout-button:hover { background-color: #c82333; }
+
+/* --- Pesan Status --- */
+.message {
+    padding: 10px;
+    margin-top: 15px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+}
+.message[style*="red"] { color: #dc3545; border-color: #dc3545; background-color: #f8d7da; }
+.message[style*="green"] { color: #28a745; border-color: #28a745; background-color: #d4edda; }
+
+/* Tambahkan styling dari file Informasi_Sistem.html Anda di sini */
+/* Misalnya, styling untuk tab, tabel, dll. */
