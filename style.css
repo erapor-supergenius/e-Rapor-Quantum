@@ -1,81 +1,176 @@
-/* NAMA FILE: style.css */
-
-/* --- Tampilan Dasar --- */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f7f6;
+    font-family: Arial, sans-serif;
+    background: #eef1f5;
     margin: 0;
+    padding: 0;
+}
+
+.card {
+    background: white;
     padding: 20px;
-    color: #333;
+    width: 350px;
+    margin: 80px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-h1 {
-    color: #007bff;
-    border-bottom: 2px solid #007bff;
-    padding-bottom: 10px;
-}
-
-section { 
-    background: #ffffff;
-    padding: 25px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    margin-bottom: 25px;
-}
-
-/* --- Formulir dan Input --- */
-label {
-    display: block;
-    margin-top: 10px;
-    margin-bottom: 5px;
-    font-weight: 600;
-}
-
-input[type="text"], input[type="password"], input[type="number"] {
+input {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    box-sizing: border-box;
-    transition: border-color 0.3s;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
-input:focus {
-    border-color: #007bff;
-    outline: none;
-}
-
-/* --- Tombol --- */
 button {
-    padding: 10px 20px;
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #2a67ff;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ecc;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px;
+    background: #2a67ff;
+    color: white;
+}
+
+.content {
+    padding: 20px;
+}
+
+
+.logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    width: 120px;      /* bisa Anda atur */
+    height: auto;
+    margin-bottom: 10px;
+}
+.logo-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.logo {
+    width: 120px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    background: #f4f6f9;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    background: #1a237e;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    position: fixed;
+    left: 0;
+    top: 0;
+}
+
+.sidebar .logo {
+    width: 70px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.sidebar h2 {
+    font-size: 20px;
+    margin-top: 5px;
+}
+
+.sidebar .school-name {
+    font-size: 14px;
+    margin-top: 5px;
+    opacity: 0.9;
+}
+
+.sidebar .footer {
+    margin-top: auto;
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Content Area */
+.content {
+    margin-left: 260px;
+    padding: 20px;
+    width: calc(100% - 260px);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 15px;
+}
+
+.header h1 {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.logout-btn {
+    padding: 8px 16px;
+    background: #d32f2f;
+    color: white;
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s;
-    margin-right: 10px;
 }
 
-#btn-token, #btn-login { background-color: #007bff; color: white; }
-#btn-token:hover, #btn-login:hover { background-color: #0056b3; }
+/* Form Grid */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
 
-#showRegister { background-color: #28a745; color: white; }
-#showRegister:hover { background-color: #1e7e34; }
-
-#logout-button { background-color: #dc3545; color: white; }
-#logout-button:hover { background-color: #c82333; }
-
-/* --- Pesan Status --- */
-.message {
+.grid-container input,
+.grid-container select {
+    width: 100%;
     padding: 10px;
-    margin-top: 15px;
+    border: 1px solid #bbb;
     border-radius: 6px;
-    background-color: #f8f9fa;
-    border: 1px solid #e9ecef;
 }
-.message[style*="red"] { color: #dc3545; border-color: #dc3545; background-color: #f8d7da; }
-.message[style*="green"] { color: #28a745; border-color: #28a745; background-color: #d4edda; }
 
-/* Tambahkan styling dari file Informasi_Sistem.html Anda di sini */
-/* Misalnya, styling untuk tab, tabel, dll. */
+.submit-btn {
+    margin-top: 20px;
+    padding: 12px;
+    width: 200px;
+    background: #1a237e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
