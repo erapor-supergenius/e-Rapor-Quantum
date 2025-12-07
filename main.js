@@ -1,4 +1,4 @@
-const API_URL = "YOUR_WEBAPP_URL_HERE";  // <--- GANTI
+const API_URL = "https://script.google.com/macros/s/AKfycbz8jVe3CduWj0FSnFhiYCofRfL3GpH0j1Th53N6GULIf--rKKlb7o2LhcMaoxCXCMSzKw/exec";  // <--- GANTI
 
 // Request umum
 async function api(action, data = {}) {
