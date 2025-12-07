@@ -208,26 +208,40 @@ function setupNavigation() {
  * HANDLER: Cek Token
  * (MODIFIKASI: Menambahkan 'action' ke FormData secara manual)
  */
+/**
+ * HANDLER: Cek Token
+ */
 function handleTokenForm(e) {
     e.preventDefault();
     const msgEl = document.getElementById('token-message');
     const form = document.getElementById('tokenForm');
     const button = document.getElementById('btn-token');
+    
+    // Ambil nilai token secara manual untuk pengecekan awal (tambahan)
+    const tokenValue = document.getElementById('token-input').value.trim();
 
     msgEl.textContent = 'Memvalidasi token...';
     msgEl.style.color = 'orange';
     button.disabled = true;
-
-    // 1. Buat FormData dari form
+    
+    // Pengecekan Klien Tambahan (Opsional, karena HTML sudah ada 'required')
+    if (!tokenValue) {
+        msgEl.textContent = '❌ Token harus diisi. (Token tidak boleh kosong)';
+        msgEl.style.color = 'red';
+        button.disabled = false;
+        return; 
+    }
+    
+    // 1. Buat FormData dari form (ini sudah mengambil token_unik)
     const formData = new FormData(form);
     
-    // 2. 🚨 SOLUSI: Tambahkan action yang spesifik untuk cek token
-    formData.append('action', 'check_token'); 
+    // Catatan: Baris di bawah sudah ada di hidden field HTML, jadi ini REDUNDAN tapi aman.
+    // formData.append('action', 'check_token');
 
-    // 3. Kirim request dengan fetch langsung
+    // 2. Kirim request dengan fetch
     fetch(AUTH_WEB_APP_URL, {
         method: 'POST',
-        body: formData // Mengirim FormData yang sudah di-update
+        body: formData
     })
     .then(response => response.json())
     .then(data => {
@@ -239,9 +253,13 @@ function handleTokenForm(e) {
             sessionStorage.setItem('temp_token', data.token);  
             sessionStorage.setItem('temp_sheetId', data.spreadsheetId);
             
-            showSection('auth-section');
+            // Atur tampilan
+            document.getElementById('token-section').style.display = 'none';
+            document.getElementById('auth-section').style.display = 'block';
+            document.getElementById('reg-token-field').value = data.token; // Isi token di form Register
+            
         } else {
-            // Jika status 'error', GAS mungkin mengembalikan 'Token tidak ditemukan.'
+            // Jika status 'error', GS mengembalikan 'Data tidak lengkap' atau 'Token tidak ditemukan.'
             msgEl.textContent = `❌ ${data.message}`;
             msgEl.style.color = 'red';
         }
