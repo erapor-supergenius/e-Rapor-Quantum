@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Login e-Rapor Quantum</title>
+    <title>Login Token - e-Rapor Quantum</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -14,14 +14,20 @@
         <img src="assets/logo.png" class="logo" alt="Logo e-Rapor Quantum">
     </div>
 
-    <h2>Login e-Rapor Quantum</h2>
+    <h2>Masuk dengan Token Sekolah</h2>
 
-    <input id="username" placeholder="Username">
-    <input id="password" type="password" placeholder="Password">
+    <p class="subtitle">
+        Masukkan token sekolah yang sudah terdaftar di Database Admin.
+    </p>
 
-    <button onclick="login()">Login</button>
+    <!-- Input Token Sekolah -->
+    <input id="schoolToken" placeholder="Token Sekolah">
 
-    <p>Belum punya akun? <a href="register.html">Registrasi di sini</a></p>
+    <button onclick="checkToken()">Cek Token</button>
+
+    <p class="note">
+        Token ini hanya didapat dari Admin pusat e-Rapor Quantum.
+    </p>
 </div>
 
 <script src="main.js"></script>
