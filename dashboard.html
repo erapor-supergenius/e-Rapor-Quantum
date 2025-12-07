@@ -1,66 +1,65 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dashboard - e-Rapor Quantum</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - e-Rapor Quantum</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <!-- Logo dari GitHub Assets -->
-      <img src="https://raw.githubusercontent.com/USERNAME/REPO/main/assets/logo-erapor-quantum.png" alt="Logo e-Rapor Quantum" />
-      <h2>e-Rapor Quantum</h2>
-      <p>Nama Sekolah Anda</p>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <img src="assets/logo.png" class="logo" alt="Logo e-Rapor Quantum" />
+        <h2>e-Rapor Quantum</h2>
+        <p class="school-name" id="schoolName">Nama Sekolah</p>
+
+        <div class="footer">
+            Pengembang:<br>
+            <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+        </div>
+    </aside>
+
+    <!-- Content Area -->
+    <div class="content">
+        <div class="header">
+            <h1>Selamat Datang, <span id="username">User</span></h1>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+
+        <!-- Grid Form -->
+        <div class="grid-container">
+
+            <!-- Input Data Siswa -->
+            <div>
+                <h3>Input Data Siswa</h3>
+                <input type="text" placeholder="Nama Siswa" />
+                <input type="text" placeholder="NIS" />
+                <select>
+                    <option>Pilih Kelas</option>
+                    <option>1A</option>
+                    <option>1B</option>
+                </select>
+                <button class="submit-btn">Simpan Data</button>
+            </div>
+
+            <!-- Input Nilai -->
+            <div>
+                <h3>Input Nilai</h3>
+                <input type="text" placeholder="Nama Siswa" />
+                <input type="number" placeholder="Nilai Pengetahuan" />
+                <input type="number" placeholder="Nilai Keterampilan" />
+                <button class="submit-btn">Simpan Nilai</button>
+            </div>
+
+        </div>
     </div>
 
-    <div class="sidebar-footer">
-      Pengembang:<br />
-      <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
-    </div>
-  </aside>
-
-  <!-- Main Content -->
-  <main class="main">
-    <div class="topbar">
-      <h3>Selamat datang, <span id="username">User</span></h3>
-      <button onclick="logout()">Logout</button>
-    </div>
-
-    <div class="grid">
-      <!-- Card 1: Input Data Siswa -->
-      <div class="card">
-        <h3>Input Data Siswa</h3>
-        <input type="text" placeholder="Nama Siswa" />
-        <input type="text" placeholder="NIS" />
-        <select>
-          <option>Pilih Kelas</option>
-          <option>1A</option>
-          <option>1B</option>
-        </select>
-        <button>Simpan Data</button>
-      </div>
-
-      <!-- Card 2: Input Nilai -->
-      <div class="card">
-        <h3>Input Nilai</h3>
-        <input type="text" placeholder="Nama Siswa" />
-        <input type="number" placeholder="Nilai Pengetahuan" />
-        <input type="number" placeholder="Nilai Keterampilan" />
-        <button>Simpan Nilai</button>
-      </div>
-    </div>
-  </main>
-
-  <script>
-    function logout() {
-      window.location.href = "index.html";
-    }
-  </script>
+    <script>
+        function logout() {
+            window.location.href = "index.html";
+        }
+    </script>
 
 </body>
 </html>
