@@ -2,7 +2,7 @@
 // 🚨 GANTI DENGAN URL WEB APP GAS ANDA 🚨
 // Pastikan ini adalah URL Web App yang sudah Anda deploy!
 // ========================================================
-const AUTH_WEB_APP_URL = "URL_WEB_APP_1_AUTH_ANDA";  // Web App untuk Login/Register
+const AUTH_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxvlW32iZ_o1RttaGUTQUt9X2MQOxoRiGEjuzsDiXt4eHsb9FXLG4u9HLDnpY5avTZweA/exec";  // Web App untuk Login/Register
 const DATA_WEB_APP_URL = "URL_WEB_APP_2_DATA_ANDA";  // Web App untuk Ambil Data Global/Input Nilai
 // ========================================================
 
