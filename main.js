@@ -1,7 +1,7 @@
 /* =============================
    KONFIGURASI BACKEND
 ============================= */
-const API_URL = "https://script.google.com/macros/s/AKfycbwemvo2D1gJHV2UCBTX7IzusTx2gO-20QK2tKqGbBRrdiAuEhSkpjLD9w6yUiLZl75LoQ/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyh0bmKCzCtJRkOB-clG1uPG9QQR9fJkqJMilHYeQGFlj5HVjYL4AOA7YU5sthdI7Ap9w/exec";
 
 /* =============================
    HELPER : POST REQUEST
