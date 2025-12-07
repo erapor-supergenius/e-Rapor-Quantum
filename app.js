@@ -204,29 +204,56 @@ function setupNavigation() {
 /**
  * HANDLER: Cek Token
  */
+/**
+ * HANDLER: Cek Token
+ * (MODIFIKASI: Menambahkan 'action' ke FormData secara manual)
+ */
 function handleTokenForm(e) {
     e.preventDefault();
     const msgEl = document.getElementById('token-message');
+    const form = document.getElementById('tokenForm');
+    const button = document.getElementById('btn-token');
+
     msgEl.textContent = 'Memvalidasi token...';
     msgEl.style.color = 'orange';
+    button.disabled = true;
 
-    sendToGas(AUTH_WEB_APP_URL, 'tokenForm', 'btn-token')
-        .then(data => {
-            if (data.status === 'success') {
-                msgEl.textContent = '✅ Token Valid. Silakan Login atau Daftar.';
-                msgEl.style.color = 'green';
-                
-                // Simpan data sesi sementara
-                sessionStorage.setItem('temp_token', data.token);  
-                sessionStorage.setItem('temp_sheetId', data.spreadsheetId);
-                
-                showSection('auth-section');
-            } else {
-                msgEl.textContent = `❌ ${data.message}`;
-                msgEl.style.color = 'red';
-            }
-        })
-        .catch(error => { msgEl.textContent = 'Error koneksi ke server.'; msgEl.style.color = 'red'; console.error(error); });
+    // 1. Buat FormData dari form
+    const formData = new FormData(form);
+    
+    // 2. 🚨 SOLUSI: Tambahkan action yang spesifik untuk cek token
+    formData.append('action', 'check_token'); 
+
+    // 3. Kirim request dengan fetch langsung
+    fetch(AUTH_WEB_APP_URL, {
+        method: 'POST',
+        body: formData // Mengirim FormData yang sudah di-update
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            msgEl.textContent = '✅ Token Valid. Silakan Login atau Daftar.';
+            msgEl.style.color = 'green';
+            
+            // Simpan data sesi sementara
+            sessionStorage.setItem('temp_token', data.token);  
+            sessionStorage.setItem('temp_sheetId', data.spreadsheetId);
+            
+            showSection('auth-section');
+        } else {
+            // Jika status 'error', GAS mungkin mengembalikan 'Token tidak ditemukan.'
+            msgEl.textContent = `❌ ${data.message}`;
+            msgEl.style.color = 'red';
+        }
+    })
+    .catch(error => { 
+        msgEl.textContent = 'Error koneksi ke server. Cek koneksi atau URL Web App.'; 
+        msgEl.style.color = 'red'; 
+        console.error(error); 
+    })
+    .finally(() => {
+        button.disabled = false;
+    });
 }
 
 /**
