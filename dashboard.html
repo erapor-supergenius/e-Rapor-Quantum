@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard - e-Rapor Quantum</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      display: flex;
+      height: 100vh;
+      background: #f4f6f9;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: #1e2a38;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 15px;
+    }
+
+    .sidebar-header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .sidebar-header img {
+      width: 80px;
+      margin-bottom: 10px;
+    }
+    .sidebar-header h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+    .sidebar-header p {
+      margin: 5px 0 0;
+      font-size: 14px;
+      color: #d0d0d0;
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      text-align: center;
+      font-size: 12px;
+      color: #ccc;
+      padding-top: 15px;
+      border-top: 1px solid #334;
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .card {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .card h3 {
+      margin-top: 0;
+      font-size: 18px;
+      margin-bottom: 15px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 14px;
+    }
+
+    button {
+      background: #1e88e5;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #1669bb;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <!-- Logo dari GitHub Assets -->
+      <img src="https://raw.githubusercontent.com/USERNAME/REPO/main/assets/logo-erapor-quantum.png" alt="Logo e-Rapor Quantum" />
+      <h2>e-Rapor Quantum</h2>
+      <p>Nama Sekolah Anda</p>
+    </div>
+
+    <div class="sidebar-footer">
+      Pengembang:<br />
+      <strong>Dedi Agus Mustofa, S.Pd.SD</strong>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="main">
+    <div class="topbar">
+      <h3>Selamat datang, <span id="username">User</span></h3>
+      <button onclick="logout()">Logout</button>
+    </div>
+
+    <div class="grid">
+      <!-- Card 1: Input Data Siswa -->
+      <div class="card">
+        <h3>Input Data Siswa</h3>
+        <input type="text" placeholder="Nama Siswa" />
+        <input type="text" placeholder="NIS" />
+        <select>
+          <option>Pilih Kelas</option>
+          <option>1A</option>
+          <option>1B</option>
+        </select>
+        <button>Simpan Data</button>
+      </div>
+
+      <!-- Card 2: Input Nilai -->
+      <div class="card">
+        <h3>Input Nilai</h3>
+        <input type="text" placeholder="Nama Siswa" />
+        <input type="number" placeholder="Nilai Pengetahuan" />
+        <input type="number" placeholder="Nilai Keterampilan" />
+        <button>Simpan Nilai</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    function logout() {
+      window.location.href = "index.html";
+    }
+  </script>
+
+</body>
+</html>
