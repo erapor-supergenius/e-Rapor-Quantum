@@ -271,8 +271,10 @@ function handleLoginForm(e) {
     if (tempSheetId) {
         formData.append('spreadsheet_id', tempSheetId);
     }
+    // 🚨 SOLUSI TAMBAHAN: Tambahkan action untuk login
+    formData.append('action', 'login_user'); // <--- TAMBAHKAN INI
 
-    fetch(AUTH_WEB_APP_URL, {
+    fetch(AUTH_WEB_APP_URL, {
         method: 'POST',
         body: formData 
     })
