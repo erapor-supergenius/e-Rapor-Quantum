@@ -3,7 +3,7 @@
  * =====================================================*/
 
 // 🚨 GANTI DENGAN URL WEB APP GAS UNTUK CETAK 🚨
-const PRINT_WEB_APP_URL = "URL_WEB_APP_3_PRINT_ANDA"; 
+const PRINT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyU1aYV62JOE1k5xGAME6h4gMoucE5k7_p1MwTvY-CmRVSqon8hugbGzAFUlfJyxn9bAA/exec"; 
 // ========================================================
 
 // Diasumsikan APP_DATA dan SPREADSHEET_ID tersedia secara global setelah login
