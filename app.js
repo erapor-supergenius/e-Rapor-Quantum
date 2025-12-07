@@ -176,3 +176,103 @@ document.addEventListener('DOMContentLoaded', function() {
          showSection('token-section');
     }
 });
+
+// ... (Bagian atas file app.js)
+
+// 🚨 GANTI DENGAN URL WEB APP GAS ANDA 🚨
+const AUTH_WEB_APP_URL = "URL_WEB_APP_1_AUTH_ANDA"; 
+const INPUT_WEB_APP_URL = "URL_WEB_APP_2_INPUT_ANDA"; 
+const DATA_GLOBAL_WEB_APP_URL = "URL_WEB_APP_3_DATA_GLOBAL_ANDA"; // <-- URL BARU
+// ========================================================
+
+let APP_DATA = { mapel: [], siswa: [], tahunAjaran: "", semester: "" }; // Global data container
+
+// ... (Fungsi showSection dan sendToGas tetap sama)
+// ... (Handler Token, Login, Registrasi, Input Nilai tetap sama)
+
+// --- HANDLER BARU: Navigasi Dashboard ---
+function setupNavigation() {
+    document.querySelectorAll('.nav-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            // Menampilkan section target dan menyembunyikan yang lain
+            document.querySelectorAll('.app-section').forEach(sec => sec.style.display = 'none');
+            document.getElementById(targetId).style.display = 'block';
+        });
+    });
+}
+
+// --- FUNGSI BARU: Memuat Data Dashboard ---
+function loadDashboard(nama, sheetId, username) {
+    showSection('dashboard-section'); // Asumsi Anda menyalin konten dashboard.html ke dalam dashboard-section di index.html
+    // ATAU: Muat konten dashboard.html ke div container
+    
+    document.getElementById('user-display').textContent = nama;
+    document.getElementById('sheet-id-display').textContent = sheetId; // Di index.html
+    document.getElementById('nilai-sheet-id').value = sheetId;
+    document.getElementById('nilai-email-guru').value = username;
+    
+    // PANGGIL WEB APP 3 UNTUK MEMUAT DATA GLOBAL
+    const formData = new FormData();
+    formData.append('spreadsheet_id', sheetId);
+
+    fetch(DATA_GLOBAL_WEB_APP_URL, {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            APP_DATA = data.data; // Simpan data global
+            
+            // Isi tampilan tahun ajaran
+            document.getElementById('ta-display').textContent = APP_DATA.tahunAjaran;
+            document.getElementById('sem-display').textContent = APP_DATA.semester;
+            
+            // Panggil fungsi untuk mengisi dropdown (Anda harus membuat fungsi ini)
+            populateDropdowns(APP_DATA); 
+            setupNavigation(); // Setup navigasi setelah data dimuat
+            
+            // Alihkan ke halaman input nilai (default)
+            document.getElementById('input-nilai-section').style.display = 'block';
+
+        } else {
+            alert("Gagal memuat data global: " + data.message);
+        }
+    })
+    .catch(error => { console.error("Error loading global data:", error); });
+
+    // Hapus token sementara setelah berhasil login
+    sessionStorage.removeItem('temp_token'); 
+    sessionStorage.removeItem('temp_sheetId');
+}
+
+
+// --- FUNGSI BARU: Mengisi Dropdown ---
+function populateDropdowns(data) {
+    // 1. Dropdown Mapel (di form input nilai)
+    const selectMapel = document.getElementById('input-mapel');
+    data.mapel.forEach(mapel => {
+        const opt = document.createElement('option');
+        opt.value = mapel.id;
+        opt.textContent = mapel.nama;
+        selectMapel.appendChild(opt);
+    });
+
+    // 2. Dropdown Siswa (di form cetak rapor)
+    const selectSiswaCetak = document.getElementById('cetak-siswa-single');
+    // ... logic untuk mengisi dropdown siswa ...
+
+    // 3. Dropdown Kelas (di form cetak leger)
+    const selectKelas = document.getElementById('cetak-kelas');
+    const kelasUnik = [...new Set(data.siswa.map(s => s.kelas))].filter(Boolean);
+    kelasUnik.forEach(kelas => {
+        const opt = document.createElement('option');
+        opt.value = kelas;
+        opt.textContent = kelas;
+        selectKelas.appendChild(opt);
+    });
+    // ... dan seterusnya untuk semua dropdown yang Anda butuhkan
+}
+
+// ... (Pengecekan Sesi Awal tetap sama)
