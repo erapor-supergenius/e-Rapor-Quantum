@@ -1,17 +1,20 @@
 // ========================================================
-// NAMA FILE: app.js
-// Diletakkan di GitHub (Harus ditarik dari index.html)
+// NAMA FILE: app.js (VERSI AKHIR YANG BERSIH)
 // ========================================================
 
 // 🚨 GANTI DENGAN URL WEB APP GAS ANDA 🚨
-const AUTH_WEB_APP_URL = "URL_WEB_APP_1_AUTH_ANDA"; 
-const INPUT_WEB_APP_URL = "URL_WEB_APP_2_INPUT_ANDA"; 
+const AUTH_WEB_APP_URL = "URL_WEB_APP_1_AUTH_ANDA"; // Untuk Login, Register, Cek Token
+const DATA_WEB_APP_URL = "URL_WEB_APP_2_DATA_ANDA"; // Untuk Input Nilai dan Ambil Data Global
 // ========================================================
+
+// Variabel global untuk menyimpan data dasar dashboard
+let APP_DATA = { mapel: [], siswa: [], tahunAjaran: "", semester: "" };
 
 // Helper untuk menampilkan/menyembunyikan bagian
 function showSection(id) {
     document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
-    document.getElementById(id).style.display = 'block';
+    const target = document.getElementById(id);
+    if (target) target.style.display = 'block';
 }
 
 // --- FUNGSI UTAMA PENGGANTI google.script.run (menggunakan Fetch API) ---
@@ -68,7 +71,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
     sendToGas(AUTH_WEB_APP_URL, 'loginForm', 'btn-login')
         .then(data => {
             if (data.status === 'success') {
-                msgEl.textContent = '✅ Login Berhasil!';
+                msgEl.textContent = '✅ Login Berhasil! Memuat data...';
                 msgEl.style.color = 'green';
                 
                 // **SIMPAN DATA SESI UTAMA**
@@ -77,7 +80,7 @@ document.getElementById('loginForm').addEventListener('submit', function(e) {
                 sessionStorage.setItem('role', data.role);
                 sessionStorage.setItem('username', document.getElementById('username-login').value); 
 
-                // Alihkan ke dashboard
+                // Alihkan ke dashboard dan muat data
                 loadDashboard(data.namaUser, data.spreadsheetId, document.getElementById('username-login').value);
 
             } else {
@@ -120,12 +123,12 @@ document.getElementById('inputNilaiForm').addEventListener('submit', function(e)
     msgEl.style.color = 'orange';
 
     // Mengirim data ke Web App 2 (Input Data)
-    sendToGas(INPUT_WEB_APP_URL, 'inputNilaiForm', 'btn-input-nilai')
+    sendToGas(DATA_WEB_APP_URL, 'inputNilaiForm', 'btn-input-nilai') // Menggunakan DATA_WEB_APP_URL
         .then(data => {
             if (data.status === 'success') {
                 msgEl.textContent = '✅ Nilai Berhasil Disimpan!';
                 msgEl.style.color = 'green';
-                document.getElementById('inputNilaiForm').reset(); // Reset form input nilai
+                document.getElementById('inputNilaiForm').reset(); 
             } else {
                 msgEl.textContent = `❌ Gagal Simpan Nilai: ${data.message}`;
                 msgEl.style.color = 'red';
@@ -134,7 +137,106 @@ document.getElementById('inputNilaiForm').addEventListener('submit', function(e)
         .catch(error => { msgEl.textContent = 'Error koneksi saat input nilai.'; msgEl.style.color = 'red'; console.error(error); });
 });
 
-// --- Logika Navigasi UI ---
+// --- FUNGSI UTAMA DASHBOARD ---
+function loadDashboard(nama, sheetId, username) {
+    showSection('dashboard-section'); 
+
+    // Tampilkan info user
+    document.getElementById('user-display').textContent = nama;
+    document.getElementById('sheet-id-display').textContent = sheetId;
+    
+    // Isi hidden field yang dibutuhkan untuk form input
+    document.getElementById('nilai-sheet-id').value = sheetId;
+    document.getElementById('nilai-email-guru').value = username;
+
+    // Hapus token sementara setelah berhasil login
+    sessionStorage.removeItem('temp_token'); 
+    sessionStorage.removeItem('temp_sheetId');
+    
+    // PANGGIL WEB APP 2 UNTUK MEMUAT DATA GLOBAL
+    const formData = new FormData();
+    formData.append('spreadsheet_id', sheetId);
+    formData.append('action', 'get_global_data'); // <-- Aksi baru untuk DataHandler.gs
+
+    fetch(DATA_WEB_APP_URL, {
+        method: 'POST',
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.status === 'success') {
+            APP_DATA = data.data; // Simpan data global
+            
+            // Isi tampilan tahun ajaran & semester
+            const taDisplay = document.getElementById('ta-display');
+            const semDisplay = document.getElementById('sem-display');
+            if (taDisplay) taDisplay.textContent = APP_DATA.tahunAjaran;
+            if (semDisplay) semDisplay.textContent = APP_DATA.semester;
+
+            populateDropdowns(APP_DATA); 
+            setupNavigation();
+            
+            // Tampilkan default section
+            const defaultSection = document.getElementById('input-nilai-section');
+            if (defaultSection) defaultSection.style.display = 'block';
+
+        } else {
+            alert("Gagal memuat data global: " + data.message);
+        }
+    })
+    .catch(error => { console.error("Error loading global data:", error); alert("Terjadi kesalahan saat memuat data dashboard.");});
+}
+
+// --- FUNGSI PENDUKUNG DASHBOARD ---
+
+// Mengisi dropdown (sama seperti kode sebelumnya)
+function populateDropdowns(data) {
+    const selectMapel = document.getElementById('input-mapel');
+    if (selectMapel) {
+        data.mapel.forEach(mapel => {
+            const opt = document.createElement('option');
+            opt.value = mapel.id;
+            opt.textContent = mapel.nama;
+            selectMapel.appendChild(opt);
+        });
+    }
+
+    const selectKelas = document.getElementById('cetak-kelas');
+    if (selectKelas) {
+        const kelasUnik = [...new Set(data.siswa.map(s => s.kelas))].filter(Boolean);
+        kelasUnik.forEach(kelas => {
+            const opt = document.createElement('option');
+            opt.value = kelas;
+            opt.textContent = kelas;
+            selectKelas.appendChild(opt);
+        });
+    }
+
+    const selectSiswaCetak = document.getElementById('cetak-siswa-single');
+    if (selectSiswaCetak) {
+        data.siswa.forEach(siswa => {
+            const opt = document.createElement('option');
+            opt.value = siswa.id;
+            opt.textContent = `${siswa.nama} (${siswa.kelas})`;
+            selectSiswaCetak.appendChild(opt);
+        });
+    }
+}
+
+// Menyiapkan navigasi antar section dashboard
+function setupNavigation() {
+    document.querySelectorAll('.nav-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const targetId = this.getAttribute('data-target');
+            // Menampilkan section target dan menyembunyikan yang lain
+            document.querySelectorAll('.app-section').forEach(sec => sec.style.display = 'none');
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) targetSection.style.display = 'block';
+        });
+    });
+}
+
+// --- Logika Navigasi UI & Logout ---
 document.getElementById('showRegister').addEventListener('click', function() {
     document.getElementById('login-container').style.display = 'none';
     document.getElementById('register-container').style.display = 'block';
@@ -150,18 +252,6 @@ document.getElementById('logout-button').addEventListener('click', function() {
     document.getElementById('token-message').style.color = 'green';
 });
 
-function loadDashboard(nama, sheetId, username) {
-    showSection('dashboard-section');
-    document.getElementById('user-display').textContent = nama;
-    document.getElementById('sheet-id-display').textContent = sheetId;
-    document.getElementById('nilai-sheet-id').value = sheetId;
-    document.getElementById('nilai-email-guru').value = username; // Mengirim username sebagai email_guru untuk pencatatan
-    
-    // Hapus token sementara setelah berhasil login
-    sessionStorage.removeItem('temp_token'); 
-    sessionStorage.removeItem('temp_sheetId');
-}
-
 // --- Pengecekan Sesi Awal saat halaman dimuat ---
 document.addEventListener('DOMContentLoaded', function() {
     if (sessionStorage.getItem('spreadsheetId')) {
@@ -176,103 +266,3 @@ document.addEventListener('DOMContentLoaded', function() {
          showSection('token-section');
     }
 });
-
-// ... (Bagian atas file app.js)
-
-// 🚨 GANTI DENGAN URL WEB APP GAS ANDA 🚨
-const AUTH_WEB_APP_URL = "URL_WEB_APP_1_AUTH_ANDA"; 
-const INPUT_WEB_APP_URL = "URL_WEB_APP_2_INPUT_ANDA"; 
-const DATA_GLOBAL_WEB_APP_URL = "URL_WEB_APP_3_DATA_GLOBAL_ANDA"; // <-- URL BARU
-// ========================================================
-
-let APP_DATA = { mapel: [], siswa: [], tahunAjaran: "", semester: "" }; // Global data container
-
-// ... (Fungsi showSection dan sendToGas tetap sama)
-// ... (Handler Token, Login, Registrasi, Input Nilai tetap sama)
-
-// --- HANDLER BARU: Navigasi Dashboard ---
-function setupNavigation() {
-    document.querySelectorAll('.nav-button').forEach(button => {
-        button.addEventListener('click', function() {
-            const targetId = this.getAttribute('data-target');
-            // Menampilkan section target dan menyembunyikan yang lain
-            document.querySelectorAll('.app-section').forEach(sec => sec.style.display = 'none');
-            document.getElementById(targetId).style.display = 'block';
-        });
-    });
-}
-
-// --- FUNGSI BARU: Memuat Data Dashboard ---
-function loadDashboard(nama, sheetId, username) {
-    showSection('dashboard-section'); // Asumsi Anda menyalin konten dashboard.html ke dalam dashboard-section di index.html
-    // ATAU: Muat konten dashboard.html ke div container
-    
-    document.getElementById('user-display').textContent = nama;
-    document.getElementById('sheet-id-display').textContent = sheetId; // Di index.html
-    document.getElementById('nilai-sheet-id').value = sheetId;
-    document.getElementById('nilai-email-guru').value = username;
-    
-    // PANGGIL WEB APP 3 UNTUK MEMUAT DATA GLOBAL
-    const formData = new FormData();
-    formData.append('spreadsheet_id', sheetId);
-
-    fetch(DATA_GLOBAL_WEB_APP_URL, {
-        method: 'POST',
-        body: formData
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status === 'success') {
-            APP_DATA = data.data; // Simpan data global
-            
-            // Isi tampilan tahun ajaran
-            document.getElementById('ta-display').textContent = APP_DATA.tahunAjaran;
-            document.getElementById('sem-display').textContent = APP_DATA.semester;
-            
-            // Panggil fungsi untuk mengisi dropdown (Anda harus membuat fungsi ini)
-            populateDropdowns(APP_DATA); 
-            setupNavigation(); // Setup navigasi setelah data dimuat
-            
-            // Alihkan ke halaman input nilai (default)
-            document.getElementById('input-nilai-section').style.display = 'block';
-
-        } else {
-            alert("Gagal memuat data global: " + data.message);
-        }
-    })
-    .catch(error => { console.error("Error loading global data:", error); });
-
-    // Hapus token sementara setelah berhasil login
-    sessionStorage.removeItem('temp_token'); 
-    sessionStorage.removeItem('temp_sheetId');
-}
-
-
-// --- FUNGSI BARU: Mengisi Dropdown ---
-function populateDropdowns(data) {
-    // 1. Dropdown Mapel (di form input nilai)
-    const selectMapel = document.getElementById('input-mapel');
-    data.mapel.forEach(mapel => {
-        const opt = document.createElement('option');
-        opt.value = mapel.id;
-        opt.textContent = mapel.nama;
-        selectMapel.appendChild(opt);
-    });
-
-    // 2. Dropdown Siswa (di form cetak rapor)
-    const selectSiswaCetak = document.getElementById('cetak-siswa-single');
-    // ... logic untuk mengisi dropdown siswa ...
-
-    // 3. Dropdown Kelas (di form cetak leger)
-    const selectKelas = document.getElementById('cetak-kelas');
-    const kelasUnik = [...new Set(data.siswa.map(s => s.kelas))].filter(Boolean);
-    kelasUnik.forEach(kelas => {
-        const opt = document.createElement('option');
-        opt.value = kelas;
-        opt.textContent = kelas;
-        selectKelas.appendChild(opt);
-    });
-    // ... dan seterusnya untuk semua dropdown yang Anda butuhkan
-}
-
-// ... (Pengecekan Sesi Awal tetap sama)
