@@ -3,7 +3,7 @@
 // Pastikan ini adalah URL Web App yang sudah Anda deploy!
 // ========================================================
 const AUTH_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxvlW32iZ_o1RttaGUTQUt9X2MQOxoRiGEjuzsDiXt4eHsb9FXLG4u9HLDnpY5avTZweA/exec";  // Web App untuk Login/Register
-const DATA_WEB_APP_URL = "URL_WEB_APP_2_DATA_ANDA";  // Web App untuk Ambil Data Global/Input Nilai
+const DATA_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvNzVh_4AgTDa1HQcF6nTit5x9bHnMwKOjM9wpYU3iBwsf7LgaZ0zl8uA14lYtcUqX-A/exec";  // Web App untuk Ambil Data Global/Input Nilai
 // ========================================================
 
 // Variabel Global untuk menyimpan data aplikasi setelah login
