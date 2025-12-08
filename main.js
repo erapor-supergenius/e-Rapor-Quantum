@@ -2,7 +2,7 @@
    KONFIGURASI BACKEND
    Pastikan URL ini adalah URL Web App Apps Script terbaru
 ========================================================== */
-const API_URL = "https://script.google.com/macros/s/AKfycbxechuZ-DqZpE-Jhji8rI8tfH9alGb2oEun47RUKnAkFZZ-gMOg15sL_Jywx86tgHxQdg/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyXw9GedaE-wmPadmhUL862IbsQi9DnGSYZ5-3PhsuXicHVc-RuWZcvTWCsXIgeT0ls/exec";
 
 /* ==========================================================
    HELPER : API REQUEST HANDLER
